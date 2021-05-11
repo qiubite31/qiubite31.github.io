@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="機器學習技法是林軒田老師的開的機器學習後半堂課，主要在延續前面機器學習的基礎理論，並延申出不同的機器學習模型介紹。   而這堂課主要圍繞在特徵轉換上並分三個面向探討，分別為(1)如果處理大量且高複雜度的特徵轉換(2)找出具有預測性質的特徵來提升模型表現(3)找出資料中的隱藏特徵讓機器學習表現更好。   在線性可分的問題中，前面的課程有教過可以透過PLA或是POCKET來找到分開的超平面，但PLA在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="機器學習技法(Machine Learning Techniques)第一講筆記">
+<meta property="og:url" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="機器學習技法是林軒田老師的開的機器學習後半堂課，主要在延續前面機器學習的基礎理論，並延申出不同的機器學習模型介紹。   而這堂課主要圍繞在特徵轉換上並分三個面向探討，分別為(1)如果處理大量且高複雜度的特徵轉換(2)找出具有預測性質的特徵來提升模型表現(3)找出資料中的隱藏特徵讓機器學習表現更好。   在線性可分的問題中，前面的課程有教過可以透過PLA或是POCKET來找到分開的超平面，但PLA在">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/CourseOutline.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/NoiseTolerateHyperplane.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/LargestMarginHyperplane.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/DistanceHyperplane.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/DistanceSeperateHyperplane.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/SpecialSpearateHyperplanea.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/StandardLargeMarginHyperplane.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/SVM.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/SolveSVM.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/WhyLargeMarginHyperplane.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/LargeMarginRestrictDichotomy.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/BenefitSVM.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/SummaryLecture1.JPG">
+<meta property="article:published_time" content="2020-01-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-11T15:41:31.154Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Machine Learning Techniques">
+<meta property="article:tag" content="Support Vector Machine">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/CourseOutline.JPG">
+
+<link rel="canonical" href="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>機器學習技法(Machine Learning Techniques)第一講筆記 | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          機器學習技法(Machine Learning Techniques)第一講筆記
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2020-01-09 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-09T00:00:00+08:00">2020-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:41:31" itemprop="dateModified" datetime="2021-05-11T23:41:31+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/01/09/Machine-Learning-Techniques-1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/09/Machine-Learning-Techniques-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>機器學習技法是林軒田老師的開的機器學習後半堂課，主要在延續前面機器學習的基礎理論，並延申出不同的機器學習模型介紹。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/CourseOutline.JPG" class="" width="500">
+
+<p>而這堂課主要圍繞在特徵轉換上並分三個面向探討，分別為(1)如果處理大量且高複雜度的特徵轉換(2)找出具有預測性質的特徵來提升模型表現(3)找出資料中的隱藏特徵讓機器學習表現更好。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/NoiseTolerateHyperplane.JPG" class="" width="500">
+
+<p>在線性可分的問題中，前面的課程有教過可以透過PLA或是POCKET來找到分開的超平面，但PLA在求解的過程中會得到很多種解，究竟怎麼樣的切線才會是比較好的切線呢？如果以雜訊的容忍度來看，當資料產生時可能會存在或多或少的雜訊(例如從實體感測器訊號收資料時，可能會有震盪或是偏移的現象)，而雜訊是模型過擬合的因素之一。因此如果要讓模型對雜訊的容忍度最大，那麼就要讓超平面能夠離點越遠越好。例如最右邊的超平面能離點最遠，雜訊的容忍度(灰色區域)也最大。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/LargestMarginHyperplane.JPG" class="" width="500">
+
+<p>換個方式來，這會是一個最佳化問題，而最好的線須要滿足兩大條件: (1)能作出最大邊界(Margin) (2)可以把不同的類別分對。其中灰色區域的算法，是把每個點和超平面計算距離後取最小距離。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/DistanceHyperplane.JPG" class="" width="500">
+
+<p>距離的計算方法，可以想像在平面上有兩個點構成的向量，而w乘上平面上的向量為0，所以w為垂直於平面上的法向量。當有一個x要計算x和平面的距離，即為x和平面上任一個點構成的向量，並對垂直於平面的向量作投影，即為對w方向的投影。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/DistanceSeperateHyperplane.JPG" class="" width="500">
+
+<p>因為要找的是一個可以區分出正確類別的分割超平面，所以可以拆掉距離的絕對值，變成乘上y大於0(即為分割正確時值皆會大於0，如果類別分錯乘上y會小於0)</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SpecialSpearateHyperplanea.JPG" class="" width="500">
+
+<p>為了簡化式子，假設將式子放縮到最小值會等於1，那margin就會簡化為成1/|w|，並從求margin的最小值，變成分數乘上y的最小值要等於1。而且因為其條件已經滿足大於0，所以可以再拿掉一條分數乘上y要大於0的限制式。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/StandardLargeMarginHyperplane.JPG" class="" width="500">
+
+<p>為了再簡化限制式條件，限制式條件可以再從最小值為1，放寬為分數乘上y大於等於1，而且這個放寬並不會違反原本的限制式。老師這裡舉了一個例子，假設找出來的解為大於等於1.126並且不滿足等於1的條件，這時候如果把b和w除上1.126作放縮讓他滿足原本的條件，會因為w變小而使得目標式變大。這個證明在說如果找出來的解不滿於原本等於1的條件下，就不會是最佳解，因此可以對限制式條件作放寬。最後再將最大化的問題轉為求最小值(倒數)，得到最後的簡化的最佳化問題。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SVM.JPG" class="" width="500">
+
+<p>如果要找到最佳的平面，只要找到最靠近平面的點就行了，而這些點被稱為支撐向量(support vector)，就像是這個超平面是由最靠近的點所支撐起來般，這也是SVM的概念。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SolveSVM.JPG" class="" width="500">
+
+<p>因為svm要找到的最佳值是w的兩次函數，且限制式為b和w的一次式，有這樣的限制非常適合使用二次規畫作最佳化。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/WhyLargeMarginHyperplane.JPG" class="" width="500">
+
+<p>但為什麼svm可以作的好呢，老師這邊以兩個面向來說明使用svm會讓Ein和Eout越接近，且不容易overfit泛化性更佳。</p>
+<p>之前在提到regularization的時候講到，為了讓Ein越小但又不希望造成overfit，於是加上w的限制條件限制其範圍。而svm剛好對調，svm是要讓w的長度越小且限制讓所有的類別的資料分對，所以svm和regularization是一體兩面，svm找出來的灰色區域讓為了容忍雜訊對模型的干擾。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/LargeMarginRestrictDichotomy.JPG" class="" width="500">
+
+<p>假設平面上有三個點，如果是原本的pla，在任意切線上可以找到所有的類別組合(共八種)。但使用svm考量到需要維持最大特定margin區域情況，所以沒有辦法作出所有的類別排列組合。在vc維的介紹有講到，如果能作出的dichotomies越少，vc維就越小，Ein和Eout就會越接近，即泛化能力越好。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/BenefitSVM.JPG" class="" width="500">
+
+<p>從上面兩個面向來看，svm可以帶來本質上泛化性更佳的好處，並且在加上特徵轉換的方法後，non-linear的svm可以同時辦到將Ein(即分對不同類別)與Eout(泛化能力)作好。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SummaryLecture1.JPG" class="" width="500">
+
+<p>這一講主要在說明如何從邊界分類問題延申出最大margin提供更強健的方法來容忍雜訊，並作svm最大margin的最佳化式子推導，最後提到最大margin帶來本值上的好處在於可以提高更佳的泛化能力。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/201_handout.pdf">Machine Learning Techniques 1</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Machine-Learning-Techniques/" rel="tag"># Machine Learning Techniques</a>
+              <a href="/tags/Support-Vector-Machine/" rel="tag"># Support Vector Machine</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/14/machine-learning-on-gcp-feature-engineering2/" rel="prev" title="Machine Learning on GCP - Feature Engineering(下)">
+      <i class="fa fa-chevron-left"></i> Machine Learning on GCP - Feature Engineering(下)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/21/Machine-Learning-Techniques-2/" rel="next" title="機器學習技法(Machine Learning Techniques)第二講筆記">
+      機器學習技法(Machine Learning Techniques)第二講筆記 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/";
+    this.page.identifier = "2020/01/09/Machine-Learning-Techniques-1/";
+    this.page.title = "機器學習技法(Machine Learning Techniques)第一講筆記";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '657d7aa2434a6f4b78503d5c99f1a68d',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

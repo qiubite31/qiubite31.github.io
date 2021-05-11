@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。   因為已經知道最佳的w會是βZ的線性組合，所以這裡一樣可以將w轉換為z的線性組合，當出現Z與Z乘積時">
+<meta property="og:type" content="article">
+<meta property="og:title" content="機器學習技法(Machine Learning Techniques)第六講筆記">
+<meta property="og:url" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。   因為已經知道最佳的w會是βZ的線性組合，所以這裡一樣可以將w轉換為z的線性組合，當出現Z與Z乘積時">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/RecallRepresenterTheorem.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/KernelRidge.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/SolvingKernelRidgeRegression.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/LinearVSKernelRidgeRegression.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/vsLSSVM.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/TubeRegression.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/TubeVSSquaredRegression.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/L2REgularizedTubeRegression.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/StandartSVR.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/QPforSVR.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/LagrangeMultiplier.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/SVRdual.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/SparsitySVRSolution.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/MapofLinearModel.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/MapofKernelModel.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/KernelModela.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/Summary.JPG">
+<meta property="article:published_time" content="2020-02-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-11T15:42:50.793Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Machine Learning Techniques">
+<meta property="article:tag" content="Support Vector Machine">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/RecallRepresenterTheorem.JPG">
+
+<link rel="canonical" href="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>機器學習技法(Machine Learning Techniques)第六講筆記 | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          機器學習技法(Machine Learning Techniques)第六講筆記
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2020-02-22 00:00:00" itemprop="dateCreated datePublished" datetime="2020-02-22T00:00:00+08:00">2020-02-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:42:50" itemprop="dateModified" datetime="2021-05-11T23:42:50+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/02/22/Machine-Learning-Techniques-6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/22/Machine-Learning-Techniques-6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <img src="/2020/02/22/Machine-Learning-Techniques-6/RecallRepresenterTheorem.JPG" class="" width="500">
+
+<p>上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/KernelRidge.JPG" class="" width="500">
+
+<p>因為已經知道最佳的w會是βZ的線性組合，所以這裡一樣可以將w轉換為z的線性組合，當出現Z與Z乘積時就可以換成kernel，轉成透過kernel trick解β問題。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/SolvingKernelRidgeRegression.JPG" class="" width="500">
+
+<p>因為這是一個無條件的最佳化問題，所以可以求梯度為0，即對β微分等於0求出讓梯度為0的β最佳解。因為K一定大於0所以可以求出需要求解的反矩陣來解出最好的β。原本之前說的要作nonlinear的方法是先作transform轉換再作regression，而且現可以另一種方法即使用kernel來達成nonlinear regression。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/LinearVSKernelRidgeRegression.JPG" class="" width="500">
+
+<p>比較linear ridge regression和kernel ridge regression，kernel ridge rgression具有非線性性質所以有更彈性的應用來解決較複雜的問題，但其缺點就是要付出較大的計算時間複雜度。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/vsLSSVM.JPG" class="" width="500">
+
+<p>kernel ridge regression當然也可以拿來作classification，這個方法又稱為LSSVM(least-squares SVM)。在比較Soft-Margin SVM和LSSVM，兩者得到的邊界可能會差不多，但比起Soft-Margin裡面求出的α是稀疏的，前面在解kernel ridge時β沒有特別的限制，因此β會求出dense的解，因而得到比Soft-Margin更多的support vector。而support vector較多的情況下，會造成在預測時效率較差。所以再來的重點是如何讓β也可以和標準SVM一樣求出稀疏解。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/TubeRegression.JPG" class="" width="500">
+
+<p>這裡介紹到Tube Regression，比起原本的regression會計算每一點算與實際值的誤差，tube regression允許在一個範圍內，即落在tube內的點可以不計算error，而落在tube外的點除了計算與實際值的誤差外要再減掉tube的寬度，得到一種新的error計算方法。這種error被稱為ε-insensitive error，下一步會嘗試透過這個新的error來解出稀疏的β值。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/TubeVSSquaredRegression.JPG" class="" width="500">
+
+<p>在比較Tube Regression和Squared Regresion會發現，兩者在預測值和實際值接近時，error計算是比較接近的。但是在相差越來越大時，squared regression的error會成長的比較快，因此也比較容易受到雜訊的影響。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/L2REgularizedTubeRegression.JPG" class="" width="500">
+
+<p>L2-Regularized Ture Regression在求解時可以使用任何unconstrain的方式，和之前SVM求hinge error時一樣會遇到max無法微分，雖然也可以使用reprsenter的方式作kernel化，但卻無法保證最後求出的是稀疏解。而標準的SVM一樣無法微分，但是可以被寫成QP問題求解，再透過求對偶問題達成kernel化，而且因為滿足KKT condition可以保證其具有稀疏性。因此這裡可以把L2-Regularized Tube Regression模擬成像原本的SVM再求解(加入C並將w0拆出b值)。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/StandartSVR.JPG" class="" width="500">
+
+<p>再進一步加入ξn來紀錄犯錯的程度，其中為了將限制式的絕對值拆掉，會得到upper tube violation和lower tube violation兩個ξn。這個式子就是一個Support Vector Regression(SVR)的標準式，而且也會符合QP問題。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/QPforSVR.JPG" class="" width="500">
+
+<p>這個SVR的標準式會有兩個參數，一個是C和之前的SVM一樣用來控制regularization和violation之間的trade-off。第二個是ε用來紀錄tube的寬度決定允許的犯錯範圍。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/LagrangeMultiplier.JPG" class="" width="500">
+
+<p>有了SVR的primal後，就可以引入Langrange multiplier來轉成對偶問題，所以這裡會引入兩個α來對應兩個ξn，再來就是重複之前課程的推導。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/SVRdual.JPG" class="" width="500">
+
+<p>因為SVM和SVR的問題相似，所以可以發現兩者的對偶很相近，而且可以透過QP來解。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/SparsitySVRSolution.JPG" class="" width="500">
+
+<p>回到原本的問題，我們希望β可以是稀疏的，也就是β系數在某些情況要是0。可以發現如果資料是在tube內部ξ會為0，而ξ為0的情況下complementary slackness括號內部的值就不等於0，又因為α和括號內部其中要有一邊要為0，所以α必定要為0，也就是β會等於0。所以位在tube內部的β會為0，而tube外面或是邊界就是對w有貢獻的support vector，這就可以得到β要稀疏解。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/MapofLinearModel.JPG" class="" width="500">
+
+<p>到目前為止教過的linear model總共有5種，在分類問題上，除了最早教到的PLA/pocket方法，這幾講教的linear soft-margin SVM是透過找到具有soft-margin性質的超平面來解分類問題；在regression問題中除了前面講到的linear ridge regression，還引申出透過Tube與SVM概念所延伸出來的linear SVR。另外還有regularized logistic regression結合regularization作模型複雜度修正與maximum likelihood概念來處理分類問題。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/MapofKernelModel.JPG" class="" width="500">
+
+<p>當linear model具有regularized性質時都可以引入kernel的概念，而這6講的內容分別教了如何將SVM、ridge regression、SVR和logistic regression帶入kernel trick。其中第一排的PLA/pocket和linear SVR，因為其表現都沒有第二排linear soft-margin SVM和linear ridge regression來的好，所以實務上比較少用。第三排的kernel ridge regression和kernel logistic regression因為β解出來是不是稀疏解，所以實務上傾向使用第四排的SVR。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/KernelModela.JPG" class="" width="500">
+
+<p>kernel是一個power的方法強化linear model來解更複雜的問題，但要注意的是要小心處理參數的選擇以避免發生overfit。</p>
+<img src="/2020/02/22/Machine-Learning-Techniques-6/Summary.JPG" class="" width="500">
+
+<p>總結這一講的內容，教到將representer theorem應用在ridge regression上，並結合tube regression引申出SVR的primal形式，再透過求解對偶得到β的稀疏解。最後則比較到目前為止教到的線性模型，並且有嘗試使用kernel來解更複雜的問題時要小心使用，避免overfit。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/206_handout.pdf">Machine Learning Techniques 6</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Machine-Learning-Techniques/" rel="tag"># Machine Learning Techniques</a>
+              <a href="/tags/Support-Vector-Machine/" rel="tag"># Support Vector Machine</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/14/Machine-Learning-Techniques-5/" rel="prev" title="機器學習技法(Machine Learning Techniques)第五講筆記">
+      <i class="fa fa-chevron-left"></i> 機器學習技法(Machine Learning Techniques)第五講筆記
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/";
+    this.page.identifier = "2020/02/22/Machine-Learning-Techniques-6/";
+    this.page.title = "機器學習技法(Machine Learning Techniques)第六講筆記";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '7b2d4a4ca29296a8df515641038f1424',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

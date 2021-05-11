@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="上一講說明了dual SVM，好像可以讓SVM與高維度的z空間兩者可以脫鉤，但以計算的角度，仔細看會發現在整個求解過程中的Q矩陣還是會在z空間作內積。而在z空間的內積在運算可以拆成兩個部份，一個是先透過某個函式φ轉換到z空間，第二再進行轉換後的內積。但這樣的運算方法就會變成z空間的維度作內積。   透過這個polynomial transform可以發現，其實是能先在x維度作完內積，再作函式φ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="機器學習技法(Machine Learning Techniques)第三講筆記">
+<meta property="og:url" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="上一講說明了dual SVM，好像可以讓SVM與高維度的z空間兩者可以脫鉤，但以計算的角度，仔細看會發現在整個求解過程中的Q矩陣還是會在z空間作內積。而在z空間的內積在運算可以拆成兩個部份，一個是先透過某個函式φ轉換到z空間，第二再進行轉換後的內積。但這樣的運算方法就會變成z空間的維度作內積。   透過這個polynomial transform可以發現，其實是能先在x維度作完內積，再作函式φ">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/DualSVMRevisit.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/FastInnerProduct.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/KernelTrick.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/GemeralPoly2Kernel.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/Poly2Action.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/GeneralPolyKernel.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/LinearKernel.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/InfiniteDimensionalTrasform.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/GaussianSVM.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/GuassianSVMAction.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/LinearKernelProCon.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/PolynomialKernelProCon.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/GaussianKernelProCon.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/OtherValidKernel.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/Summary.JPG">
+<meta property="article:published_time" content="2020-01-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-11T15:45:05.999Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Machine Learning Techniques">
+<meta property="article:tag" content="Support Vector Machine">
+<meta property="article:tag" content="Kernel Trick">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/DualSVMRevisit.JPG">
+
+<link rel="canonical" href="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>機器學習技法(Machine Learning Techniques)第三講筆記 | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          機器學習技法(Machine Learning Techniques)第三講筆記
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2020-01-30 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-30T00:00:00+08:00">2020-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:45:05" itemprop="dateModified" datetime="2021-05-11T23:45:05+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/01/30/Machine-Learning-Techniques-3/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/30/Machine-Learning-Techniques-3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <img src="/2020/01/30/Machine-Learning-Techniques-3/DualSVMRevisit.JPG" class="" width="500">
+
+<p>上一講說明了dual SVM，好像可以讓SVM與高維度的z空間兩者可以脫鉤，但以計算的角度，仔細看會發現在整個求解過程中的Q矩陣還是會在z空間作內積。而在z空間的內積在運算可以拆成兩個部份，一個是先透過某個函式φ轉換到z空間，第二再進行轉換後的內積。但這樣的運算方法就會變成z空間的維度作內積。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/FastInnerProduct.JPG" class="" width="500">
+
+<p>透過這個polynomial transform可以發現，其實是能先在x維度作完內積，再作函式φ的轉換，這樣就可避免產生在z空間作內積的情況，透過這個簡化的方式計算內積稱為kernel function。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/KernelTrick.JPG" class="" width="500">
+
+<p>回到svm不管是在計算b和最佳的超平面gsvm時，都可以將kernel function應用在計算中。這種合併函式轉換和內積計算，來避免在在高級度空間進行內積計算的方法，又稱為kernel trick。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GemeralPoly2Kernel.JPG" class="" width="500">
+
+<p>延續前面的Poly-2 kernel例子，在每項前面再加上不同的係數，就能再對計算進一步簡化。雖然不同的函式都是轉換到相同的維度，但是會計算出不一樣的內積得到不同的距離，所以得到的幾合意義和算出來的SVM margin也會不同。其中最常使用的kernel為加上根號2與γ值的General Poly-2 kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/Poly2Action.JPG" class="" width="500">
+
+<p>舉例來說，中間為原本的Poly-2 kernel，而左右兩個為General Poly-2 kernel但代入不同的γ值，左邊帶很小的γ右邊帶很大的γ。可以看到得出的邊界是不同的，所以得出的支撐向量也不同(方框的點)。雖然三個kernel的邊界不同，margin的定義也不同，但這邊沒辦法說哪個邊界會比較好，因為三個kernel都可以把點分開。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GeneralPolyKernel.JPG" class="" width="500">
+
+<p>前面提到的Poly-2可以再加入ζ參數，就會形成一個包含3個參數的一般型態Polynomial Kernel，包含了(1)γ控制x內積算完後的放縮程度，和(2)ζ控制常數項與乘上轉換係數如何對應(3)Q代表poly作幾次方的轉換。而且不管作了幾次方的轉換，都是透遇kernel而不會在高維空間計算。使用高次方的轉換仍然可能會有overfit的風險，但SVM會透過找到最大margin來避免overfit，所以透過kernel可以讓SVM達到避免ovefit，又可以使用較複雜的模型，同時不需要高度的計算複雜度。SVM結合polynomial kernel又稱為Polynomial kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/LinearKernel.JPG" class="" width="500">
+
+<p>Polynomial kernel如果設定成1次轉換，γ設成1，ζ設成0的話，就等於是原本的linear kernel SVM。老師建議大家在使用SVM時，可以從linear SVM開始，如果linear就可以解決問題，就不需要作高次方的nonlinear轉換。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/InfiniteDimensionalTrasform.JPG" class="" width="500">
+
+<p>既然可以透過kernel trick來達成高維度轉換的運算，那是否有可能作到無限多維轉換呢？老師這裡透過證明可以發現，即使在無限多維的情況，使用高斯函數作轉換是可以辦到的。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GaussianSVM.JPG" class="" width="500">
+
+<p>所以高斯函數也是一種kernel trick的方法，讓資料映射到無限多維的空間後找到支撐向量和超平面。但其實際上的意義為他會產生以支撐向量為中心的高斯函數的線性組合，也常被稱為RBF(Radial Basis Function) kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GuassianSVMAction.JPG" class="" width="500">
+
+<p>到目前為止，SVM可以辦到使用kernel trick作無限多維的轉換後，再透過最大margin找到超平面，而SVM裡面的最大margin計算，可以對無限多維的轉換有一定程度的保護。但要注意SVM仍然會有overfit的問題，當γ越調越大時會使原本Gaussan裡面的σ變小Gaussian就會變尖(γ=1/2σ^2)，所以還是要小心γ參數的選用會決定SVM的表現，通常不建議使用太大的γ值。</p>
+<p>前面介紹到許多的kernel，不同的kernel也有其好處和壞處</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/LinearKernelProCon.JPG" class="" width="500">
+
+<ol>
+<li>Linear Kernel<br>最簡單的kernel，就是不作任何的維度轉換，其好處就是最簡單安全。除了QP好解之外也具有可解釋性，因為是線性所以可以透過每個特徵的權重來看出特徵的重要性，應該是遇到問題時要先被拿來嘗試使用的kernel。但其壞處在於問題如果是非線性的，那只靠線性沒辦法很好的解決問題。</li>
+</ol>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/PolynomialKernelProCon.JPG" class="" width="500">
+
+<ol start="2">
+<li>Polynomial Kernel<br>Polynomial的好處在經過非線性轉換後，會比linear限制還要少，而且可以透過設定Q來限制模型的維度。缺點在於Polynomial有3個要給定的參數較難選定，而且在計算值時QP不容易解，尤其是γ過大的時候，因此Polynomial比較適合用在心裡有假設而且使用比較小的Q。</li>
+</ol>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GaussianKernelProCon.JPG" class="" width="500">
+
+<ol start="3">
+<li>Gaussian Kernel<br>Gaussian可以作到無限多維的轉換，所以會比Linear和Polynomial使用限制更少。而且Gaussian的數值會落在0到1之間，所以數值計算難度較低；又因為Gaussian只有一個參數要給定，比起Polynomial要選3個參數，Gaussian可以更容易作參數選擇。Gaussian的壞處在於被轉換到無限多維後，模型沒辦法容易的被解讀；另外他的速度會比單純使用線性還要慢，又因為轉換較複雜，因此使用的不好會造成overfit。</li>
+</ol>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/OtherValidKernel.JPG" class="" width="500">
+
+<p>Kernel表示一種特徵的相似度，但是不是任何相似度都能用來當作Kernel呢？這邊老師給出必須要滿足對稱性還有postive semi-definite兩種條件才能當作Kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/Summary.JPG" class="" width="500">
+
+<p>這一講提到了如何透過kerlnel trick快速計算轉換和內積，避開最複雜的計算，另外也比較了不同的kernel的優點和缺點。</p>
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/203_handout.pdf">Machine Learning Techniques 3</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Machine-Learning-Techniques/" rel="tag"># Machine Learning Techniques</a>
+              <a href="/tags/Support-Vector-Machine/" rel="tag"># Support Vector Machine</a>
+              <a href="/tags/Kernel-Trick/" rel="tag"># Kernel Trick</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/01/21/Machine-Learning-Techniques-2/" rel="prev" title="機器學習技法(Machine Learning Techniques)第二講筆記">
+      <i class="fa fa-chevron-left"></i> 機器學習技法(Machine Learning Techniques)第二講筆記
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/05/Machine-Learning-Techniques-4/" rel="next" title="機器學習技法(Machine Learning Techniques)第四講筆記">
+      機器學習技法(Machine Learning Techniques)第四講筆記 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/";
+    this.page.identifier = "2020/01/30/Machine-Learning-Techniques-3/";
+    this.page.title = "機器學習技法(Machine Learning Techniques)第三講筆記";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '320f0d47ebcfe539a71a430b387d1e5a',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

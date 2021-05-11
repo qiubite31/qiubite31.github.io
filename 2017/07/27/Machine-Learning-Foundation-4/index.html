@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="這一講的學習重點主要是在如何討論學習到底是不是可行的，並進一步推導證明機器是真的可以「學習」的。   機器會不會其實是沒辦法學習的？我們可以先看講義上的圖形，上半部的圖形屬於-1，下半部的圖形屬於+1，那麼給了f上方右邊的圖，他究竟是屬於+1還是-1呢？如果我們用黑色區域是不是對稱來判斷，那麼這張圖會是+1；但如果我們用左上角的格子是否為黑色，那邊這張圖會是-1。這裡會發現如果我們用不同的規則就可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="機器學習基石(Machine Learning Foundation)第四講筆記">
+<meta property="og:url" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="這一講的學習重點主要是在如何討論學習到底是不是可行的，並進一步推導證明機器是真的可以「學習」的。   機器會不會其實是沒辦法學習的？我們可以先看講義上的圖形，上半部的圖形屬於-1，下半部的圖形屬於+1，那麼給了f上方右邊的圖，他究竟是屬於+1還是-1呢？如果我們用黑色區域是不是對稱來判斷，那麼這張圖會是+1；但如果我們用左上角的格子是否為黑色，那邊這張圖會是-1。這裡會發現如果我們用不同的規則就可">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/ControversialAnswer.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/NoFreeLunch.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/InferrProbability.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/HoeffdingInequality.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/ConnectLearning.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/AddComponent.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/FormalGuarantee.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/Verification.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/CoinGame.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/BadData.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/BADDataBound.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/StatisticaLearningFlow.JPG">
+<meta property="article:published_time" content="2017-07-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-11T14:55:00.128Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Machine Learning Foundation">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/ControversialAnswer.JPG">
+
+<link rel="canonical" href="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>機器學習基石(Machine Learning Foundation)第四講筆記 | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          機器學習基石(Machine Learning Foundation)第四講筆記
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-07-27 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-27T00:00:00+08:00">2017-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:55:00" itemprop="dateModified" datetime="2021-05-11T22:55:00+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/07/27/Machine-Learning-Foundation-4/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/27/Machine-Learning-Foundation-4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>這一講的學習重點主要是在如何討論學習到底是不是可行的，並進一步推導證明機器是真的可以「學習」的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/ControversialAnswer.JPG" class="" width="500">
+
+<p>機器會不會其實是沒辦法學習的？我們可以先看講義上的圖形，上半部的圖形屬於-1，下半部的圖形屬於+1，那麼給了f上方右邊的圖，他究竟是屬於+1還是-1呢？如果我們用黑色區域是不是對稱來判斷，那麼這張圖會是+1；但如果我們用左上角的格子是否為黑色，那邊這張圖會是-1。這裡會發現如果我們用不同的規則就可能得到不同的答案，看起來好像真的沒辦法讓機器真的「學習」一個正確的答案。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/NoFreeLunch.JPG" class="" width="500">
+
+<p>用一個比較數學的例子來看，假設今天有一個函式f，輸入是3個bit，輸出是o或是x。再來我們透過機器學習演算法學到g函式，並確保這個g函式在5筆資料D都能和f得到一樣的答案(即f和g結果相同)。所以我們確保了g和f(甚至是講義上的8個f)在D得到相同答案，但是除了D之外剩下的3種答案，g只會有一種結果。這會有什麼的影響呢？比如說當g在剩下3筆得到XOX，那麼他會和f6相同，可是我們今天是要告訴你正確的f其實是除了f6以外的函式，那麼似乎g和f答案又錯了，看起來機器好像真的沒辦法「學習」到一個正確答案。這又稱為no free lunch，如果沒有對機器學習問題加上一些限制，即我們只是單純給機器資料學習，事實上是沒辦法讓機器學出一個正確的答案的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/InferrProbability.JPG" class="" width="500">
+
+<p>這裡舉一個推論未知的方法，比如說在一個瓶子中有綠色彈珠和橘色彈珠，如果今天沒有辦法完全數完瓶內所有的彈珠，那麼該如何去推論橘色彈珠的比例呢？我們可以透過統計手法利用取樣(樣本)的比例來推論瓶內橘色彈珠(母體)的比例。假設瓶內橘色彈珠的比例是μ，綠色是1-μ，取樣出橘色彈珠的比例是ν，綠色是1-ν，是否可以用這個ν來推論μ呢？照理說ν可能沒辦法完全的推論μ(明明有橘色彈珠，但是每一次運氣不好都抽到綠色)，但是在一定的機率下，ν應該是有辦法推論μ的，在數學上可用Hoeffding’s Inequality來解釋</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/HoeffdingInequality.JPG" class="" width="500">
+
+<p>透過Hoeffding’s Inequality可以解釋，如果今天抽出彈珠(N)的數量越大的話，ν和μ之間差很遠的機率(ε)就會很小，也就是說如果可以取出數量夠大的樣本的話，就可以讓「壞事」(ν和μ差很多)發生的機率變小，我們可以說ν和μ大概差不多會是對的(即probably approximately correct, PAC)</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/ConnectLearning.JPG" class="" width="500">
+
+<p>那用這個抽彈珠的例子到底和學習會有什麼關係？當把抽彈珠轉成學習的問題，未知橘色彈珠的機率μ可視為未知的f，所有抽出來的彈珠就是每筆的資料，其中橘色彈珠可視為h(x)≠f(x)，即hypothesis h是錯的，綠色彈珠可視為h(x)=f(x)，即hypothesis h是對的。所以如果我們在獨立的抽出彈珠時，就可知道來誰論h和f不一樣的機率到底是多少。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/AddComponent.JPG" class="" width="500">
+
+<p>所以把前面錯誤推估的部份加入進去機器學習的流程中。首先我有一個機率在瓶子中取樣產生了資料D，在判斷h和f是不是一樣時，其中這個h就是Hypothesis集合中的其中一個</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/FormalGuarantee.JPG" class="" width="500">
+
+<p>再來就可以透過手上確實知道的資料D來說h和f是否相同，也就是透過Ein(取樣的資料Error)來推論Eout(實際的瓶子的資料Error)，使用Hoeffding’s Inequality就可以證明當N夠大時，Ein和Eout就會差不多是相同的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/Verification.JPG" class="" width="500">
+
+<p>但這樣的證明充其量其能說是驗證而已，就是這個h目前還沒有辦法像是PLA一樣丟不同資料產生不同的h，但是我們可以證明這個h是不是使用資料D能夠有有用的推論f，即驗證選出h的表現是好的還是不好的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/CoinGame.JPG" class="" width="500">
+
+<p>目前已經可以驗證相同h之下的表現好還是不好，但是今天當我們有了選擇時(即在多個h裡面作選擇)，我們可能就會有偏見的選出一個瓶子都是綠色彈珠的結果，但事實上可能只是剛好這個瓶子都「碰巧」的抽出了綠色彈珠，就像擲銅板一樣，不論這枚銅板多麼公正，都會有可能出現每次都正面的情況。前面講到Hoeffding告訴我們的是ν和μ之間差異很大的這種「不好」的事情機率應該是很小的，但是當我們有選擇的時候，這種「不好」的取樣卻會造成Ein和Eout差距變大。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/BadData.JPG" class="" width="500">
+
+<p>如果演算法遇到不好的資料(Ein和Eout差很遠)，就會得到不好的結果。Hoeffding告訴我們的是每一個h不好的情況是很小的，但是在演算法有自由選擇h的情況下，那麼不好資料發生的機率是多少呢？</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/BADDataBound.JPG" class="" width="500">
+
+<p>假設有M總不同的h，那麼不好資料發生的機率，就會等於每一個h發生不好機率的總合(Union Bound)。所以如果演算法有辦法選出一個最小的Ein(壞事發生的機率是最小的)，就可以表示選出來的Eout會是最小的</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/StatisticaLearningFlow.JPG" class="" width="500">
+
+<p>總結來說機器該如何能夠學習呢？只要滿足Hypothesis集合是有限的集合M，且樣本資料N是夠大的，對於任何被演算法選出來的g(其中一個假設h)，就可以推論Eout和Ein是差不多相同的。就是剛提到的，演算法只要選出一個Ein是最小的，就可以保證Eout也是最小的。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/04_handout.pdf">Machine Learning Foundation 04</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Machine-Learning-Foundation/" rel="tag"># Machine Learning Foundation</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/18/Machine-Learning-Foundation-3/" rel="prev" title="機器學習基石(Machine Learning Foundation)第三講筆記">
+      <i class="fa fa-chevron-left"></i> 機器學習基石(Machine Learning Foundation)第三講筆記
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/08/01/Machine-Learning-Foundation-5/" rel="next" title="機器學習基石(Machine Learning Foundation)第五講筆記">
+      機器學習基石(Machine Learning Foundation)第五講筆記 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/";
+    this.page.identifier = "2017/07/27/Machine-Learning-Foundation-4/";
+    this.page.title = "機器學習基石(Machine Learning Foundation)第四講筆記";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '05683bc8f2a1c00814dbe96dd937ff45',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="在上一週的課程中，我們使用了one-hot結合詞庫來將句子作量化處理。但是使用one-hot的缺點是每個詞被視為獨立的，也就是無法衡量出兩個詞之間的相似或與重要性(兩個one-hot vector內積都會為0)。所以當你想知道apple和orange之間的關係比起apple和king還接近，就無法單純的使用one-hot來作文字的量化。其中一個方法是可以用不同的特性來作量化，比如說使用性別、是否為">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Andrew深度學習課程五 - Sequence Model第2周筆記">
+<meta property="og:url" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="在上一週的課程中，我們使用了one-hot結合詞庫來將句子作量化處理。但是使用one-hot的缺點是每個詞被視為獨立的，也就是無法衡量出兩個詞之間的相似或與重要性(兩個one-hot vector內積都會為0)。所以當你想知道apple和orange之間的關係比起apple和king還接近，就無法單純的使用one-hot來作文字的量化。其中一個方法是可以用不同的特性來作量化，比如說使用性別、是否為">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_feature.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_visualize.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_transfer.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/analogy.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/analogy_vector.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/cosine_similarity.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/embedding_matrix.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/other_context_target.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/skip_grams.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/skip_grams_model.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/softmax_problem.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling_model.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling_selection.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/GlovVe.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/GlovVe_model.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification_model.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification_rnn.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/bias_problem.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/bias_problem_addressing.JPG">
+<meta property="article:published_time" content="2018-02-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-11T15:31:20.006Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Deep Learning">
+<meta property="article:tag" content="RNN">
+<meta property="article:tag" content="Natural Language Processing">
+<meta property="article:tag" content="Word Embeddings">
+<meta property="article:tag" content="Word2Vec">
+<meta property="article:tag" content="GloVe">
+<meta property="article:tag" content="Sentiment Analysis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_feature.JPG">
+
+<link rel="canonical" href="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>Andrew深度學習課程五 - Sequence Model第2周筆記 | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Andrew深度學習課程五 - Sequence Model第2周筆記
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2018-02-18 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-18T00:00:00+08:00">2018-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:31:20" itemprop="dateModified" datetime="2021-05-11T23:31:20+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/02/18/andrew-deep-learning-course5-week2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/02/18/andrew-deep-learning-course5-week2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在上一週的課程中，我們使用了one-hot結合詞庫來將句子作量化處理。但是使用one-hot的缺點是每個詞被視為獨立的，也就是無法衡量出兩個詞之間的相似或與重要性(兩個one-hot vector內積都會為0)。所以當你想知道apple和orange之間的關係比起apple和king還接近，就無法單純的使用one-hot來作文字的量化。其中一個方法是可以用不同的特性來作量化，比如說使用性別、是否為食物等等的特性，這個時候便可以辯識出具有相同性質的詞。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_feature.JPG" class="" width="500">
+
+<p>這種量化文字的方法又可以被稱為Word Embedding，像是每個詞會嵌在高維度的特徵向量中，即每個詞都可以在高維度的特徵找到一個能表示它的位置，而如果要將多個維度的特徵壓縮到兩維來表示，可以使用t-SNE演算法來找到相同的詞會彼此較相近。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_visualize.JPG" class="" width="500">
+
+<p>使用Word Embedding的好處除了可以判斷出兩個詞之間的相關係，也對Transfer learning有很大的幫助，即使用已經訓練好的word embeddig來用在新的任務。在使用word embedding於transfer learning有幾種方法。1. 從大量的詞庫(1-3B)中進行訓練(或是下載已被訓練過的) 2. 使用原本已建立的embedding並transfer到新的而且訓練資料集較小(1-3k)的任務 3. 持續的使用新的資料來對embeddings進行finetune。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_transfer.JPG" class="" width="500">
+
+<p>Word Embeddings也可以作到比擬(analogy)，比如說Man之於Woman等同於King之於Queen，這可以透過向量相減來找到相似的結果。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/analogy.JPG" class="" width="500">
+
+<p>實際上要基於Man與Woman的關係來找到King和某個詞，可以透過向量相似度的計算來找到，只要找到King和哪一個詞的相似度與Man和Woman的相似度最接近即可。這裡的相似度計算是從原始的高維度(~300D)來的，雖然可以透過t-SNE來將高維度使用非線性的轉換到2維空間作視覺化，但如果使用了轉換的2維來計算反而會失真，所以在實際上的相似度計算會使用原始的高維度向量空間。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/analogy_vector.JPG" class="" width="500">
+
+<p>一個常用的相似度計算是Cosine similarity，即計算兩個向量的角度來判斷兩個相向之間的相似度。Cosine similarity也經常被用在文本分析中，透過計算代表兩筆資料的高維度向量，來評估兩筆資料的相似度。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/cosine_similarity.JPG" class="" width="500">
+
+<p>Word Embedding的學習最終會得到一個Embedding Matrix，凡是把這個矩陣乘上某一個詞的one-hot向量，所得到的即是代表這個詞的embedding。因為one-hot是高維度而且幾乎都是0的稀疏矩陣，所以在實務上並不會真的相乘，而且透過特別的方法來找到詞的embeddings。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/embedding_matrix.JPG" class="" width="500">
+
+<p>在word embeddings的學習演算法中，過去往往會使用很多很複雜的演算法來學習，但後來卻發現很多簡單的方法就可以達到很好的效果。在複雜的方法中，比如說要預測一句話的下一個詞，可以把每個詞的word embeddings輸入到一個類神經網路學習，最後訓練出我們要的embedding matrix(E)。如果有300維度，那麼要輸入到網路裡面的維度就會多達300乘6共1800維，也可以選擇只看前4個詞來學習，那麼維度就會降到300乘4共1200維。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/other_context_target.JPG" class="" width="500">
+
+<p>不過事實上用簡單一點的模型也可以訓練出好的效果，比如說只用預測詞的前一個字，或是最接近預測詞前一個詞的詞(又稱為skip gram)來訓練word embeddings matrix。</p>
+<p>這裡介紹Word2Vec的Skip-grams模型，Skip-grams在選擇Context與Target組合時，針對Target可透過隨機挑選的方式選出不同的組合，比如說Context詞的+-5~10個詞來選出Target詞。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/skip_grams.JPG" class="" width="500">
+
+<p>再來將這些對應的組合透過matrix E轉成word embeddings後丟入神經路網學習，接著經過softmax後計算loss function來訓練出matrix E。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/skip_grams_model.JPG" class="" width="500">
+
+<p>但這個方法的主要缺點在於需要大量的計算，因為在計算softmax時，分別需要加總所有詞，如果詞的數量越多，那麼速度就會越慢，因此很難擴充到大型的訓練詞集。一個解法是使用hierarchical softmax，先拆出詞位於哪個部份(前或是後五千詞)，接著再接續往下作二元拆解。在tree的結構可以把常出現的通用詞放在上半部，這樣就可以較快的被找到。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/softmax_problem.JPG" class="" width="500">
+
+<p>因為skip-grams在計算softmax需要花費大量運算，使用Negative Sampling則可以避免這個問題。Negative Sampling首先會先建立postive pair和negaive pair，比如說orange和juice會一起出現，就給予label 1，然後再隨機選出其他K個詞和orange組成negative pair給予label 0(即便某些時候negative pair組合真的有一起出現也沒關係)。最後將這些組合透過監督式學習訓練模型。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling.JPG" class="" width="500">
+
+<p>接著可以使用logistic regression來計算在給定label為1時，postive pair組合的機率，並使用K+1組資料進行訓練，然後再將這個分類器應用在10000個詞作二元分類。因此比起原本作skip-grams要一次訓練10000組資料，使用negatiev sampling的方法只需要用少量的資料訓練，再一次用在多組詞的分類。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling_model.JPG" class="" width="500">
+
+<p>但是該如何去選擇negative sampling呢？一個方法可以從詞出現的頻率選起，但是很容易選到停用詞(stop word)；或是假定他是均勻分配，使用1/|V|來選擇，而在這篇論文裡面是用了每個詞在訓練詞庫中出現的3/4次方來計算機率作選擇。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling_selection.JPG" class="" width="500">
+
+<p>另一個學習方法為GloVe，首先會計算context和target一起出現在訓練資料的次數，Xij會等於Xji如果是用target的正負距離來選擇context，但是如果只看target出現在context後面，就會不相等。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/GlovVe.JPG" class="" width="500">
+
+<p>GloVe的模型中為了避免Xij為0，因此會乘上一個權重f(Xij)，如果Xij為0則f(Xij)為0，當然這個函式也可以用來給予不同詞頻的詞有不同的權重處理。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/GlovVe_model.JPG" class="" width="500">
+
+<p>情感分析(Sentiment Analysis/Classification)是NLP其中一種應用，主要用在判斷文本中是表達喜歡或是不喜歡(正或負)。比如說，輸入的X為評論的內容，輸出Y為評論的情感等級，像是從網路評論中判斷對於餐廳或是旅館的正負評論。其最大的困難在於情感分析缺乏大量的標記資料來學習，如果使用word embedding可以幫助在少量訓練資料的情況下學習。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification.JPG" class="" width="500">
+
+<p>在建立情感分析模型時，一樣使將每個詞透過embedding matrix選出該詞的embeddings向量，接著透過加總或是取平均值後，再使用softmax函式得到輸出Yhat。不過因為這樣的方法是沒有前後順序的，所以如果遇到明明有否定詞在前面，但是後面出現很多的正向詞good，這可能就會造成誤判斷把明明是一星的評論判成五星，因為出現很多次的good會把結果導到正向，這個時候就需要使用RNN來建立模型。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification_model.JPG" class="" width="500">
+
+<p>使用RNN一開始也是將每個詞透過embeddings matrix找到該詞的embeddings向量，接著將每個詞輸入進RNN，最後再接softmax判斷結果，這個就一開始提到的Many to One的RNN類型。因為RNN是會有順序性的，所以對於出現否定詞的句子能夠處理的比較好。因為word embedding可以從較大的訓練資料訓練出來，所以即使在情感分析的訓練集裡面缺少了某些詞，但這些詞有被word embedding訓練過，這樣在作情感分析時也可以得到較好的結果。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification_rnn.JPG" class="" width="500">
+
+<p>在word embeddings的訓練過程中，可能會造成帶有偏見的學習結果，比如說本來是希望學出Man之於Woman等於King之於Queen，但可能會學習出Man之於Programer對於Woman之於Home_keeper這種帶偏見，或是Father之於Doctor對於Mother之於Nurse這種錯誤的結果。因為機器學習現在已經越來越普及的被應用在許多不同的領域上，所以這種帶偏見的錯誤結果應該要被避免的。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/bias_problem.JPG" class="" width="500">
+
+<p>解決這種錯誤的學習有不同的方法，以解決性別偏見為例來說明，第一先將girl-boy和mother-father來找到屬於性別的分界向量，這時把任一個詞和這個分界向量作內積，就可以找到這個詞會偏向哪個性別，並找出bias direction，要讓不能帶有性別偏差的詞向量去除bias。透過Neutralize將一些對於性別來說屬於中性的詞，將其投影到non bias的方向軸，最後為確保像是doctor這種應該屬於中性的詞，與帶不同性別的詞(像Girl或是Boy)距離要是相同的，會使用Equalize pairs的手法將帶性別的詞移動到以軸為中性對稱的位置，這樣就會讓兩者與doctor的距離或是相似度是相同的。在選擇哪些詞需要進行Neutralize，可以透過練一個分類器來分辨；在選擇要equalize的部份因為較少量，所以可以簡單透過人工挑選的方式完成。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/bias_problem_addressing.JPG" class="" width="500">
+
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/nlp-sequence-models">Deep Learning Course 5 - Sequece Models</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
+              <a href="/tags/RNN/" rel="tag"># RNN</a>
+              <a href="/tags/Natural-Language-Processing/" rel="tag"># Natural Language Processing</a>
+              <a href="/tags/Word-Embeddings/" rel="tag"># Word Embeddings</a>
+              <a href="/tags/Word2Vec/" rel="tag"># Word2Vec</a>
+              <a href="/tags/GloVe/" rel="tag"># GloVe</a>
+              <a href="/tags/Sentiment-Analysis/" rel="tag"># Sentiment Analysis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/02/05/andrew-deep-learning-course5-week1/" rel="prev" title="Andrew深度學習課程五 - Sequence Model第1周筆記">
+      <i class="fa fa-chevron-left"></i> Andrew深度學習課程五 - Sequence Model第1周筆記
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/02/27/andrew-deep-learning-course5-week3/" rel="next" title="Andrew深度學習課程五 - Sequence Model第3周筆記">
+      Andrew深度學習課程五 - Sequence Model第3周筆記 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/";
+    this.page.identifier = "2018/02/18/andrew-deep-learning-course5-week2/";
+    this.page.title = "Andrew深度學習課程五 - Sequence Model第2周筆記";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : 'ba036eb193060cfeba9499b68baeb5d9',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

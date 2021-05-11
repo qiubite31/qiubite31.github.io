@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="有序列性質的資料(sequence data)可以泛指輸入資料(X)是有序列的，或是輸出資料(Y)是有序列的。比如說在翻譯問題上，輸入和輸出都是有序列性的句子；但在情感分析問題上，輸入會是一個有序列性質的評論句子，但是輸出為情感的等級或是分數。   量化句子的方法可以使用詞庫加上one-hot encoding，可以透過自己建立或是使用已存在的詞庫，並將詞庫使用one-hot encoding作編">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Andrew深度學習課程五 - Sequence Model第1周筆記">
+<meta property="og:url" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="有序列性質的資料(sequence data)可以泛指輸入資料(X)是有序列的，或是輸出資料(Y)是有序列的。比如說在翻譯問題上，輸入和輸出都是有序列性的句子；但在情感分析問題上，輸入會是一個有序列性質的評論句子，但是輸出為情感的等級或是分數。   量化句子的方法可以使用詞庫加上one-hot encoding，可以透過自己建立或是使用已存在的詞庫，並將詞庫使用one-hot encoding作編">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/sequence_model_example.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/Representing_words.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/recurrent_neural_networks.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/why_not_standard_network.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/RNN_type.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/language_model.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/language_model_rnn.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/sample_sentense_word_level.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/GRU.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/GRU_and_LSTM.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/LSTM.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/BRNN.JPG">
+<meta property="og:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/Deep_RNN.JPG">
+<meta property="article:published_time" content="2018-02-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-11T15:30:11.454Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Deep Learning">
+<meta property="article:tag" content="RNN">
+<meta property="article:tag" content="GRU">
+<meta property="article:tag" content="LSTM">
+<meta property="article:tag" content="Gradient Vanishing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/sequence_model_example.JPG">
+
+<link rel="canonical" href="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>Andrew深度學習課程五 - Sequence Model第1周筆記 | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Andrew深度學習課程五 - Sequence Model第1周筆記
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2018-02-05 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-05T00:00:00+08:00">2018-02-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:30:11" itemprop="dateModified" datetime="2021-05-11T23:30:11+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/02/05/andrew-deep-learning-course5-week1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/02/05/andrew-deep-learning-course5-week1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>有序列性質的資料(sequence data)可以泛指輸入資料(X)是有序列的，或是輸出資料(Y)是有序列的。比如說在翻譯問題上，輸入和輸出都是有序列性的句子；但在情感分析問題上，輸入會是一個有序列性質的評論句子，但是輸出為情感的等級或是分數。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/sequence_model_example.JPG" class="" width="500">
+
+<p>量化句子的方法可以使用詞庫加上one-hot encoding，可以透過自己建立或是使用已存在的詞庫，並將詞庫使用one-hot encoding作編碼來將文字資料作量化產生可以用來學習的輸入資料X。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/Representing_words.JPG" class="" width="500">
+
+<p>如果使用一般標準的類神經網路會有什麼問題呢？1. 每一個訓練資料的輸入和輸出的長度不同，不好處理。2. 在不同文字中的不同位置無法學習出共同的特徵。如果要像CNN一樣能夠在不同的訓練資料的不同位置中學習到共同的特徵，就必須要透過RNN來達成。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/recurrent_neural_networks.JPG" class="" width="500">
+
+<p>Recurrent Neural Network(RNN)在每個訓練樣本會共同相同的weight和activation function。RNN會將每一個字詞X&lt; i &gt;經過激活函式後的結果，再傳給下一個字詞X&lt; i+1 &gt;，所以每個字詞會拿到由前面傳遞過來的資訊。但是只拿到前面字詞的資訊是不夠的，例如在判斷Teddy時，就需要使用字詞後面的句子內容，才能夠有效的區分Teddy究竟是指總統還是玩具。這時會使用到雙向的RNN(BRNN)才能夠解決這個問題。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/why_not_standard_network.JPG" class="" width="500">
+
+<p>前面有提到RNN的輸入和輸出長度可能會不一樣長，針對不同輸入輸出長度可分為不同類型的RNN。在翻釋問題上，不同的語言可能翻譯後的長度都不同，這是一個Many to Many問題；如果是情感分析會將一則評論輸出成正反或是1到5星等級，屬於Many to One問題；One to Many會適用在像是音樂生成，給定一種音樂類型來產生一首音樂；One to One這種類型就是一般的神經網路了。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/RNN_type.JPG" class="" width="500">
+
+<p>RNN可以被應用在建立語言模型(Language Model)，例如在語音辨識中，透過語言模型可以透過計算不同輸出句子的機率，來辨識出哪一個句子是最符合的輸出。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/language_model.JPG" class="" width="500">
+
+<p>把每個句字斷詞並量化後，就可以丟進RNN來建立模型。舉例來說，在訓練時，將第一層RNN輸入空向量，再將本來的實際詞Y&lt; i &gt;從第兩次RNN依序丟進去訓練，就可以建立模型來預測某段句子後會接什麼樣的詞。即輸入Cats average，判斷下個接每個詞的機率。所以可以透過將每個詞依序輸入來計算出在給定某個句子下，輸出某個詞的機率。在這裡可以透過外部詞典，並使用softmax來算出每個詞的機率</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/language_model_rnn.JPG" class="" width="500">
+
+<p>進一步我們就可以使用這個模型來隨機的產生句子，首先先隨機選出一個詞，接著將每個詞依序丟進下個結點來產生新的詞，直到取出字尾EOS或是設定一個固定的句子長度終止。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/sample_sentense_word_level.JPG" class="" width="500">
+
+<p>除了使用詞(Word-level)來組成句子，也可以使用字元(Character-level)來建且模型組成句子。如果使用字元來組成句子，那麼每一個輸出就是一個字元而非一個詞，好處在於不用怕取到辭典裡面沒有的詞，壞處則會產生更長的句子，也會降低訓練速度，所以目前經常是使用詞來建立模型。</p>
+<h1 id="梯度消失-Gradient-Vanishing"><a href="#梯度消失-Gradient-Vanishing" class="headerlink" title="梯度消失(Gradient Vanishing)"></a>梯度消失(Gradient Vanishing)</h1><p>如果句子太長的話，使得神經網路過於深，會讓梯度在作back propagation時很難影響到前面的layer，產生梯度消失現象。對於RNN來說，實際上的影響在於如果太前面的神經元，將會無法去記住前面的詞(例如區分單數詞或是複數詞)。因此，傳統的RNN的輸出結果主要會受到接近神經元的影響，較遠的神經元不容易影響到最終的輸出。比起梯度爆炸容易被發現與處理，梯度消失反而不容易被處理，而且更容易影響到RNN的訓練結果。</p>
+<p>Gate Recurrent Unit(GRU)是一個改善RNN長期記憶問題的方法，他引入了memory cell(C)的概念，在這裡的C就等同於activation function的輸出a，這個memory cell會將長期的記憶儲存下來，並用一個帶使用sigmoid轉換後的Γu值來判斷要不要選擇忘記之前的記憶並更新，還是要保留之前的記憶，直到不需時再忘記。實際上為什麼應用GRU會改善梯度消失的現象，主是要在Γu值透過sigmoid轉換後如數數值很小那麼就可能會非常的接近0，在這個情況下，C&lt; t &gt;就會非常接近C&lt; t-1 &gt;並很容易的保存較遠的記憶來大幅改善梯度消失的現象。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/GRU.JPG" class="" width="500">
+
+<p>另一個常用的方法為Long Short Term Memory(LSTM)，在LSTM裡面C不再等同於a，LSTM會用到3種gate，分別為update gate, forget gate和output gate。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/GRU_and_LSTM.JPG" class="" width="500">
+
+<p>透過update gate和forget gate來決定是否保存較長遠的記憶，並透過output gate來輸出a到下一個神經元。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/LSTM.JPG" class="" width="500">
+
+<p>如果要同時合併前後神經元的資訊，就得使用Bidrectional RNN(BRNN)。BRNN除了從左到右作forward propagation外，也會從右到左作forward propagation。在輸出資料時，會同時輸入兩個方向進入activation function。而其中每個神經元也可以是GRU或是LSTM，所以實務上也會使用LSTM結合BRNN來建立模型。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/BRNN.JPG" class="" width="500">
+
+<p>RNN可以疊多層起來變成深度的RNN模型，本來RNN每一個順序都只有連接一個神經元，但也可以在每一個序順接處多個神經元來建立深度的RNN模型，甚至結合GRU和LSTM與BRNN來建立複雜的RNN模型。不過因為深度的RNN在訓練是非常耗資源的，所以不太常見到超過3層的RNN模型。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/Deep_RNN.JPG" class="" width="500">
+
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/nlp-sequence-models">Deep Learning Course 5 - Sequece Models</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
+              <a href="/tags/RNN/" rel="tag"># RNN</a>
+              <a href="/tags/GRU/" rel="tag"># GRU</a>
+              <a href="/tags/LSTM/" rel="tag"># LSTM</a>
+              <a href="/tags/Gradient-Vanishing/" rel="tag"># Gradient Vanishing</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/12/05/keras-intro/" rel="prev" title="第一次使用Keras就上手">
+      <i class="fa fa-chevron-left"></i> 第一次使用Keras就上手
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/02/18/andrew-deep-learning-course5-week2/" rel="next" title="Andrew深度學習課程五 - Sequence Model第2周筆記">
+      Andrew深度學習課程五 - Sequence Model第2周筆記 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1-Gradient-Vanishing"><span class="nav-number">1.</span> <span class="nav-text">梯度消失(Gradient Vanishing)</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/";
+    this.page.identifier = "2018/02/05/andrew-deep-learning-course5-week1/";
+    this.page.title = "Andrew深度學習課程五 - Sequence Model第1周筆記";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '74868b7e791991c32de6becab8fe5980',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
