@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近幾個月來工作的職務上有些轉換，加入到一個小規模的app開發團隊，並且嘗試導入Flutter開發一套codebase就能夠佈署到多個平台的跨平台app。其實網路上已經有非常多介紹Flutter的文章，而原生與跨平台的解決方案比較也很多人討論過，所以這篇會以一個初入Flutter的新手，到成功交付產品上線後，一直到採用Flutter Web的心路歷程分享。 老闆問：能不能弄個跨平台app其實跨平台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="從Flutter走到Flutter Web的app開發新手歷程">
+<meta property="og:url" content="https://qiubite31.github.io/2021/05/13/from-flutter-to-flutter-web-for-beginner/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="最近幾個月來工作的職務上有些轉換，加入到一個小規模的app開發團隊，並且嘗試導入Flutter開發一套codebase就能夠佈署到多個平台的跨平台app。其實網路上已經有非常多介紹Flutter的文章，而原生與跨平台的解決方案比較也很多人討論過，所以這篇會以一個初入Flutter的新手，到成功交付產品上線後，一直到採用Flutter Web的心路歷程分享。 老闆問：能不能弄個跨平台app其實跨平台">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-05-12T17:34:42.000Z">
+<meta property="article:modified_time" content="2021-05-20T17:16:02.431Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Flutter">
+<meta property="article:tag" content="Flutter Web">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://qiubite31.github.io/2021/05/13/from-flutter-to-flutter-web-for-beginner/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>從Flutter走到Flutter Web的app開發新手歷程 | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/05/13/from-flutter-to-flutter-web-for-beginner/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          從Flutter走到Flutter Web的app開發新手歷程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-05-13 01:34:42" itemprop="dateCreated datePublished" datetime="2021-05-13T01:34:42+08:00">2021-05-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-21 01:16:02" itemprop="dateModified" datetime="2021-05-21T01:16:02+08:00">2021-05-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flutter/" itemprop="url" rel="index"><span itemprop="name">Flutter</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/05/13/from-flutter-to-flutter-web-for-beginner/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/13/from-flutter-to-flutter-web-for-beginner/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近幾個月來工作的職務上有些轉換，加入到一個小規模的app開發團隊，並且嘗試導入Flutter開發一套codebase就能夠佈署到多個平台的跨平台app。其實網路上已經有非常多介紹Flutter的文章，而原生與跨平台的解決方案比較也很多人討論過，所以這篇會以一個初入Flutter的新手，到成功交付產品上線後，一直到採用Flutter Web的心路歷程分享。</p>
+<h4 id="老闆問：能不能弄個跨平台app"><a href="#老闆問：能不能弄個跨平台app" class="headerlink" title="老闆問：能不能弄個跨平台app"></a>老闆問：能不能弄個跨平台app</h4><p>其實跨平台一直都存在並且持續有新的技術出現，雖然Flutter還很年輕，但是在這幾年的熱度也快速的竄升。我認為採用跨平台技術對於單純開發給公司內部使用的系統來說，最大的優點就是在人力的節省。在一個開發了web就會被問能不能放在行動裝置上，作了手機app就會被問能不能web也有的環境下，為了提供多個平台管道給使用者，一支系統難道不能只開發一次就好了嗎(彷彿老闆的聲音飄出來了)。</p>
+<p>要開發多個平台可以使用的應用程式，除了能夠支援不同裝置尺寸的web應用程式外，如果需求面上又希望能保留行動裝置功能的支援，那Flutter自然是一個適合的選擇。</p>
+<p>Flutter官方網站直接的介紹是這樣寫的：</p>
+<blockquote>
+<p>Flutter is Google’s UI toolkit for building beautiful, natively compiled applications for mobile, web, and desktop from a single codebase.</p>
+</blockquote>
+<h4 id="Web-Hit-Stable-Millestone"><a href="#Web-Hit-Stable-Millestone" class="headerlink" title="Web Hit Stable Millestone"></a>Web Hit Stable Millestone</h4><p>Android和iOS是Flutter最先開始穩定支援的平台，但終究web平台還是一個觸及度最高的管道，也許平板電腦不是每個人都有，但user們還是都用電腦上班。在專案達成mobile first的任務，接著要開始擴大觸及程度時，剛好迎來Flutter Engage在3月3號發佈了Flutter 2的更新。</p>
+<blockquote>
+<p>Perhaps the single largest announcement in Flutter 2 is production-quality support for the web.</p>
+</blockquote>
+<p>Flutter 2正式將Web支援放進stable channel，原本要打開Web支援還得使用beta channel才行，甚至官方也建議在web正式穩定支援前，要發佈成產品都需要仔細的確認執行起來是否有bug。當下還在觀望是否該導入Flutter Web才過沒多久，隨著Flutter 2的發佈後，馬上就在隔天拿起現有的Flutter專案進行POC，直到最近成功的將原本的app正式發佈給使用者使用。</p>
+<h4 id="從Flutter到Flutter-Web"><a href="#從Flutter到Flutter-Web" class="headerlink" title="從Flutter到Flutter Web"></a>從Flutter到Flutter Web</h4><p>下面我分享三個如果今天從新手Flutter開發者，一路走到開發產品等級的Flutter Web可能會發生的心路歷程與重點學習資源：</p>
+<ul>
+<li>從零開始開始的Flutter菜鳥</li>
+</ul>
+<p>身為第一次接觸Flutter的開發者，自己覺得還不算難上手，基本上跟著官方的文件把開發環境裝起來後，接著讀完stateless和stateful widget還有column和row的layout概念後，就可以作出簡單的切版畫面。</p>
+<p>Flutter的widget其實很多，常常都是需要的時候邊查邊實作，通常第一步會先找是不是有Flutter已經提供的<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/ui/widgets">widget</a>(像是drawer、search、bottom navigation等)，如果沒有的話這裡推薦<a target="_blank" rel="noopener" href="https://pub.dev/">pub.dev</a>還有<a target="_blank" rel="noopener" href="https://fluttergems.dev/">Flutter Gems</a>，這兩個網站的資源可以幫你找到很多你需要的功能。最後再上<a target="_blank" rel="noopener" href="https://pub.dev/packages/http">http</a>加上<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/data-and-backend/json">json serialization</a>，或是直接跟著<a target="_blank" rel="noopener" href="https://flutter.dev/docs/cookbook/networking/fetch-data">cookbook</a>作大致上就能接完後端了。</p>
+<ul>
+<li>一個好的狀態管理很重要</li>
+</ul>
+<p>成功發佈完app的1.0.0版後，接著來的就是各種app的新功能需求，在追加越來越多的跳頁功能下，開始出現很多的渲染失敗或是改一改就出現畫面亂跳頁的bug。這時候才會發現真的需要一個好的狀態管理，領悟到沒有好好規畫狀態管理的app不止難以維護，更會造成app效能變差。如果這段是在趕鴨子上架的過程被忽略掉的，這時直接建議把<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/data-and-backend/state-mgmt/intro">Flutter狀態管理</a>這篇讀完，至少用<a target="_blank" rel="noopener" href="https://pub.dev/packages/provider">Provider</a>好好設計每個widget的狀態變化與重新渲染的時機。</p>
+<p>另外要注意在取後端資料時是否有使用<a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html">FutureBuilder</a>，FutureBuilder可以幫你確認取得async資料(通常是後端的一包資料)的各種狀態，例如在接到資料前可以先拋出一個自己準備有讀取效果的widget，並在取得資料後再使用這包資料渲染出要程現的widget(對Dashboard而言可能就是一些圖表)。</p>
+<ul>
+<li>打開web支援要怎麼作</li>
+</ul>
+<p>Flutter web在開發上其實也不困難，而且可以在VSCode用debug模式就可以直接進行開發，<a target="_blank" rel="noopener" href="https://flutter.dev/web">Web support for Flutter</a>官方有一個篇章在作介紹，如果是專案一開始就有打算作Web平台，那建議直接跟著文件說明就能夠<a target="_blank" rel="noopener" href="https://flutter.dev/docs/get-started/web">建立Flutter Web應用程式</a>。</p>
+<p>但如果今天是有一個已經開發好的app產品要打開Web平台的支援，通常就會遇到比較多的阻礙，當我以為一個彈指就能把web支援打開，但遇到的就是滿滿的error訊息。要將現有的app打開web支援，通常在開發上會遇到的問題我大致上分成三種。</p>
+<ol>
+<li><p>Responsive Design(響應式設計): 不管是從手機或是平板使用的app，如果沒有對螢幕尺寸作適當的處理，通常直接放到web都會直接跑版，官方文件也有一個篇章在介紹<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/ui/layout/adaptive-responsive">響應式設計</a>。</p>
+</li>
+<li><p>Cross-Platform Support Package(跨平台支援套件): 在開發過程中會有一定程度的使用第三方的package，要注意是否有支援所需要的平台特別是web，通常可以在<a target="_blank" rel="noopener" href="https://pub.dev/">pub.get</a>查到。</p>
+</li>
+<li><p>Platform Dependency Feature(平台相依性功能): 因為不同平台還是會有差異存在，有些dart自帶的library本身就不支援，比如說web就不能使用dart:io相關的函式，因此在開發的時候需要特別注意。如果需要針對不同的平台用該平台才有支援的widget，通常會先用邏輯判斷目前使用者是使用哪個平台，再渲染該平台特有的widget。</p>
+</li>
+</ol>
+<p>以上是自己在投入開發Flutter到打開web支援的一些心得整理，其實中間遇到的問題也許不止這些，特別是在web支援的部份遇到了許多挑戰。雖然花了許多時間解決各種遇到的轉換問題，但不得不說在打開web支援後，看到web和app的畫面渲染出來的效果幾乎是一模一樣，而且真的是可以達到single codebase並佈署到多個平台上的，所以下次打算再分享打開web支援遇到的細節問題與建議的解法啦！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Flutter/" rel="tag"># Flutter</a>
+              <a href="/tags/Flutter-Web/" rel="tag"># Flutter Web</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/22/Machine-Learning-Techniques-6/" rel="prev" title="機器學習技法(Machine Learning Techniques)第六講筆記">
+      <i class="fa fa-chevron-left"></i> 機器學習技法(Machine Learning Techniques)第六講筆記
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%80%81%E9%97%86%E5%95%8F%EF%BC%9A%E8%83%BD%E4%B8%8D%E8%83%BD%E5%BC%84%E5%80%8B%E8%B7%A8%E5%B9%B3%E5%8F%B0app"><span class="nav-number">1.</span> <span class="nav-text">老闆問：能不能弄個跨平台app</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Web-Hit-Stable-Millestone"><span class="nav-number">2.</span> <span class="nav-text">Web Hit Stable Millestone</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%9EFlutter%E5%88%B0Flutter-Web"><span class="nav-number">3.</span> <span class="nav-text">從Flutter到Flutter Web</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2021/05/13/from-flutter-to-flutter-web-for-beginner/";
+    this.page.identifier = "2021/05/13/from-flutter-to-flutter-web-for-beginner/";
+    this.page.title = "從Flutter走到Flutter Web的app開發新手歷程";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '81bd91e2f988eedd699570f0f989e7f7',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

@@ -196,6 +196,136 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/06/26/Machine_Learning_Foundation-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/06/26/Machine_Learning_Foundation-1/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第一講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-06-26 00:00:00" itemprop="dateCreated datePublished" datetime="2017-06-26T00:00:00+08:00">2017-06-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:54:58" itemprop="dateModified" datetime="2021-05-11T22:54:58+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/06/26/Machine_Learning_Foundation-1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/06/26/Machine_Learning_Foundation-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>林軒田老師的機器學習基石(Machine Learning Foundation)又開始在Coursera上開課囉!雖然老師已經在youtube上公開所有的課程影片還有課程Slide了，不過在Coursera上面跟著每周的課程，也滿有上課的感覺！剛好也針對上課的內容，希望在有時間之餘，隨手寫下一些其中自己覺得印象深刻的部份來加深對機器學習的瞭解。<img src="/2017/06/26/Machine_Learning_Foundation-1/KeyEssenceML.jpg" class="" width="500">在第一講裡面談到了機器學習的背景，機器學習的過程是從資料出發，經過計算後可以得到某種表現的增進。比如說我們透過股市的資料，經過計算後讓電腦自動投資，來賺到更多的錢。那什麼時候該使用機器學習，其中有提到三個關鍵：</p>
+<ol>
+<li>資料或問題有潛藏的模式(Pattern)可以學習，並得到某種表現的增進</li>
+<li>具有存在的規則，但我們無法得知該如何(或是簡單的)定義</li>
+<li>需要有資料，因為機器學習需要從資料來學習潛在的規則</li>
+</ol>
+<img src="/2017/06/26/Machine_Learning_Foundation-1/KeyEssenceFunTime.jpg" class="" width="500">
+
+<p>上面共有四個問題，讓我們思考倒底什麼時候可以使用機器學習(答案是3)。</p>
+<ol>
+<li>預測小孩下次什麼時候哭，因為是沒有pattern所以無法使用機器學習</li>
+<li>要判斷一個graph裡面是否有cycle，其實寫程式就可以判斷，而不用使用到機器學習</li>
+<li>判斷是否要核信用卡，其中包含了pattern，而且不容易被定義，且可以使用歷史資料來學習</li>
+<li>核能是否會毀滅地球，這個問題太有爭議性而且也沒有足夠的資料來學習</li>
+</ol>
+<img src="/2017/06/26/Machine_Learning_Foundation-1/FormalizeML.jpg" class="" width="500">
+
+<p>在看機器學習的流程前，機器學習有幾個重要的定義:<br/>x: 機器學習的輸入資料，會透過這些輸入作學習<br/>y: 我們想要機器學習告訴我們的結果<br/>f: 目標函數，也可以說是x和y之間的pattern，他定義了x和y之間實際上的關係，因為f是未知的，所以這也是後們想透過機器學習來學到的<br/>D: 即資料，每一組資料包含了x和他相對應的y。d={(x1, y1)…..}<br/>g: 我們希望透過機器學習學到f，但事實上我們並不一定真的能得學到f。所以我們希望機器學習可以學到一個假說(hypothesis)的函數g，而且和f越接近越好</p>
+<img src="/2017/06/26/Machine_Learning_Foundation-1/DefinitionML.jpg" class="" width="500">
+
+<p>上面可以看到機器學習的流程，透過資料餵給機器學習的演算法來學習到一個函式g，並且可以和f可以很像，這裡的f即是指資料的一種隱藏pattern，而且是未知的，而函式g會從hypothesis的集合內選出一個最符合資料的hypothesis。</p>
+<p>機器學習常常被和很多不同領域搞混或是分不出清楚，在課程也有說明機器學習和不同領域的關係</p>
+<p>Machine Learning vs Data Mining</p>
+<img src="/2017/06/26/Machine_Learning_Foundation-1/MLvsDM.jpg" class="" width="500">
+
+<p>資料探勘簡單來說是指，期望從資料庫中大量的資料出發，並從中找到一些有趣的發現來回答問題。以超市來說，會希望透過銷售的資料來找到一個人買了一樣商品後，是否也會買另一樣商品(像是之前的<a target="_blank" rel="noopener" href="https://www.inside.com.tw/2016/11/10/beer-diapers-myth">尿布與啤酒</a>都市傳說)。但如果在資料探勘中想要找到有趣的事情，是指要找到一個假說G來作預測的話，那這裡的資料探勘就等同於機器學習。但資料探勘並非都會專注在作預測，有時可能只是想找到一些關聯性。</p>
+<p>所以機器學習和資料探勘兩個領或可以說是密不可分的，甚至兩者是可以互補的。比如說可以透過資料探勘找到有趣的性質可以幫助機器學習找到好的假說(可以用在摘取好的特徵值)，或是透過機器學習的假說來幫助資料探勘找到有趣的發現。</p>
+<p>Machine Learning vs AI</p>
+<img src="/2017/06/26/Machine_Learning_Foundation-1/MLvsAI.jpg" class="" width="500">
+
+<p>人工智慧: 希望電腦能夠作出智慧的表現，來完成一件事情(開車、下棋、預測)</p>
+<p>有很多的方法可以達到不同的人工智慧任務，以下棋來說，傳統的人工智慧作法會設計演算法，透過分析一個game tree(下某一步棋的好處和壞處)來讓電腦自動下棋。如果是使用機器學習方法的話，就是設計演算法來可以告訴機器怎麼下棋會贏怎麼下會輸，然後讓機器分析後自己決定怎麼下(Alpha GO)。所以可以說，機器學習是實現人工智慧的一種方法。</p>
+<p>Machine Learning vs Statistics<img src="/2017/06/26/Machine_Learning_Foundation-1/MLvsStatistic.jpg" class="" width="500"></p>
+<p>統計:使用資料來推論原本不知道的事情(ex: 丟銅板的機器)</p>
+<p>機器學習中的假說G實際上是一個推論的結果，F則是一個我們不知道的事情，所以統計可以說是實現機器學習的一種方法。我們可以透過很多傳統統計的工具來實現機器學習，將這些工具借過來，使用機器學習的角度來看他。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/01_handout.pdf">Machine Learning Foundation 01</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/05/31/Hidden_Markov_Model_HMM/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1157,110 +1287,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/09/13/%E5%B0%87%E6%98%9F%E7%AC%A6%E7%95%B6%E4%BD%9C%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8%E4%BE%86%E5%BC%B7%E5%88%B6%E4%BD%BF%E7%94%A8%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/09/13/%E5%B0%87%E6%98%9F%E7%AC%A6%E7%95%B6%E4%BD%9C%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8%E4%BE%86%E5%BC%B7%E5%88%B6%E4%BD%BF%E7%94%A8%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8/" class="post-title-link" itemprop="url">將*當作函式參數來強制使用關鍵字引數</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2016-09-13 00:00:00" itemprop="dateCreated datePublished" datetime="2016-09-13T00:00:00+08:00">2016-09-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/09/13/%E5%B0%87%E6%98%9F%E7%AC%A6%E7%95%B6%E4%BD%9C%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8%E4%BE%86%E5%BC%B7%E5%88%B6%E4%BD%BF%E7%94%A8%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/13/將星符當作函式參數來強制使用關鍵字引數/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>很特別的可以直接當作一個函式的參數來使用。如果當作函式的參數，可以用來限定*之後不可以使用位置引數，但可以使用關鍵字引數，這樣的使用方法被稱為Keyword-Only Arguments</p>
-<p>以下以<a href="/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/">位置引數(Positional Argument)與關鍵字引數(Keyword Argument)</a>中的計算小考平均成績為例說明:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, math_score, eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_scoremath_weight</span><br></pre></td></tr></table></figure>
-<p>在這個範例中，可以使用以下4種方式來呼叫函式都是沒問題的</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>)  <span class="comment"># 省略且不指定有預設值的參數</span></span><br><span class="line"><span class="number">85</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(eng_score=<span class="number">80</span>, eng_weight=<span class="number">0.2</span>, math_score=<span class="number">90</span>, math_weight=<span class="number">0.8</span>)  <span class="comment"># 使用關鍵字引數，可隨意安排順序</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, math_weight=<span class="number">0.8</span>, eng_weight=<span class="number">0.2</span>)  <span class="comment"># 混用位置和關鍵字引數</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line"><span class="number">88</span></span><br></pre></td></tr></table></figure>
-<p>但如果今天在原本的函式中，把*加入到第三個參數，這樣在第四種單純使用位置引數來作函式呼叫就會引發TypeError，因為在之後不能使用位置引數</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, math_score, * , eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_score*math_weight</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">2</span> positional arguments but <span class="number">4</span> were given</span><br></pre></td></tr></table></figure>
-<p>今天如果要設計成防止呼叫者使用任何位置引數，就可以將*做為第一個參數，這樣就可以強迫叫者全部使用關鍵字引數，若使用任何的位置引數，都會引發TypeError</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">*, eng_score, math_score, eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_score*math_weight</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>)  <span class="comment"># 省略且不指定有預設值的參數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">0</span> positional arguments but <span class="number">2</span> were given</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, math_weight=<span class="number">0.8</span>, eng_weight=<span class="number">0.2</span>)  <span class="comment"># 混用位置和關鍵字引數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">0</span> positional arguments but <span class="number">2</span> positional arguments (<span class="keyword">and</span> <span class="number">2</span> keyword-only arguments) were given</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">0</span> positional arguments but <span class="number">4</span> were given</span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-3102/">PEP 3102 – Keyword-Only Arguments</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1332,20 +1358,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

@@ -196,6 +196,158 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/20/Machine-Learning-Foundation-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/09/20/Machine-Learning-Foundation-10/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-09-20 00:00:00" itemprop="dateCreated datePublished" datetime="2017-09-20T00:00:00+08:00">2017-09-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:18:43" itemprop="dateModified" datetime="2021-05-11T23:18:43+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/09/20/Machine-Learning-Foundation-10/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/20/Machine-Learning-Foundation-10/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上次介紹了linear regression，這一堂課會說到logistic regression，主要會將linear regression使用sigmoid轉換來算出不同類別的機率。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/HeartAttackPredictionProblem.JPG" class="" width="500">
+
+<p>之前有學過在二元分類中會判斷病人「有」或是「沒有」心臟疾病，並可以使用0/1的分類錯誤來判斷分類的結果好壞</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/HeartAttackPredictionProblem2.JPG" class="" width="500">
+
+<p>但如果今天並非想要知道病人「有」或是「沒有」心臟疾病，而是想知道未來一段時間後，心臟疾病發生的機率是多少。和二元分類有點不同，我們想要知道的是發生某個狀況的機率，這會是一個介於0到1的數值。當然後續可以對這個數值定義出一個臨界值來達成二元分類，所以又可以稱為soft binary classification。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/SoftBinaryClassification.JPG" class="" width="500">
+
+<p>如果我們可以知道在給定一組x，他的結果y是一個機率值的話那就可以很容易的找到這樣的結果，但是實務上我們只會拿到有抽樣誤差雜訊的結果，只能知道0/1的結果(即有沒有心臟病發)。再來會學到的是，如果只能知道0/1的情況下，要如何求出想要的機率值。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/LogisticHypothesis.JPG" class="" width="500">
+
+<p>要如何找到這個機率值呢？一樣可以像之前的線性問題，將每個特徵乘上特徵權重，就會找到分數，但是這次想要的不是這個分數，而且要把分數轉換為0到1的機率值，分數越大機率越大，反之分數越小機率就越對，這裡會透過logistic function會把這個分數值轉換成0到1的機率值。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/LogisticFunction.JPG" class="" width="500">
+
+<p>一般會使用sigmoid來把分數轉換成0到1的機率值，當分數越大會越接近1，分數越小會越接近0。再來就可以使用這個logistic hypothesis來達到我們的目標函式f(x)</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/ThreeLinearModels.JPG" class="" width="500">
+
+<p>究竟logistic和之前學到的有什麼差別呢？<br/>在linear classification算完分數會以0為臨界點來區分0/1類別，並使用0/1 err來判斷結果，在linear regression則會直接輸出分數，再使用squared err來評估結果；logistic regression會將算完的分數透過logistic function轉換，但該用什麼err來衡量呢？</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/Likelihood.JPG" class="" width="500">
+
+<p>首先可以先算出f(x)是怎麼產生一組資料D的，再來因為要使用hypothesis H來逼近f(x)，所以可以把f取代成h，因為最好的狀況下，我們學習到的h和原本的f是會非常接近。而且如果資料D是由f產生的，那麼f算出來的機率值應該是很大的，所以若是可以在多個h裡面找到一個最大機率的h，就能找到一個最適合的hypothesis</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/LikelihoodLogisticHypothesis.JPG" class="" width="500">
+
+<p>在計算likeliood時，重點會放在hypothesis上，因為hypothesis決定了最後的機率，再來因為logistic function具有對稱性，所以最後可以整理成h(YnXn)的連乘</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/CrossEntropyError.JPG" class="" width="500">
+
+<p>因為這個hypothesis是線性的，在線性裡面我們關注的是其中的權重w，所以再重新整理將h取代成w，把y取代成線性組合yn*w</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/CrossEntropyError2.JPG" class="" width="500">
+
+<p>之前最常處理的就是連加的問題，所以我們取log將連乘取代成連加，再來為了轉成求Ein，所以加上負號來取最小值。最後再將logistic function代進去，就可以得到最後要求的Ein，這裡的Ein又可以稱為cross-entropy error。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/MinimizingEin.JPG" class="" width="500">
+
+<p>在推導出Ein後，再來就要找到一個權重w可以讓Ein最小，因為Ein最小就可以知道Eout也很小。前面的linear regression因為是convex所以可以透過梯度找到最小低，而logistic regression這個函式也是convex，所以也可以透過梯度來找到梯度為0的地方算出最好的權重w。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/MinimizingEin2.JPG" class="" width="500">
+
+<p>我們可以使用微分和鏈鎖率來找到梯度，如果今天要讓梯度等於0可以有一個假設，就是假設θ出來的值是0，但要讓θ出來的值是負無限大，就要讓y乘上w乘上x這一項是正的。其中w^T．x這個分數在以前可以被拿來作兩元分類，而乘上y如果大於0的話，代表是同號，即所有資料都可以分對，意義就是線性可分。之前在linear regression可以直接算出一個close-form的答案，但是現在logistic regression並非線性的，困難在於沒辦法直接算出close-form的解，那該怎麼辦呢？</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/IterativeOptimization.JPG" class="" width="500">
+
+<p>這個時候就可以應用到之前的PLA方法，PLA在每次拜訪到的點如果分錯的話，就會逐步作調整來更新權重。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/IterativeOptimization2.JPG" class="" width="500">
+
+<p>在整理後可以歸納出兩個部分，如果需要更新權重的話，第一個η是指走多大一步，之前在PLA可以視為1，後面第二部份則是算出要走的方向。像這種逐步循序的調整學習又稱為iterative optimization approach逐步最佳化方法。</p>
+<p>那麼再來要如何找到logistic regression的最好權重值w呢？其實就是隨便找一個方向v，然後慢慢透過往下走到谷底就可以了，其中要走的步伐η會決定往下走的速度。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/GradientDescent.JPG" class="" width="500">
+
+<p>但是要怎麼找這個方向v呢？因為這個問題還是非線性，但是如果我們每次都看一小小段，就是一次只看一個線性問題，就可以比較容易而且轉成接近線性問題。其實這就是常使用的梯度下降法(Gradient Descent)，即每一次走梯度逐步找到最佳，或是近似最佳解。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/StepChoice.JPG" class="" width="500">
+
+<p>那麼η該怎麼決定呢？如果η太小的話，雖然遲早可以找到最佳值，但是速度會很慢；如果η太大的話，反而可以會跳過最小值，搞不好會跳來跳去找不到最佳值。有一個最好的方法，就是隨著坡度的大小來決定η要走的大小。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/SimpleHeuristicEta.JPG" class="" width="500">
+
+<p>因為η會改變，所以可以採用一個不一樣的η來代表這個會變動的η，即他每一次的學習都是會變化的η乘上梯度，這就稱為fixed learning rate gradient descent。</p>
+<img src="/2017/09/20/Machine-Learning-Foundation-10/PuttingEverythingTogether.JPG" class="" width="500">
+
+<p>最後我們可以逐步的作梯度下降，一直到找到最好的谷點，但是實際上可以找到接近谷底的值就可以了，所以最常用的就是設定一個iteration的次數，到達就停止。這個方法其實就很像之前學到的pocket方法，pocket方法是每次抓一個最好的值，得到更好的值就會更新。</p>
+<p>因為之前有上過Andrew的Machine Learning課程，其實Andrew在教linear regression找最佳權重w時，就是直接教fixed learning rate的梯度下降法，我覺得在學習線性時用梯度下降還滿好理解的，對於後面到logistic regression很有幫助，建議沒有上過Andrew的Machine Learning課程可以考慮上看看！</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/10_handout.pdf">Machine Learning Foundation 10</a><br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/machine-learning">Andrew Ng - Machine Learning</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/12/Machine-Learning-Foundation-9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1354,136 +1506,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/06/26/Machine_Learning_Foundation-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/06/26/Machine_Learning_Foundation-1/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第一講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-06-26 00:00:00" itemprop="dateCreated datePublished" datetime="2017-06-26T00:00:00+08:00">2017-06-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:54:58" itemprop="dateModified" datetime="2021-05-11T22:54:58+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/06/26/Machine_Learning_Foundation-1/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/06/26/Machine_Learning_Foundation-1/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>林軒田老師的機器學習基石(Machine Learning Foundation)又開始在Coursera上開課囉!雖然老師已經在youtube上公開所有的課程影片還有課程Slide了，不過在Coursera上面跟著每周的課程，也滿有上課的感覺！剛好也針對上課的內容，希望在有時間之餘，隨手寫下一些其中自己覺得印象深刻的部份來加深對機器學習的瞭解。<img src="/2017/06/26/Machine_Learning_Foundation-1/KeyEssenceML.jpg" class="" width="500">在第一講裡面談到了機器學習的背景，機器學習的過程是從資料出發，經過計算後可以得到某種表現的增進。比如說我們透過股市的資料，經過計算後讓電腦自動投資，來賺到更多的錢。那什麼時候該使用機器學習，其中有提到三個關鍵：</p>
-<ol>
-<li>資料或問題有潛藏的模式(Pattern)可以學習，並得到某種表現的增進</li>
-<li>具有存在的規則，但我們無法得知該如何(或是簡單的)定義</li>
-<li>需要有資料，因為機器學習需要從資料來學習潛在的規則</li>
-</ol>
-<img src="/2017/06/26/Machine_Learning_Foundation-1/KeyEssenceFunTime.jpg" class="" width="500">
-
-<p>上面共有四個問題，讓我們思考倒底什麼時候可以使用機器學習(答案是3)。</p>
-<ol>
-<li>預測小孩下次什麼時候哭，因為是沒有pattern所以無法使用機器學習</li>
-<li>要判斷一個graph裡面是否有cycle，其實寫程式就可以判斷，而不用使用到機器學習</li>
-<li>判斷是否要核信用卡，其中包含了pattern，而且不容易被定義，且可以使用歷史資料來學習</li>
-<li>核能是否會毀滅地球，這個問題太有爭議性而且也沒有足夠的資料來學習</li>
-</ol>
-<img src="/2017/06/26/Machine_Learning_Foundation-1/FormalizeML.jpg" class="" width="500">
-
-<p>在看機器學習的流程前，機器學習有幾個重要的定義:<br/>x: 機器學習的輸入資料，會透過這些輸入作學習<br/>y: 我們想要機器學習告訴我們的結果<br/>f: 目標函數，也可以說是x和y之間的pattern，他定義了x和y之間實際上的關係，因為f是未知的，所以這也是後們想透過機器學習來學到的<br/>D: 即資料，每一組資料包含了x和他相對應的y。d={(x1, y1)…..}<br/>g: 我們希望透過機器學習學到f，但事實上我們並不一定真的能得學到f。所以我們希望機器學習可以學到一個假說(hypothesis)的函數g，而且和f越接近越好</p>
-<img src="/2017/06/26/Machine_Learning_Foundation-1/DefinitionML.jpg" class="" width="500">
-
-<p>上面可以看到機器學習的流程，透過資料餵給機器學習的演算法來學習到一個函式g，並且可以和f可以很像，這裡的f即是指資料的一種隱藏pattern，而且是未知的，而函式g會從hypothesis的集合內選出一個最符合資料的hypothesis。</p>
-<p>機器學習常常被和很多不同領域搞混或是分不出清楚，在課程也有說明機器學習和不同領域的關係</p>
-<p>Machine Learning vs Data Mining</p>
-<img src="/2017/06/26/Machine_Learning_Foundation-1/MLvsDM.jpg" class="" width="500">
-
-<p>資料探勘簡單來說是指，期望從資料庫中大量的資料出發，並從中找到一些有趣的發現來回答問題。以超市來說，會希望透過銷售的資料來找到一個人買了一樣商品後，是否也會買另一樣商品(像是之前的<a target="_blank" rel="noopener" href="https://www.inside.com.tw/2016/11/10/beer-diapers-myth">尿布與啤酒</a>都市傳說)。但如果在資料探勘中想要找到有趣的事情，是指要找到一個假說G來作預測的話，那這裡的資料探勘就等同於機器學習。但資料探勘並非都會專注在作預測，有時可能只是想找到一些關聯性。</p>
-<p>所以機器學習和資料探勘兩個領或可以說是密不可分的，甚至兩者是可以互補的。比如說可以透過資料探勘找到有趣的性質可以幫助機器學習找到好的假說(可以用在摘取好的特徵值)，或是透過機器學習的假說來幫助資料探勘找到有趣的發現。</p>
-<p>Machine Learning vs AI</p>
-<img src="/2017/06/26/Machine_Learning_Foundation-1/MLvsAI.jpg" class="" width="500">
-
-<p>人工智慧: 希望電腦能夠作出智慧的表現，來完成一件事情(開車、下棋、預測)</p>
-<p>有很多的方法可以達到不同的人工智慧任務，以下棋來說，傳統的人工智慧作法會設計演算法，透過分析一個game tree(下某一步棋的好處和壞處)來讓電腦自動下棋。如果是使用機器學習方法的話，就是設計演算法來可以告訴機器怎麼下棋會贏怎麼下會輸，然後讓機器分析後自己決定怎麼下(Alpha GO)。所以可以說，機器學習是實現人工智慧的一種方法。</p>
-<p>Machine Learning vs Statistics<img src="/2017/06/26/Machine_Learning_Foundation-1/MLvsStatistic.jpg" class="" width="500"></p>
-<p>統計:使用資料來推論原本不知道的事情(ex: 丟銅板的機器)</p>
-<p>機器學習中的假說G實際上是一個推論的結果，F則是一個我們不知道的事情，所以統計可以說是實現機器學習的一種方法。我們可以透過很多傳統統計的工具來實現機器學習，將這些工具借過來，使用機器學習的角度來看他。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/01_handout.pdf">Machine Learning Foundation 01</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1555,20 +1577,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
