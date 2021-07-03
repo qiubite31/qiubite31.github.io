@@ -196,6 +196,118 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/12/Machine-Learning-Foundation-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/07/12/Machine-Learning-Foundation-2/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第二講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-07-12 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-12T00:00:00+08:00">2017-07-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:54:58" itemprop="dateModified" datetime="2021-05-11T22:54:58+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/07/12/Machine-Learning-Foundation-2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/12/Machine-Learning-Foundation-2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>第二講的內容主要在說明如何透過機器學習來回答兩元問題。上一講有提到機器學習會透過一個演算法A，並透過資料D和假說Hyposis H集合，透過選擇一個假說來學習到函式g。以上一講的案例來說，我們會透過函式g來決定要不要發信用卡。</p>
+<img src="/2017/07/12/Machine-Learning-Foundation-2/Perceptron.jpg" class="" width="500">
+
+<p>我們可以簡單的透過計算分數的方式來建立一個簡單的機器學習方法。首先可以把每位使用者的資料建立一筆特徵向量當作輸入資料，而每個維度還會有重要性的權重(例如年薪的權重可能會比性別的權重還來的高)，最後把每個使用者依據加總的分數，和設定的門檻值(threshold)比較，如果高過門檻值就發卡，沒高過就不發卡，這樣的模型h就是一個簡單的Perceptron(感知器)。</p>
+<p>其實在情感分析(Sentiment Analysis)上，以前也常用這種計算分數的方式來判斷文本屬於正面(Postive)或是(Nagtive)。當我們手上有一個情感詞典(定義哪些字是正面，哪些字是負面)，在拿到一篇文章的時候，就可以加總正面詞(+1)和負面詞(-1)來算出文章的情感分數，再搭配門檻值來判斷文章是屬於正面還是負面，甚至是正負面的程度。(不同字詞可以有不同程度的權重，沒有被情感詞典定義的詞當作0分)</p>
+<img src="/2017/07/12/Machine-Learning-Foundation-2/Perceptron2.jpg" class="" width="500">
+
+<p>這個用來判斷要不要發信用卡的模型h，在二維的平面上會呈現為一條直線(平面上的每一點就是一筆資料x，每一筆資料的形狀則是指的label)，在高維度的空間會是一個平面。這條直接的一邊是其中一種label(O)，跨過線的另一邊則是另一種label(X)，這樣的線性分類器即可以用來分類兩元問題。</p>
+<img src="/2017/07/12/Machine-Learning-Foundation-2/PLA.jpg" class="" width="500">
+
+<p>那究竟平面上面的這條線該怎麼切才是最好的呢？可以透過Perceptron Learning Algorithm(PLA)來學習出最好的線性分類器。當平面上的線如果切的不夠好時，透過會旋轉這條線來讓切線更完美。當正的label被分到負的label時，代表w和x的角度太大，可以透過向量相加來讓角度變小；當負的label被分到正的label時，代表w和x的角度太小，可以透過向量相減來讓角度變大。就這樣一直轉到所有的正的label和負的label都分到正確的類別沒有任何分錯，就可以得到一個最佳的切線，這個演算法稱為PLA。</p>
+<img src="/2017/07/12/Machine-Learning-Foundation-2/LinearSeparability.jpg" class="" width="500">
+
+<p>PLA既然要在平面上找到一條切線，那勢必他就必須要是線性可分的問題，像是上圖最左邊就是一個線性可分的問題，右邊兩張則是線性不可分，即不管怎麼旋轉這條切線都沒辦法把兩種類別各自分到對的地方。如果稍有瞭解支援向量機(Support Vector Machine, SVM)的人大概會想到，如果使用SVM的話就可以解決線性不可分的問題，因為SVM主要是也在空間裡找到線性可分的超平面來切分空間，如果遇到第二種線性不可分的情況，最簡單可以透過調整懲罰參數C來忽略一些無法分到正確類別的資料(也許是雜訊)。至於遇到第三種情況的話，則可以調整核函式Kernel Function來將於N維線性不可分的資料於較高的維度M找到線性可分的超平面。</p>
+<img src="/2017/07/12/Machine-Learning-Foundation-2/PocketAlgo.jpg" class="" width="500">
+
+<p>回到PLA，現實上絕對沒有這麼好的情況可以讓你都有線性可分，也許只有稍微有點雜訊，就會讓問題變成線性不可分。這邊會用到演算法稱為口袋演算法(pocket algorithm)，即是在PLA的修正學習過程中，如果找到一個比較好的線(即分錯最少)，我們就把這條線放到口袋裡面，當遇到下一條比我們口袋裡這條線更好的線，就再換成新的線，一直到執到覺得應該差不多就停下來。所以當我們是線性可分，PLA可以幫助找到好的解答；但如果不是線性可分，透過變形的PLA確實可以找到一個還不錯的解答。</p>
+<p>參考資料: <a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/02_handout.pdf">Machine Learning Foundation 02</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/06/26/Machine_Learning_Foundation-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1179,114 +1291,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/09/27/%E4%BD%BF%E7%94%A8bind-variable%E5%9F%B7%E8%A1%8CSQL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/09/27/%E4%BD%BF%E7%94%A8bind-variable%E5%9F%B7%E8%A1%8CSQL/" class="post-title-link" itemprop="url">使用bind variable執行SQL</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2016-09-27 00:00:00" itemprop="dateCreated datePublished" datetime="2016-09-27T00:00:00+08:00">2016-09-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:53:00" itemprop="dateModified" datetime="2021-05-11T22:53:00+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SQL/" itemprop="url" rel="index"><span itemprop="name">SQL</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/09/27/%E4%BD%BF%E7%94%A8bind-variable%E5%9F%B7%E8%A1%8CSQL/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/27/使用bind-variable執行SQL/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在寫sql的時候，一開始總是習慣帶入一支完整的sql，遇到要替換的地方就在程式用取代來處理。例如下面這個範例，為了insert不用的資料，用format來作字串替代完成一支sql</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = <span class="string">&quot;INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (&#x27;&#123;0&#125;&#x27;,&#123;1&#125;)&quot;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = sql.<span class="built_in">format</span>(<span class="string">&#x27;The Archive&#x27;</span>, <span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (<span class="string">&#x27;The Archive&#x27;</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<p>可以看到要insert的資料，如果是char型態會用’’括起來。但是當今天要取代的字串有特殊符號或是有引號處理起來就會很麻煩，像下面的例子在insert到db時就會造成syntax error</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = <span class="string">&quot;INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (&#x27;&#123;0&#125;&#x27;,&#123;1&#125;)&quot;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = sql.<span class="built_in">format</span>(<span class="string">&quot;It&#x27;s Time&quot;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (<span class="string">&#x27;It&#x27;</span>s Time<span class="string">&#x27;,2) # syntax error</span></span><br></pre></td></tr></table></figure>
-<p>所以再來要介紹一下用bind variable下SQL的好處，下面是一個oracle使用bind variable的方式，在執行SQL時，會將變數直接帶入:1和:2的位置，所以也不用考慮任何原本要處理的跳脫字元問題</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sql = <span class="string">&quot;INSERT INTO ALBUM (TITLE, ARTIST_ID) VALUES (:1, :2)&quot;</span></span><br><span class="line">cursor.execute(sql, (<span class="string">&quot;It&#x27;s Time&quot;</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p>使用bind variable不止在處理SQL很方便之外，也可以避免有SQL injection的風險，甚至對操作DB的performance也有影響。</p>
-<p>例如對Oracle DB下SQL時，oracle首先會在share pool找到這支SQL是否之前曾執行過，有的話會取得這支SQL之前處理過的執行計畫(Execute Plan)並開始執行這支SQL；如果找不到的話oracle會hard parsing這支SQL，並找到最佳的執行計畫後才執行SQL。所以如果能在share pool找到之前有執行過的執行計畫，SQL執行前就不用再經過hard parsing。</p>
-<p>但是oracle在share pool尋找的時候，只有完全相同的SQL才會被認為有對應到。所以當我們在程式使用取代字串來完成SQL，在執行時每一支SQL都會被視為不同的SQL，自然每一次的SQL執行前都必須要經過hard parsing</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> ALBUM(TITLE, ARTIST_ID) <span class="keyword">VALUES</span> (<span class="string">&#x27;The Archive&#x27;</span>,<span class="number">1</span>)  # 兩支<span class="keyword">SQL</span>會被oracle視為不同的<span class="keyword">SQL</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> ALBUM(TITLE, ARTIST_ID) <span class="keyword">VALUES</span> (<span class="string">&#x27;Hear Me&#x27;</span>,<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p>為了避免這個問題，可以使用bind variable來下SQL，因為採用bind variable的SQL會被視為同一支SQL</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sql = <span class="string">&#x27;INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (:1, :2)&#x27;</span></span><br><span class="line">cursor.execute(sql, (<span class="string">&quot;It&#x27;s Time&quot;</span>, <span class="number">2</span>))  <span class="comment"># 兩支SQL會被oracle視為相同的SQL</span></span><br><span class="line">cursor.execute(sql, (<span class="string">&quot;Hear Me&quot;</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
-
-<p>因此採用bind variable在操作SQL上不止處理起更方便(不用特別處理跳脫字元)，也更安全(避免SQL injection)，甚至更快速(重使用最佳化過後的執行計畫)</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1358,7 +1362,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>

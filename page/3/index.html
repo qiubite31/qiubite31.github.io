@@ -196,6 +196,157 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/28/Machine-Learning-Foundation-11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/09/28/Machine-Learning-Foundation-11/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十一講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-09-28 00:00:00" itemprop="dateCreated datePublished" datetime="2017-09-28T00:00:00+08:00">2017-09-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/09/28/Machine-Learning-Foundation-11/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/28/Machine-Learning-Foundation-11/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一講談到logistic regression，這一講會講到到底該如何使用線性的模型來作二元或是多元分類。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/LinearModelsRevisited.JPG" class="" width="500">
+
+<p>複習一下三種線性模型，共同點就是三種都會透過計算分數來作分類，差別在於PLA的線性分類會將分數取正負號來達到0/1分類，線性迴歸則是直接輸出分數，並使用squared error評估找到最佳解；logistic regression則是會透過logistic function將分數轉換成0到1的機率值。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/ErrorFunctionsRevisited.JPG" class="" width="500">
+
+<p>為了將線性模型作二元分類(y=-1/+1)，可以把error function稍微整理算出yx項，這個yx項的實際意義為分類的正確性，也就是yx項得到的分數要是正的(即兩者同號)，而且越大越好。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/VisualizingErrorFunctions.JPG" class="" width="500">
+
+<p>再來將三種模型的error畫出來，可以發現三種error的特性都不同，唯一相同地方在於如果squared和scaled cross-entropy很低時，通常0/1也會很低。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/TheoreticalImplicationUpperBound.JPG" class="" width="500">
+
+<p>究竟linear regression和logistic regression是否是好的分類方法呢？先從VC的角度來看scaled cross-entropy他會是0/1 error的upper bound，所以如果把logistic regression的cross-entropy error作到最小的話，也就可以說我們能把0/1 error也作的好。當然sqr err也是一樣，所以linear regression和logistic regression確實是可以作到二元分類的。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/RegressionClassification.JPG" class="" width="500">
+
+<p>在logistic/linear regression分類問題上，linear regression的好處是他最容易作到最佳化，但是其error衡量比較寬鬆；logistic regression因為他也是convex所以最佳化也是容易的，而error衡量在ys負向很小時會很寬鬆，但也比linear regression還好；PLA則是如果在線性可分的問題上可以作到很好，不過缺點就是如果在非性線可分的問題上，雖然可以使用pocket演算法，但是效果就沒那麼好。</p>
+<p>以前有有學過，雖然linear regression太過寬鬆，但是卻可以很快的先拿在找到一個初始的權重值，後續再交給PLA或是logistic regression作後續的最佳化。在實務上大部份的人會較常使用logistic regression來作二元分類，因為可以兼顧效果還有最佳化的容易程度。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/IterativeOptimization.JPG" class="" width="500">
+
+<p>雖然PLA和logistic regression都是iterative optimization方法，但是PLA是每看一點就作調整，而logistic regression卻要看完所有的資料點才會一次調整權重，他的速度和pocket一樣，每作一輪都要花比較長的時間，到底能不能讓logistic regression和PLA一樣快呢？</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/StochasticGradientDescent.JPG" class="" width="500">
+
+<p>那不就學PLA每看一個點就調整一次權重就好了啊，這種每看一點作偏微分求梯度來調整權重的方法就稱為Stochastic Gradient Desent(SGD)，即用隨機的梯度作梯度下降來接近真實梯度的期望值。好處就是每次算一個點比較簡單而且容易計算，由其是在大量資料的情況下原本的批次梯度下降法速度會很慢，但是壞就就是一次看一個點所以每次調整的結果可能很不穩定，但是最終應該都會很接近要求的目標值。這種隨機梯度下降也適合online learning，即每次接到一筆新資料後即作學習調整權重。其實還有另外折衷的方法稱為mini-batch gradient desent，當我們沒辦法看完所有資料再調整權重時，那就一次看N筆資料作調整就好囉！</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/PLARevisited.JPG" class="" width="500">
+
+<p>那PLA和logistic regression到底相差在哪裡呢？PLA是一次調整到位，而logistic是看差多少就調多少，所以SGD的logistic可以說他像soft的PLA，而PLA又很像η設成1的logistic。在執行logistic時有兩個可以調整討論的地方，第一個是停止條件，通常我們會執行夠多的次數，因為我們相信執行夠多次就會逐步接近目標執；另外是η的設定上，老師個人習慣會使用0.1126，也許之後需要調整學習速度時可以參考一下。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/MulticlassClassification.JPG" class="" width="500">
+
+<p>再來談到多類別分類的問題，實務上常會有很多多類別的問題，像是要辨識圖像上不同的東西就是多類別的問題，再來會介紹該怎麼使用二元分類來達成多類別分類。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/MulticlassPrediction.JPG" class="" width="500">
+
+<p>當我們想分類其中一種類別時，可以把其他三種當成同一種類別，這樣就可以建立四種二元分類器，把多類別問題轉成二元分類問題。但是這樣的方法會有某些地方有分類重疊的問題，像是四個角落都有兩種分類器範圍重疊，甚至也會有某些地方所有分類器都分不出來，像是中間區塊所有分類器都會認為不是自己要分類出來的區域。那該怎麼辦呢？</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/OneClassSoftly.JPG" class="" width="500">
+
+<p>我們可以應用logistic regression來達成softly classfication，用顏色深淺來代表機率的大小，顏色越藍分到O機率越大，反之顏色越紅分到X的機率大。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/SoftClassifiers.JPG" class="" width="500">
+
+<p>再來組合出四個分類器，就可以知道在給定一組資料X，他究竟有分到不同類別的的機率有多少，所以可以透過選出機率最大的類別來判斷要分成哪個類別。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/OVA.JPG" class="" width="500">
+
+<p>當我們有K種類別要作分類時，透過logistic regression建立K個分類器，接著選出機率最高的類別，這種方法來作多類別分類稱為One-Versus-All(OVA)。好處是方法很有效率，而且只要和logistic regression能算出機率值的方法，都可以應用OVA作多類別分類，壞處是如果成兩元分類的資料不平衡的話，可能造成每個分類器都叫你猜大宗類別，造成最終分類效果不好。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/Unbalance.JPG" class="" width="500">
+
+<p>前面有講到OVA會遇到Unbalance問題，可能造成分類表現不好，那該怎麼解決這個問題呢？</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/OneVersusOne.JPG" class="" width="500">
+
+<p>前面是一對其他所有類別作兩元分類，我們其實可以直接使用其中兩種類別的資料作二元分類就好了，如果兩種類別的資料接近的話，那麼資料量就會比較平均避免Unbalance問題。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/PairwiseClassifiers.JPG" class="" width="500">
+
+<p>那有這麼多的分類器，到底該如何判斷是哪個類別呢？以方塊類別為例，其中可以發現共6個分類器，其中前三個都說分出來的結果是方塊，後面三個則分類分到一個菱形和兩個星型，透過投票可以知道最可能的類別應該會是方塊，因為分出方塊佔大多數。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/OVO.JPG" class="" width="500">
+
+<p>這樣的方法稱為One-versus-one(OVO)，因為他是一對一類別的分類，而非一對其他所有類別的分類方法，透過一對一類別的分類別，再找出最有可能的的類別。這個方法的優點是在訓練資料時很有效果，因為只使用比較少的資料量來作訓練，而且可以應用在所有的二元分類問題；壞處則是要訓練更多的分類器，所以在預測的時間、訓練的次數還有儲存的空間都會花比較多。</p>
+<img src="/2017/09/28/Machine-Learning-Foundation-11/Summary.JPG" class="" width="500">
+
+<p>這一講首先學到了前面講的三種線種模型方法其實都是可以用來作二元分類的，而且針對logistic regression可以使用SGD來作隨機梯度下降找最佳解，這樣的方法很像最早學到的PLA。再來針對多類別的問題教了兩種方法，都是應用二元分類來達成多類別分類，第一種OVA是把所有資料分成兩個類別，一個是要分出來的類別，另一個是把其他資料視為同一類別；第二種OAO是單純就看兩種不同類別來作兩兩比較，而這兩種多類別方法都是簡單而且常被拿來使用的分類手法！</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/11_handout.pdf">Machine Learning Foundation 11</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/20/Machine-Learning-Foundation-10/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1394,118 +1545,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/12/Machine-Learning-Foundation-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/07/12/Machine-Learning-Foundation-2/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第二講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-07-12 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-12T00:00:00+08:00">2017-07-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:54:58" itemprop="dateModified" datetime="2021-05-11T22:54:58+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/07/12/Machine-Learning-Foundation-2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/12/Machine-Learning-Foundation-2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>第二講的內容主要在說明如何透過機器學習來回答兩元問題。上一講有提到機器學習會透過一個演算法A，並透過資料D和假說Hyposis H集合，透過選擇一個假說來學習到函式g。以上一講的案例來說，我們會透過函式g來決定要不要發信用卡。</p>
-<img src="/2017/07/12/Machine-Learning-Foundation-2/Perceptron.jpg" class="" width="500">
-
-<p>我們可以簡單的透過計算分數的方式來建立一個簡單的機器學習方法。首先可以把每位使用者的資料建立一筆特徵向量當作輸入資料，而每個維度還會有重要性的權重(例如年薪的權重可能會比性別的權重還來的高)，最後把每個使用者依據加總的分數，和設定的門檻值(threshold)比較，如果高過門檻值就發卡，沒高過就不發卡，這樣的模型h就是一個簡單的Perceptron(感知器)。</p>
-<p>其實在情感分析(Sentiment Analysis)上，以前也常用這種計算分數的方式來判斷文本屬於正面(Postive)或是(Nagtive)。當我們手上有一個情感詞典(定義哪些字是正面，哪些字是負面)，在拿到一篇文章的時候，就可以加總正面詞(+1)和負面詞(-1)來算出文章的情感分數，再搭配門檻值來判斷文章是屬於正面還是負面，甚至是正負面的程度。(不同字詞可以有不同程度的權重，沒有被情感詞典定義的詞當作0分)</p>
-<img src="/2017/07/12/Machine-Learning-Foundation-2/Perceptron2.jpg" class="" width="500">
-
-<p>這個用來判斷要不要發信用卡的模型h，在二維的平面上會呈現為一條直線(平面上的每一點就是一筆資料x，每一筆資料的形狀則是指的label)，在高維度的空間會是一個平面。這條直接的一邊是其中一種label(O)，跨過線的另一邊則是另一種label(X)，這樣的線性分類器即可以用來分類兩元問題。</p>
-<img src="/2017/07/12/Machine-Learning-Foundation-2/PLA.jpg" class="" width="500">
-
-<p>那究竟平面上面的這條線該怎麼切才是最好的呢？可以透過Perceptron Learning Algorithm(PLA)來學習出最好的線性分類器。當平面上的線如果切的不夠好時，透過會旋轉這條線來讓切線更完美。當正的label被分到負的label時，代表w和x的角度太大，可以透過向量相加來讓角度變小；當負的label被分到正的label時，代表w和x的角度太小，可以透過向量相減來讓角度變大。就這樣一直轉到所有的正的label和負的label都分到正確的類別沒有任何分錯，就可以得到一個最佳的切線，這個演算法稱為PLA。</p>
-<img src="/2017/07/12/Machine-Learning-Foundation-2/LinearSeparability.jpg" class="" width="500">
-
-<p>PLA既然要在平面上找到一條切線，那勢必他就必須要是線性可分的問題，像是上圖最左邊就是一個線性可分的問題，右邊兩張則是線性不可分，即不管怎麼旋轉這條切線都沒辦法把兩種類別各自分到對的地方。如果稍有瞭解支援向量機(Support Vector Machine, SVM)的人大概會想到，如果使用SVM的話就可以解決線性不可分的問題，因為SVM主要是也在空間裡找到線性可分的超平面來切分空間，如果遇到第二種線性不可分的情況，最簡單可以透過調整懲罰參數C來忽略一些無法分到正確類別的資料(也許是雜訊)。至於遇到第三種情況的話，則可以調整核函式Kernel Function來將於N維線性不可分的資料於較高的維度M找到線性可分的超平面。</p>
-<img src="/2017/07/12/Machine-Learning-Foundation-2/PocketAlgo.jpg" class="" width="500">
-
-<p>回到PLA，現實上絕對沒有這麼好的情況可以讓你都有線性可分，也許只有稍微有點雜訊，就會讓問題變成線性不可分。這邊會用到演算法稱為口袋演算法(pocket algorithm)，即是在PLA的修正學習過程中，如果找到一個比較好的線(即分錯最少)，我們就把這條線放到口袋裡面，當遇到下一條比我們口袋裡這條線更好的線，就再換成新的線，一直到執到覺得應該差不多就停下來。所以當我們是線性可分，PLA可以幫助找到好的解答；但如果不是線性可分，透過變形的PLA確實可以找到一個還不錯的解答。</p>
-<p>參考資料: <a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/02_handout.pdf">Machine Learning Foundation 02</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1577,7 +1616,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>

@@ -196,6 +196,114 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/09/27/%E4%BD%BF%E7%94%A8bind-variable%E5%9F%B7%E8%A1%8CSQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/09/27/%E4%BD%BF%E7%94%A8bind-variable%E5%9F%B7%E8%A1%8CSQL/" class="post-title-link" itemprop="url">使用bind variable執行SQL</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2016-09-27 00:00:00" itemprop="dateCreated datePublished" datetime="2016-09-27T00:00:00+08:00">2016-09-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:53:00" itemprop="dateModified" datetime="2021-05-11T22:53:00+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL/" itemprop="url" rel="index"><span itemprop="name">SQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/09/27/%E4%BD%BF%E7%94%A8bind-variable%E5%9F%B7%E8%A1%8CSQL/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/27/使用bind-variable執行SQL/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在寫sql的時候，一開始總是習慣帶入一支完整的sql，遇到要替換的地方就在程式用取代來處理。例如下面這個範例，為了insert不用的資料，用format來作字串替代完成一支sql</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = <span class="string">&quot;INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (&#x27;&#123;0&#125;&#x27;,&#123;1&#125;)&quot;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = sql.<span class="built_in">format</span>(<span class="string">&#x27;The Archive&#x27;</span>, <span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (<span class="string">&#x27;The Archive&#x27;</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>可以看到要insert的資料，如果是char型態會用’’括起來。但是當今天要取代的字串有特殊符號或是有引號處理起來就會很麻煩，像下面的例子在insert到db時就會造成syntax error</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = <span class="string">&quot;INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (&#x27;&#123;0&#125;&#x27;,&#123;1&#125;)&quot;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = sql.<span class="built_in">format</span>(<span class="string">&quot;It&#x27;s Time&quot;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (<span class="string">&#x27;It&#x27;</span>s Time<span class="string">&#x27;,2) # syntax error</span></span><br></pre></td></tr></table></figure>
+<p>所以再來要介紹一下用bind variable下SQL的好處，下面是一個oracle使用bind variable的方式，在執行SQL時，會將變數直接帶入:1和:2的位置，所以也不用考慮任何原本要處理的跳脫字元問題</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sql = <span class="string">&quot;INSERT INTO ALBUM (TITLE, ARTIST_ID) VALUES (:1, :2)&quot;</span></span><br><span class="line">cursor.execute(sql, (<span class="string">&quot;It&#x27;s Time&quot;</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p>使用bind variable不止在處理SQL很方便之外，也可以避免有SQL injection的風險，甚至對操作DB的performance也有影響。</p>
+<p>例如對Oracle DB下SQL時，oracle首先會在share pool找到這支SQL是否之前曾執行過，有的話會取得這支SQL之前處理過的執行計畫(Execute Plan)並開始執行這支SQL；如果找不到的話oracle會hard parsing這支SQL，並找到最佳的執行計畫後才執行SQL。所以如果能在share pool找到之前有執行過的執行計畫，SQL執行前就不用再經過hard parsing。</p>
+<p>但是oracle在share pool尋找的時候，只有完全相同的SQL才會被認為有對應到。所以當我們在程式使用取代字串來完成SQL，在執行時每一支SQL都會被視為不同的SQL，自然每一次的SQL執行前都必須要經過hard parsing</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> ALBUM(TITLE, ARTIST_ID) <span class="keyword">VALUES</span> (<span class="string">&#x27;The Archive&#x27;</span>,<span class="number">1</span>)  # 兩支<span class="keyword">SQL</span>會被oracle視為不同的<span class="keyword">SQL</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> ALBUM(TITLE, ARTIST_ID) <span class="keyword">VALUES</span> (<span class="string">&#x27;Hear Me&#x27;</span>,<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>為了避免這個問題，可以使用bind variable來下SQL，因為採用bind variable的SQL會被視為同一支SQL</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sql = <span class="string">&#x27;INSERT INTO ALBUM(TITLE, ARTIST_ID) VALUES (:1, :2)&#x27;</span></span><br><span class="line">cursor.execute(sql, (<span class="string">&quot;It&#x27;s Time&quot;</span>, <span class="number">2</span>))  <span class="comment"># 兩支SQL會被oracle視為相同的SQL</span></span><br><span class="line">cursor.execute(sql, (<span class="string">&quot;Hear Me&quot;</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+
+<p>因此採用bind variable在操作SQL上不止處理起更方便(不用特別處理跳脫字元)，也更安全(避免SQL injection)，甚至更快速(重使用最佳化過後的執行計畫)</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/09/13/%E5%B0%87%E6%98%9F%E7%AC%A6%E7%95%B6%E4%BD%9C%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8%E4%BE%86%E5%BC%B7%E5%88%B6%E4%BD%BF%E7%94%A8%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -789,7 +897,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
