@@ -196,6 +196,121 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2019/03/14/machine-learning-on-gcp-feature-engineering2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/03/14/machine-learning-on-gcp-feature-engineering2/" class="post-title-link" itemprop="url">Machine Learning on GCP - Feature Engineering(下)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2019-03-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-03-14T00:00:00+08:00">2019-03-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:40:33" itemprop="dateModified" datetime="2021-05-11T23:40:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/03/14/machine-learning-on-gcp-feature-engineering2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/14/machine-learning-on-gcp-feature-engineering2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a href="https://qiubite31.github.io/2019/03/05/machine-learning-on-gcp-feature-engineering/">上一篇</a>提到一些基本的Feature Engineering概念與方法，這一篇則是會說明當要使用類別型的特徵來訓練機器學習模型時的技巧。</p>
+<h2 id="Categorical"><a href="#Categorical" class="headerlink" title="Categorical"></a>Categorical</h2><img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/Categorical.JPG" class="" width="500">
+
+<p>如果遇到類別型的特徵又需要拿進來訓練模型，則可以用one-hot encoding來處理。例如當今天要對商品銷售預測建立模型時，想要把員工拿進來考量，也許不同員工對顧客的服務上會影響到商品銷售。雖然員工的編號是數值，但其並不存在實際上數值的意義，這時候就可以透過one-hot來處理，並以多個欄位變數表示來將每個值轉成0/1表示的稀疏向量。</p>
+<img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/CustomerRating.JPG" class="" width="500">
+
+<p>有時候在某些資料則可以當作連續型處理，也可以使用one-hot來處理。例如顧客的評分，如果你認為4分和2分是差距很大的，這時也可以依個人考量當作類別型處理。要特別注意的是，如果今天顧客沒有提供評分資料，在處理missing value上，第一種數值型的處理方法是使用另一個欄位來紀錄是否有收到評分(1/0)，並維持評分值為0；第二種類別型處理方法則將所有one-hot變數設為0，並一樣透過另一欄位紀錄是否有評分，注意不要使用自己的特別編碼(magic number)來處理。</p>
+<h2 id="Feature-Cross"><a href="#Feature-Cross" class="headerlink" title="Feature Cross"></a>Feature Cross</h2><img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/FeatureCross.JPG" class="" width="500">
+
+<p>假設今天要建立模型來判斷車輛是否為計程車，而使用的特徵只有兩個，分別為車倆的顏色和車輛所屬城市。假設透過簡單的線性模型來作訓練，在調整權重的過程中，都沒辦法有好的辨識效果。因為模型在調整黃色和白色的權重時，當它看到黃色在紐約是計程車，提高了黃色的權重，但這反而造成所有黃色車倆比較容易判斷成計程車，這是不對的；相同的如果模型提高了紐約的權重，這也會造成所有紐約的車倆都容易判斷成計程車，這一樣是不對的。</p>
+<p>這時候則可以嘗試將兩個變數結合變成第三個變數，並透過one-hot encoding來處理，而在訓練過程中就會將黃色X紐約的組合單獨調整權重，可以避開原本的問題。例如在預測計程車車資問題中，雖然知道在上下班時間的旅程時間會比較長，車資也可能比較高，但是這時可以不特別作新增rule的處理(例如標注某天的某時段為上下班時間)，而是直接將Day of Week和24小時作feature cross建立組合。</p>
+<h2 id="Bucketize"><a href="#Bucketize" class="headerlink" title="Bucketize"></a>Bucketize</h2><img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/DiscreteFloat.JPG" class="" width="500">
+
+<p>以加州的房價預測來說，如果觀察緯度這個特徵會發現有兩個高峰，一個是舊金山灣區，另一個則是洛杉磯大都市，這時就可以透過資料分群(bin)來拆成100個bucket，轉成類別型資料來訓練模型。注意在預測時也要透過資料前處理來將資料作bucketize。</p>
+<h2 id="Wide-and-Deep"><a href="#Wide-and-Deep" class="headerlink" title="Wide and Deep"></a>Wide and Deep</h2><img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/DenseAndSparse.JPG" class="" width="500">
+
+<p>到這邊就會遇到一個問題，在銷售遇到時會有價格和員工兩種不同特性的變數，價格是密集的(Dense)的連續型變數，而員工編號是透過one-hot產生稀疏(Sparse)的類別型變數。而在使用類神經網路訓練模型時，因為在0在乘上權重還是為0，所以稀疏的矩陣可能造成訓練過程中收斂在區域最佳解跳不出來。但是以上面說的計程車例子，其實線性模型是比較容處理的。</p>
+<img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/EatAll.JPG" class="" width="500">
+
+<p>因此在訓練模型時，可以嘗試合併兩種方法，透過類神經網路來使用連續型變數訓練深度(Deep)結果，再和類別型變數透過線性方式串聯(Wide)，這即是一個wid-and-deep架構的神經網路模型。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/serverless-data-analysis-bigquery-cloud-dataflow-gcp/home/welcome">Data Engineering on Google Cloud Platform 4 - Serverless Data Analysis with Google BigQuery and Cloud Dataflow</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2019/03/05/machine-learning-on-gcp-feature-engineering/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1402,144 +1517,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/13/Machine-Learning-Foundation-13/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/13/Machine-Learning-Foundation-13/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十三講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-10-13 00:00:00" itemprop="dateCreated datePublished" datetime="2017-10-13T00:00:00+08:00">2017-10-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:16:38" itemprop="dateModified" datetime="2021-05-11T23:16:38+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/10/13/Machine-Learning-Foundation-13/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/13/Machine-Learning-Foundation-13/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上一講提到可以使用非線性轉換的方法，將線性的模型轉換成非線性，雖然可以解決更複雜的問題，但也伴隨著模型複雜度提高的代價。這一講將提到過度適合(Overfitting)現象所造成的泛化能力缺陷。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/BadGeneralization.JPG" class="" width="500">
-
-<p>假設今天有一個目標的函式是二次函式，但我們使用的四次函式來找到通過所有點的答案使得Ein為0，但這個四次函式卻和目標的二次函式差距很大造成Eout很大。這樣就會讓這個四次函式只認得樣本資料，而這種VC維度很高所付出的代價就是模型會失去舉一反三的能力，也就是泛化能力很差。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/Overfitting.JPG" class="" width="500">
-
-<p>這裡帶出學習會出現的兩個問題，一個是過度適合(Overfitting)，即Ein的fitting作的很好，但是作過度了造成Eout效果不好；一個是低度適合(Underfitting)，即Ein的fitting作的不夠好。Underfitting可以透過增加樣本資料或是使用較複雜的模型就可以解決，但是Overfitting反而是一個比較難解決的問題。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/CauseofOverfitting.JPG" class="" width="500">
-
-<p>發生Overfitting會有幾種原因，第一種是使用了過多的VC維，也就是使用了過於複雜的機器學習模型，像是對二次函式問題使用了四次函式來解；第二種可能性是雜訊太多，造成錯誤的學習；第三種是資料量不足，如果資料量不足可能沒有辦法學習出接近目標函式的結果。尤其當資料量不夠且雜訊又多，就很容易造成Overfitting讓模型最終失去泛化能力</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/CaseStudy.JPG" class="" width="500">
-
-<p>假設現在有兩個目標函式，一個是十次多項式加上雜訊，一個是五十次多項式但是沒有雜訊。今天分別使用二次多項式和十次多項式來比較兩個問題的學習結果，會發現十次多項式都發生Overfitting，在Ein都作的比較好，但是Eout都作不好。甚至是當我們已經知道目標函式是十次多項式的情況，使用十次多項式的結果也不一定會贏過二次多項式。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/LearningCurve.JPG" class="" width="500">
-
-<p>用學習曲線來看會發現，當樣本數量不夠的時候，十次多項式Ein和Eout差距會非常大，所以如果資料量不足就不應該免強使用較複雜的方法，反而使用二次多項式還能夠學習出比較好的結果。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/NoNoise.JPG" class="" width="500">
-
-<p>那如果都沒有雜訊的情況下也會是二次多項式的效果比較好，因為當目標函式很複雜時，也會造成類似雜訊的效果，如果二次多項式和十次多項式都作不好，使用二次多項式的泛化效果可能會比較好。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DetailExperiment.JPG" class="" width="500">
-
-<p>什麼時候要注意overfitting會發生呢？可以分成模型複雜程度Qf和雜訊程度σ^2來探討，再來會討論兩者和資料量N之間的關係。<img src="/2017/10/13/Machine-Learning-Foundation-13/TheOverfitMeasure.JPG" class="" width="500">延續之前的二次和十次多項式的例子，再來會使用Eout(g10) - Eout(g2)來衡量overfit的程度，即使用十次和二次多項式的Eout差來衡量。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/Result.JPG" class="" width="500">
-
-<p>在固定模型複雜度之下，只要資料量不夠而且雜訊程度越高，就越容易造成overfit；但在固定雜訊程度看模型複雜度的影響，大部份也是發生在資料量少且目標複雜度高會造成overfit。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/NoiseAndSize.JPG" class="" width="500">
-
-<p>兩者最主要的差異在於，雜訊是stochastic noise，即隨機產生的，但是目標函式的複雜度是deterministic noice，是固定可以計算出來的。總結來說在四種情況下會發生overfit，第一個是資料的量過小，第二個是stochastic noise太高的時候，第三個是deterministic noise太高的時候，第四個則是VC維度太高的時候。所以overfit是很容易發生的。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DeterministicNoise.JPG" class="" width="500">
-
-<p>所以到底為什麼今天的目標函式太過複雜的情況下和隨機雜訊是類似的呢？假設今天目標函式太過複雜，以至於無法使用任何的hypothesis描述，這中間的差距就是我們說的deterministic noise，這並不是一個隨機發生的雜訊。所以deterministic noise會取決於hypothesis，而且在給定相同x之下會有相同的deterministic noise。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/HandleOverfit.JPG" class="" width="500">
-
-<p>如果有這麼多的原因會造成overfit，那該怎麼解決呢？在模型部份，可以先使用比較簡單的模型開始，避免一開始就用過複雜的模型；在資料部份，可以將雜訊資料作data cleaning/pruning處理，或是收集更多的資料與使用data hinting產生虛擬資料來提供更多額外的資料；另外還可以透過regularization對模型產生懲罰效果，或是透過validation來隨時看學習的狀況。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DataClean.JPG" class="" width="500">
-
-<p>在Data Cleaning/Pruning的部份，Data Clean是指把已經確定是錯誤標記的資料，標記到正確的類別。Data Pruning則是直接將錯誤的雜訊資料直接從資料集去除掉。兩個資料的處理方法都不難，難度反而會在於該如何判斷資料是有問題的雜訊資料。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DataHinting.JPG" class="" width="500">
-
-<p>在Data Hinging部份，以圖像的數字辨識來說，就是把每個字作簡單的旋轉來當作新的虛擬資料並加進來學習。這個方法很常用在現今在作圖象辨識時，對圖像作扭曲或是轉換來增加學習樣本數量。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/Summary.JPG" class="" width="500">
-
-<p>總結來說，這堂課教到了把Ein作好但是Eout作不好是overfitting現象，而且overfitting是非常容易發生的。不只是雜訊會造成overfitting，當目標函式過於複雜時，也是另一種雜訊。在處理overfitting的部份，這堂課簡單提到了data cleaning/pruning和data hinting，下一堂會再進一步教到如何使用regularization來避免overfitting現象。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/13_handout.pdf">Machine Learning Foundation 13</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1611,7 +1588,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1624,7 +1601,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

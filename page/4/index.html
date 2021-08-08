@@ -196,6 +196,138 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/07/27/Machine-Learning-Foundation-4/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第四講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-07-27 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-27T00:00:00+08:00">2017-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:55:00" itemprop="dateModified" datetime="2021-05-11T22:55:00+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/07/27/Machine-Learning-Foundation-4/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/27/Machine-Learning-Foundation-4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>這一講的學習重點主要是在如何討論學習到底是不是可行的，並進一步推導證明機器是真的可以「學習」的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/ControversialAnswer.JPG" class="" width="500">
+
+<p>機器會不會其實是沒辦法學習的？我們可以先看講義上的圖形，上半部的圖形屬於-1，下半部的圖形屬於+1，那麼給了f上方右邊的圖，他究竟是屬於+1還是-1呢？如果我們用黑色區域是不是對稱來判斷，那麼這張圖會是+1；但如果我們用左上角的格子是否為黑色，那邊這張圖會是-1。這裡會發現如果我們用不同的規則就可能得到不同的答案，看起來好像真的沒辦法讓機器真的「學習」一個正確的答案。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/NoFreeLunch.JPG" class="" width="500">
+
+<p>用一個比較數學的例子來看，假設今天有一個函式f，輸入是3個bit，輸出是o或是x。再來我們透過機器學習演算法學到g函式，並確保這個g函式在5筆資料D都能和f得到一樣的答案(即f和g結果相同)。所以我們確保了g和f(甚至是講義上的8個f)在D得到相同答案，但是除了D之外剩下的3種答案，g只會有一種結果。這會有什麼的影響呢？比如說當g在剩下3筆得到XOX，那麼他會和f6相同，可是我們今天是要告訴你正確的f其實是除了f6以外的函式，那麼似乎g和f答案又錯了，看起來機器好像真的沒辦法「學習」到一個正確答案。這又稱為no free lunch，如果沒有對機器學習問題加上一些限制，即我們只是單純給機器資料學習，事實上是沒辦法讓機器學出一個正確的答案的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/InferrProbability.JPG" class="" width="500">
+
+<p>這裡舉一個推論未知的方法，比如說在一個瓶子中有綠色彈珠和橘色彈珠，如果今天沒有辦法完全數完瓶內所有的彈珠，那麼該如何去推論橘色彈珠的比例呢？我們可以透過統計手法利用取樣(樣本)的比例來推論瓶內橘色彈珠(母體)的比例。假設瓶內橘色彈珠的比例是μ，綠色是1-μ，取樣出橘色彈珠的比例是ν，綠色是1-ν，是否可以用這個ν來推論μ呢？照理說ν可能沒辦法完全的推論μ(明明有橘色彈珠，但是每一次運氣不好都抽到綠色)，但是在一定的機率下，ν應該是有辦法推論μ的，在數學上可用Hoeffding’s Inequality來解釋</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/HoeffdingInequality.JPG" class="" width="500">
+
+<p>透過Hoeffding’s Inequality可以解釋，如果今天抽出彈珠(N)的數量越大的話，ν和μ之間差很遠的機率(ε)就會很小，也就是說如果可以取出數量夠大的樣本的話，就可以讓「壞事」(ν和μ差很多)發生的機率變小，我們可以說ν和μ大概差不多會是對的(即probably approximately correct, PAC)</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/ConnectLearning.JPG" class="" width="500">
+
+<p>那用這個抽彈珠的例子到底和學習會有什麼關係？當把抽彈珠轉成學習的問題，未知橘色彈珠的機率μ可視為未知的f，所有抽出來的彈珠就是每筆的資料，其中橘色彈珠可視為h(x)≠f(x)，即hypothesis h是錯的，綠色彈珠可視為h(x)=f(x)，即hypothesis h是對的。所以如果我們在獨立的抽出彈珠時，就可知道來誰論h和f不一樣的機率到底是多少。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/AddComponent.JPG" class="" width="500">
+
+<p>所以把前面錯誤推估的部份加入進去機器學習的流程中。首先我有一個機率在瓶子中取樣產生了資料D，在判斷h和f是不是一樣時，其中這個h就是Hypothesis集合中的其中一個</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/FormalGuarantee.JPG" class="" width="500">
+
+<p>再來就可以透過手上確實知道的資料D來說h和f是否相同，也就是透過Ein(取樣的資料Error)來推論Eout(實際的瓶子的資料Error)，使用Hoeffding’s Inequality就可以證明當N夠大時，Ein和Eout就會差不多是相同的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/Verification.JPG" class="" width="500">
+
+<p>但這樣的證明充其量其能說是驗證而已，就是這個h目前還沒有辦法像是PLA一樣丟不同資料產生不同的h，但是我們可以證明這個h是不是使用資料D能夠有有用的推論f，即驗證選出h的表現是好的還是不好的。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/CoinGame.JPG" class="" width="500">
+
+<p>目前已經可以驗證相同h之下的表現好還是不好，但是今天當我們有了選擇時(即在多個h裡面作選擇)，我們可能就會有偏見的選出一個瓶子都是綠色彈珠的結果，但事實上可能只是剛好這個瓶子都「碰巧」的抽出了綠色彈珠，就像擲銅板一樣，不論這枚銅板多麼公正，都會有可能出現每次都正面的情況。前面講到Hoeffding告訴我們的是ν和μ之間差異很大的這種「不好」的事情機率應該是很小的，但是當我們有選擇的時候，這種「不好」的取樣卻會造成Ein和Eout差距變大。</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/BadData.JPG" class="" width="500">
+
+<p>如果演算法遇到不好的資料(Ein和Eout差很遠)，就會得到不好的結果。Hoeffding告訴我們的是每一個h不好的情況是很小的，但是在演算法有自由選擇h的情況下，那麼不好資料發生的機率是多少呢？</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/BADDataBound.JPG" class="" width="500">
+
+<p>假設有M總不同的h，那麼不好資料發生的機率，就會等於每一個h發生不好機率的總合(Union Bound)。所以如果演算法有辦法選出一個最小的Ein(壞事發生的機率是最小的)，就可以表示選出來的Eout會是最小的</p>
+<img src="/2017/07/27/Machine-Learning-Foundation-4/StatisticaLearningFlow.JPG" class="" width="500">
+
+<p>總結來說機器該如何能夠學習呢？只要滿足Hypothesis集合是有限的集合M，且樣本資料N是夠大的，對於任何被演算法選出來的g(其中一個假設h)，就可以推論Eout和Ein是差不多相同的。就是剛提到的，演算法只要選出一個Ein是最小的，就可以保證Eout也是最小的。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/04_handout.pdf">Machine Learning Foundation 04</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/18/Machine-Learning-Foundation-3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1194,111 +1326,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">Closure的基本概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2016-11-08 00:00:00" itemprop="dateCreated datePublished" datetime="2016-11-08T00:00:00+08:00">2016-11-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/08/Closure的基本概念/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>談到closure，首先要先瞭解First-cass Function，所謂的first-class function是指函式可以被assign給變數或儲存於資料結構中，並且可以作為其他函數的參數，或是作為其他的函數的回傳值。而python裡的每個function都是first-class function，所以在python中可以作到以下的操作：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">max</span>(<span class="params">m, n</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> m <span class="keyword">if</span> m &gt; n <span class="keyword">else</span> n</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">max</span>(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = <span class="built_in">max</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(<span class="number">7</span>, <span class="number">5</span>)</span><br><span class="line"><span class="number">7</span></span><br></pre></td></tr></table></figure>
-<p>我們可以把max這個函式assign給func，再使用func來實際使用max這個函式。</p>
-<p>要建立一個closure，在python中可以透過建立巢狀函式(nested function)來實作，其中內部函式會依據<a href="/2016/11/02/namespace%E8%88%87LEGB-scope%E8%A6%8F%E5%89%87/">LEGB規則</a>參照Enclosed scope的外部函式變數，此變數又稱為自由變數(free variable)。自由變數將會和此函式同時存在，即使離開了創造此變數的環境/區域也可以被此函式使用不會消失。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">target_value</span>(<span class="params">x</span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compare</span>(<span class="params">y</span>):</span>        </span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;&gt; target&#x27;</span> <span class="keyword">if</span> y &gt; x <span class="keyword">else</span> <span class="string">&#x27;&lt; target&#x27;</span>    </span><br><span class="line">    <span class="keyword">return</span> compare</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = target_value(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(<span class="number">5</span>)</span><br><span class="line">&lt; target</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func2 = target_value(<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func2(<span class="number">5</span>)</span><br><span class="line">&gt; target</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func.__closure__[<span class="number">0</span>].cell_contents</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
-<p>上面是一個closure的例子，首先呼叫外部函式target_value將參數傳入，並回傳內部函式compare且assign給func，這是一個first-class function的實作。而每一次呼叫target_value後就會產生一個closure實例，每一個實例會binding到不同的自由變數x，它並不會因為離開了創造它的target_value函式而消失，反而在透過func呼叫compare時被closure補捉使用。python還有個__colsure__可以看到在enclosed scop所補捉到的自由變數</p>
-<p>總結來說，並不是每個巢狀函式都是closure，巢狀函式需要補捉到enclosed scope的自由變數，使得此變數在脫離原本的環境仍可被內部函式使用，這樣才為closure。</p>
-<p>在使用上closure並不是一定要有的設計方式，但是有時使用closure可以幫助有效的組織程式碼，並提升程式碼的可讀性。像是當我們有資料需要重複使用，但是又不想都塞在global，這時可以透過自由變數來存放再用closure捕捉來降低global變數的數量；另外也可以透過closure來隱藏變數，作出private的效果。</p>
-<p>2016/11/14</p>
-<p>捕捉到自由變數並不能作修改，如果需要修改自由變數，可透過<a href="/2016/11/14/nonlocal%E8%88%87global%E9%97%9C%E9%8D%B5%E5%AD%97/">nonlocal</a>來宣告變數，並作進一步的操作</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/First-class_function">Wiki-First-Class Function</a><br/><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Closure_(computer_programming)">Wiki-Closure</a><br/><a target="_blank" rel="noopener" href="http://www.codedata.com.tw/java/understanding-lambda-closure-3-python-support/">認識 Lambda/Closure（3）Python 對 Lambda/Closure 的支援</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1370,7 +1397,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1383,7 +1410,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

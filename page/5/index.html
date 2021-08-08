@@ -196,6 +196,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">Closure的基本概念</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2016-11-08 00:00:00" itemprop="dateCreated datePublished" datetime="2016-11-08T00:00:00+08:00">2016-11-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/08/Closure的基本概念/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>談到closure，首先要先瞭解First-cass Function，所謂的first-class function是指函式可以被assign給變數或儲存於資料結構中，並且可以作為其他函數的參數，或是作為其他的函數的回傳值。而python裡的每個function都是first-class function，所以在python中可以作到以下的操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">max</span>(<span class="params">m, n</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> m <span class="keyword">if</span> m &gt; n <span class="keyword">else</span> n</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">max</span>(<span class="number">5</span>, <span class="number">3</span>)</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = <span class="built_in">max</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(<span class="number">7</span>, <span class="number">5</span>)</span><br><span class="line"><span class="number">7</span></span><br></pre></td></tr></table></figure>
+<p>我們可以把max這個函式assign給func，再使用func來實際使用max這個函式。</p>
+<p>要建立一個closure，在python中可以透過建立巢狀函式(nested function)來實作，其中內部函式會依據<a href="/2016/11/02/namespace%E8%88%87LEGB-scope%E8%A6%8F%E5%89%87/">LEGB規則</a>參照Enclosed scope的外部函式變數，此變數又稱為自由變數(free variable)。自由變數將會和此函式同時存在，即使離開了創造此變數的環境/區域也可以被此函式使用不會消失。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">target_value</span>(<span class="params">x</span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compare</span>(<span class="params">y</span>):</span>        </span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;&gt; target&#x27;</span> <span class="keyword">if</span> y &gt; x <span class="keyword">else</span> <span class="string">&#x27;&lt; target&#x27;</span>    </span><br><span class="line">    <span class="keyword">return</span> compare</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = target_value(<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(<span class="number">5</span>)</span><br><span class="line">&lt; target</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func2 = target_value(<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func2(<span class="number">5</span>)</span><br><span class="line">&gt; target</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func.__closure__[<span class="number">0</span>].cell_contents</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p>上面是一個closure的例子，首先呼叫外部函式target_value將參數傳入，並回傳內部函式compare且assign給func，這是一個first-class function的實作。而每一次呼叫target_value後就會產生一個closure實例，每一個實例會binding到不同的自由變數x，它並不會因為離開了創造它的target_value函式而消失，反而在透過func呼叫compare時被closure補捉使用。python還有個__colsure__可以看到在enclosed scop所補捉到的自由變數</p>
+<p>總結來說，並不是每個巢狀函式都是closure，巢狀函式需要補捉到enclosed scope的自由變數，使得此變數在脫離原本的環境仍可被內部函式使用，這樣才為closure。</p>
+<p>在使用上closure並不是一定要有的設計方式，但是有時使用closure可以幫助有效的組織程式碼，並提升程式碼的可讀性。像是當我們有資料需要重複使用，但是又不想都塞在global，這時可以透過自由變數來存放再用closure捕捉來降低global變數的數量；另外也可以透過closure來隱藏變數，作出private的效果。</p>
+<p>2016/11/14</p>
+<p>捕捉到自由變數並不能作修改，如果需要修改自由變數，可透過<a href="/2016/11/14/nonlocal%E8%88%87global%E9%97%9C%E9%8D%B5%E5%AD%97/">nonlocal</a>來宣告變數，並作進一步的操作</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/First-class_function">Wiki-First-Class Function</a><br/><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Closure_(computer_programming)">Wiki-Closure</a><br/><a target="_blank" rel="noopener" href="http://www.codedata.com.tw/java/understanding-lambda-closure-3-python-support/">認識 Lambda/Closure（3）Python 對 Lambda/Closure 的支援</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/11/02/namespace%E8%88%87LEGB-scope%E8%A6%8F%E5%89%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1002,7 +1107,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1015,7 +1120,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
