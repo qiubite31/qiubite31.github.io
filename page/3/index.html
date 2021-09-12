@@ -196,6 +196,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/18/Machine-Learning-Foundation-14/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/10/18/Machine-Learning-Foundation-14/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十四講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-10-18 00:00:00" itemprop="dateCreated datePublished" datetime="2017-10-18T00:00:00+08:00">2017-10-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/18/Machine-Learning-Foundation-14/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/18/Machine-Learning-Foundation-14/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一堂課講到overfitting現象，他會在使用過高的模型複雜度、雜訊過多或是資料太少時發生。上次有提到可以使用Data Clean/Purning和Data Hinting從資料面下手解決，這堂課會提到regularized手法來避免overfitting。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/Regularization.JPG" class="" width="500">
+
+<p>Overfit現象就是Target和Fit兩者相差太多，雖然可以將樣本學習的很好使Ein很小，但是卻造成泛化能力很差Eout過高，就如同右邊這張圖。regularized目標則是希望可以把Fit曲線能夠更接近Target，所以regularized可以視成一個從高次方項走向底次方項的手法，有很多的解都可以通過樣本點，但是究竟哪一組是最好的，就是regularized要作的。那該怎麼從高次多項走回低次多項式呢？</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithConstraint.JPG" class="" width="500">
+
+<p>要從高次多項式走回低次多項式，其實就可以視成低次多項式是高次多項式加上constrain，即如果把十次多項式中超過三次的項權重都設成0，那麼就可以降回二次多項式了。在求最佳化的過程也是，如果今天要求二次多項式的最小值Ein，就可以使用加上constrain的十次多項式來求最小值。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithLooserConstraint.JPG" class="" width="500">
+
+<p>進一步的可以再延伸出，如果我並不是把超過三次項的權重設成0，而是只要其中有8項設權重設成0，就可以放寬這個constrain，讓regression可以更加的有彈性。這個放寬限制條件的二項式會比本來的二項式可以變化的項次更多，但也不像十次多項式這麼複雜。所以成求Ein時，只要確保權重為0的項次小於3個就可以了，但是這種離散的限制就像PLA一樣不容易求解，是NP-hard問題。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithSofterConstraint.JPG" class="" width="500">
+
+<p>原本的條件是算權重不是0的項次要小於3，我們可以把他轉換成將每個項次權重平均相加要小於上限制C，這樣就可以轉成比較好解的問題，而且權重越接近0的取平均會越小。C如果設定的越大，就會越接近十次多項式結果，且所有比較小的C的項次組合都會被比較大的C的項次組合包含。這個H(C)又可以被稱為regularized hypothesis，即加上限制條件的hypothesis，而透過規則化的hypothesis set裡所找到的最佳hypothesis又稱為W(REG)</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/TheLagrangeMultiplier.JPG" class="" width="500">
+
+<p>再來可以和之前一樣把式子轉換成矩陣的表示方法來解最佳化問題。原本我們可以透過走梯度反方向到W(lin)這個最佳解，但是現在加上了限制式，這個限制在幾何上是一個圓圈，找到前面所提到的規則化hpothesis最佳解W(REG)的話，就得同時往梯度反方向走而且不離開圓邊。又因為往圓的法向量(紅色向量)走就會離開圓邊，所以只能往垂直於法向量的分量走(綠色向量)，當持續走到梯度反方向要是和圓的法向量平行的話，就代表不能走了，即為找到最佳解。我們可以把兩個平行向量的比值設成2λ/N。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/AugmentedErr.JPG" class="" width="500">
+
+<p>再來可以把求梯度等於0轉換回求最小值的式子，即為Ein加上一組regularizer又可稱為augmented error Eaug(w)，如果預先先指定λ值就可以很容易的解這個式子。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/Result.JPG" class="" width="500">
+
+<p>所以只要加上一點regularizer就可以對模型結果作出適當調整，今天如果λ設成0的話就等同沒有regularized即為overfitting，λ設的太大則會造成underfitting，加上regularizer就會有類似懲罰的效果。這種的規則化方法又稱為weight-decay regularization，即把權重最小的規則化方法。而且這個規則化方法可以應用到linear regresion、logistic regression甚至是其他不同的transform。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/RegularizationAndVC.JPG" class="" width="500">
+
+<p>但究竟這個augmented error和之前學到的VC有什麼相關性呢？用求augmented error的方法來解本來不好解的constrain Ein，這裡對應到的VC保證為Eout會小於En加上一個constrain H(C)，所以作好Eaug就能把Eout間接的也作好。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/AnotherView.JPG" class="" width="500">
+
+<p>Augmented error和VC bound其實相同的地方在於都是在求複雜度，augmented error求的是單一個hypothesis的複雜度，而VC則是在求整個hypothesis集合的複雜度。這個augmented error如果可以表現更好，那麼Eaug可能是一個比Ein更好的代理人可以幫我們作到好的Eout。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/EffectiveVCDimension.JPG" class="" width="500">
+
+<p>其實使用regulization付出的VC dimension會比原本還要小，因為在實際上有N個特徵維度下，最終透過regulization將不會使用到那麼多的維度。這裡相比原本的d(VC)，可以稱為d(EFF)，其付出的維度會比本來的d(VC)還小。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/GeneralRegularizers.JPG" class="" width="500">
+
+<p>那到底該使用什麼樣的regularizer呢？今天如果在知道target特性的情況下，可以針對target特性來設計regularizer，比如說如果想要一個比較接近偶函數的函數話，就針對奇數次方讓他變小。又或者在選出一個比較能夠說服我們的regularizer，像是比較平滑或是簡單的regularizer，因為overfitting是noise造成的，noise就會造成不平滑，像是使用L1 regularizer。或者也可以找一個好使用好最佳化的regularizer，像是前面說到的weight-decay regularizer，又被稱為L2 regularizer。如果找到不好的regularizer，那就把λ設定成0就等同於拿掉regularizer的效果。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/L2AndL1.JPG" class="" width="500">
+
+<p>L2 Regularizer最大的好處就是他很好微分求最佳值，而L1在微分求最佳值的部份比較困難，且L1在求最佳值時很常發生在頂點上，意義就是某一些的權重w會是0，所以L1 Regularizer又被稱為sparse regularizer。透過L1就可以在高維度空間下(例如1000維)，找到一些w非0的項次(可能只有5維)，所以在最後的預測只要算非0項速度會比較快。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/OptimalLambda.JPG" class="" width="500">
+
+<p>那λ該怎麼選擇呢？很明顯的可以看到不管是stochastic noise或是deterministic noise，只要noise越大λ就要越大。下一講將會開始說明在使用規則化手法時，該如何有效的使用最佳的λ。</p>
+<img src="/2017/10/18/Machine-Learning-Foundation-14/Summary.JPG" class="" width="500">
+
+<p>總結來看，這堂課說明規則化就是在原本的hypothesis加上一個條件，並轉成一個Augmented Error，因為作了規則化所以有些維度就不會被使用到，因此VC維度就會下降成d(EFF)，而使用regularizer的使用方法可以針對target特性，或是使用容易說服自己的regularizer，還有也可以使用好最佳化的regularizer。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/14_handout.pdf">Machine Learning Foundation 14</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/13/Machine-Learning-Foundation-13/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1447,141 +1585,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/01/Machine-Learning-Foundation-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/08/01/Machine-Learning-Foundation-5/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第五講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-08-01 00:00:00" itemprop="dateCreated datePublished" datetime="2017-08-01T00:00:00+08:00">2017-08-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:55:00" itemprop="dateModified" datetime="2021-05-11T22:55:00+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/08/01/Machine-Learning-Foundation-5/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/01/Machine-Learning-Foundation-5/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>這一講主要在延續前一講的推導，說明無限多個hypothesis到底發生什麼事情。</p>
-
-
-<p>前面有是到如果要讓訓練是可行的，則必需要加上一些假設，首先原本訓練的資料和測試hypothesis的資料都是來自於相同的分配(Distribution)，那麼當hypothesis集合是有限的，且資料數量N夠大的情況下，不論演算法A挑出哪一個函式g，Ein和Eout都會是接近的。在這個情況下，只要挑出趨近於0的Ein，就可以保證Eout也趨近於0，即代表學習是可能的。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/TwoCentralQuestions.JPG" class="" width="500">
-
-<p>再複習一下到目前的學習內容。證明機器學習的過程中，首先會希望得到一個函式g而且和f會很接近，也就是希望Eout(g)會接近於0。但是我們不知道該怎麼去證明Eout會接近於0，於是我們從取樣下手來證明Ein如果趨近於0的話，且Ein和Eout會很接近，那麼Eout也會趨近於0。那麼要讓機器學習可能，其中一個很大的重點是有限的hypothesis集合M，究竟這個M扮演了什麼角色？</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/TradeOffonM.JPG" class="" width="500">
-
-<p>這時我們會談到M的trade-off，所謂選擇M的trade-off就是當我們選了比較小的M才能符合Hoeffiding不等式讓壞事發生的機率降低，但這代表可以選擇的hypothesis比較少，也許這樣可能就無法選到一個好的hypothesis來讓Ein可以趨近於0。相反的，如果M越大，雖然選擇的hypothesis變多，但是壞事發生的機率也會上升。所以選擇一個正確而且適當的M對於學習問題是很重要的。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/UnionBoundFail.JPG" class="" width="500">
-
-<p>前面提到如果M是有限的集合，那麼學習才有可能發生，如果是M是無限大的話，壞事發生的機率也就是無限大，機器就沒辦法學到一個好的結果，因為其中的壞事發生的機率，就是M種發生壞事的機率相加。雖然看起來M會無限大，但事實上發生不同壞事資料D可能是一樣的。以PLA為例說明，假設選了兩條非常接近的線(即兩個hypothesis)，其實這兩條線可能對於同一組資料D分出來的結果是一樣的，所以不同的壞事發生可能會有重疊的情況，所以看起來M應該是有限的。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/OneInput.JPG" class="" width="500">
-
-<p>假設平面上只有一個點，每條線都是一個hypothesis，看起來你確實可以在平面上切出無限多條線，可是事實上不管怎麼切都只會有兩種情況，即這個點不是O就是X，所以只要任何長的像H1的切線都是O，任何長的像H2的切線都是X</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/TwoInput.JPG" class="" width="500">
-
-<p>如果是兩個輸入的話，總共會有4種切線，</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/ThreeInput.JPG" class="" width="500">
-
-<p>如果是3個輸入呢？看起來總共會有8種總合，但是事實上其中會有2種組合沒辦法使用直線切出來(OXO和XOX)，所以實際上只會有6種切線。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/EffectNumberofLine.JPG" class="" width="500">
-
-<p>這又稱為Effect Number of Lines，從表格可以發現每個輸入最多只會有2^N種組合，但是能夠有效的切出兩種分類會從3個輸入開始變少，所以我們可以把M取代成effect(N)。也就是說無論今天的M再多大，都可以找到一個有限的切線數量effect(N)，而且這個effect(N)可以比2^N小很多，這樣就能夠保證學習能夠發生。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/Dichtomies.JPG" class="" width="500">
-
-<p>這裡講到Dichotomy的概念，所謂Dichotomy就是兩分的意思(分成O和X為一例)，Dichotomy和原本的hypothesis的差別在於Dichotomy是有限的組合，而Hypothesis是平面上無限條線的任一條，接下來會把原本的M取代成有限的Dichotomy數量。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/GrothFunction.JPG" class="" width="500">
-
-<p>接著會透過計算成長函式(Growth Function)來找到有限的Dichotomy上限數量，取代M讓學習可以發生。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/PositiveRays.JPG" class="" width="500">
-
-<p>以一個最簡單的Postive Ray來說明，資料點N分佈在一維線上，當我們取一個threshold可以找到不同的Postive Ray，那麼所有可能的Dichotomy組合總共會是N+1個(就是能在點之間切線的數量)，在這個問題下Dichotomy的組合大大的小於2^N種。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/FourGrowthFunction.JPG" class="" width="500">
-
-<p>課程舉了四種不同的成長函數，其中PLA的Dichotomy數量mH(N)會小於2^N，但是對於Hoeffding不等式中，如果mH(N)是指數型成長，則無法確保不等式成立，所以我們需要證明mH(N)是一個多項式的成長。</p>
-<img src="/2017/08/01/Machine-Learning-Foundation-5/BreakPoint.JPG" class="" width="500">
-
-<p>這個部份提到了Break Point的概念，所謂的Break Point就是當某一個輸入開始，Dichotomy數量不再是指數成長(即2^N)，像是positive ray在2個輸入時發生，postive interval在3個輸入時發生，2D perceptrons在4個輸入時發生。在這裡看到神奇的地方在於本來的沒有break point的情況下mH(N)會是指數成長，但是當有了break point後，mH(N)會是一個多項式，下一講就會開始證明是如何轉變成多項式的。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/05_handout.pdf">Machine Learning Foundation 05</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1653,7 +1656,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-count">49</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>

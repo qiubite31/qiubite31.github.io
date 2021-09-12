@@ -196,6 +196,142 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/09/Machine-Learning-Techniques-1/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第一講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2020-01-09 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-09T00:00:00+08:00">2020-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:41:31" itemprop="dateModified" datetime="2021-05-11T23:41:31+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/01/09/Machine-Learning-Techniques-1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/09/Machine-Learning-Techniques-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>機器學習技法是林軒田老師的開的機器學習後半堂課，主要在延續前面機器學習的基礎理論，並延申出不同的機器學習模型介紹。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/CourseOutline.JPG" class="" width="500">
+
+<p>而這堂課主要圍繞在特徵轉換上並分三個面向探討，分別為(1)如果處理大量且高複雜度的特徵轉換(2)找出具有預測性質的特徵來提升模型表現(3)找出資料中的隱藏特徵讓機器學習表現更好。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/NoiseTolerateHyperplane.JPG" class="" width="500">
+
+<p>在線性可分的問題中，前面的課程有教過可以透過PLA或是POCKET來找到分開的超平面，但PLA在求解的過程中會得到很多種解，究竟怎麼樣的切線才會是比較好的切線呢？如果以雜訊的容忍度來看，當資料產生時可能會存在或多或少的雜訊(例如從實體感測器訊號收資料時，可能會有震盪或是偏移的現象)，而雜訊是模型過擬合的因素之一。因此如果要讓模型對雜訊的容忍度最大，那麼就要讓超平面能夠離點越遠越好。例如最右邊的超平面能離點最遠，雜訊的容忍度(灰色區域)也最大。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/LargestMarginHyperplane.JPG" class="" width="500">
+
+<p>換個方式來，這會是一個最佳化問題，而最好的線須要滿足兩大條件: (1)能作出最大邊界(Margin) (2)可以把不同的類別分對。其中灰色區域的算法，是把每個點和超平面計算距離後取最小距離。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/DistanceHyperplane.JPG" class="" width="500">
+
+<p>距離的計算方法，可以想像在平面上有兩個點構成的向量，而w乘上平面上的向量為0，所以w為垂直於平面上的法向量。當有一個x要計算x和平面的距離，即為x和平面上任一個點構成的向量，並對垂直於平面的向量作投影，即為對w方向的投影。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/DistanceSeperateHyperplane.JPG" class="" width="500">
+
+<p>因為要找的是一個可以區分出正確類別的分割超平面，所以可以拆掉距離的絕對值，變成乘上y大於0(即為分割正確時值皆會大於0，如果類別分錯乘上y會小於0)</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SpecialSpearateHyperplanea.JPG" class="" width="500">
+
+<p>為了簡化式子，假設將式子放縮到最小值會等於1，那margin就會簡化為成1/|w|，並從求margin的最小值，變成分數乘上y的最小值要等於1。而且因為其條件已經滿足大於0，所以可以再拿掉一條分數乘上y要大於0的限制式。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/StandardLargeMarginHyperplane.JPG" class="" width="500">
+
+<p>為了再簡化限制式條件，限制式條件可以再從最小值為1，放寬為分數乘上y大於等於1，而且這個放寬並不會違反原本的限制式。老師這裡舉了一個例子，假設找出來的解為大於等於1.126並且不滿足等於1的條件，這時候如果把b和w除上1.126作放縮讓他滿足原本的條件，會因為w變小而使得目標式變大。這個證明在說如果找出來的解不滿於原本等於1的條件下，就不會是最佳解，因此可以對限制式條件作放寬。最後再將最大化的問題轉為求最小值(倒數)，得到最後的簡化的最佳化問題。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SVM.JPG" class="" width="500">
+
+<p>如果要找到最佳的平面，只要找到最靠近平面的點就行了，而這些點被稱為支撐向量(support vector)，就像是這個超平面是由最靠近的點所支撐起來般，這也是SVM的概念。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SolveSVM.JPG" class="" width="500">
+
+<p>因為svm要找到的最佳值是w的兩次函數，且限制式為b和w的一次式，有這樣的限制非常適合使用二次規畫作最佳化。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/WhyLargeMarginHyperplane.JPG" class="" width="500">
+
+<p>但為什麼svm可以作的好呢，老師這邊以兩個面向來說明使用svm會讓Ein和Eout越接近，且不容易overfit泛化性更佳。</p>
+<p>之前在提到regularization的時候講到，為了讓Ein越小但又不希望造成overfit，於是加上w的限制條件限制其範圍。而svm剛好對調，svm是要讓w的長度越小且限制讓所有的類別的資料分對，所以svm和regularization是一體兩面，svm找出來的灰色區域讓為了容忍雜訊對模型的干擾。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/LargeMarginRestrictDichotomy.JPG" class="" width="500">
+
+<p>假設平面上有三個點，如果是原本的pla，在任意切線上可以找到所有的類別組合(共八種)。但使用svm考量到需要維持最大特定margin區域情況，所以沒有辦法作出所有的類別排列組合。在vc維的介紹有講到，如果能作出的dichotomies越少，vc維就越小，Ein和Eout就會越接近，即泛化能力越好。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/BenefitSVM.JPG" class="" width="500">
+
+<p>從上面兩個面向來看，svm可以帶來本質上泛化性更佳的好處，並且在加上特徵轉換的方法後，non-linear的svm可以同時辦到將Ein(即分對不同類別)與Eout(泛化能力)作好。</p>
+<img src="/2020/01/09/Machine-Learning-Techniques-1/SummaryLecture1.JPG" class="" width="500">
+
+<p>這一講主要在說明如何從邊界分類問題延申出最大margin提供更強健的方法來容忍雜訊，並作svm最大margin的最佳化式子推導，最後提到最大margin帶來本值上的好處在於可以提高更佳的泛化能力。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/201_handout.pdf">Machine Learning Techniques 1</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2019/03/14/machine-learning-on-gcp-feature-engineering2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1012,7 +1148,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:29:29" itemprop="dateModified" datetime="2021-05-11T23:29:29+08:00">2021-05-11</time>
+                <time title="修改時間：2021-06-21 16:32:49" itemprop="dateModified" datetime="2021-06-21T16:32:49+08:00">2021-06-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1379,144 +1515,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/18/Machine-Learning-Foundation-14/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/18/Machine-Learning-Foundation-14/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十四講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-10-18 00:00:00" itemprop="dateCreated datePublished" datetime="2017-10-18T00:00:00+08:00">2017-10-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/10/18/Machine-Learning-Foundation-14/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/18/Machine-Learning-Foundation-14/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上一堂課講到overfitting現象，他會在使用過高的模型複雜度、雜訊過多或是資料太少時發生。上次有提到可以使用Data Clean/Purning和Data Hinting從資料面下手解決，這堂課會提到regularized手法來避免overfitting。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/Regularization.JPG" class="" width="500">
-
-<p>Overfit現象就是Target和Fit兩者相差太多，雖然可以將樣本學習的很好使Ein很小，但是卻造成泛化能力很差Eout過高，就如同右邊這張圖。regularized目標則是希望可以把Fit曲線能夠更接近Target，所以regularized可以視成一個從高次方項走向底次方項的手法，有很多的解都可以通過樣本點，但是究竟哪一組是最好的，就是regularized要作的。那該怎麼從高次多項走回低次多項式呢？</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithConstraint.JPG" class="" width="500">
-
-<p>要從高次多項式走回低次多項式，其實就可以視成低次多項式是高次多項式加上constrain，即如果把十次多項式中超過三次的項權重都設成0，那麼就可以降回二次多項式了。在求最佳化的過程也是，如果今天要求二次多項式的最小值Ein，就可以使用加上constrain的十次多項式來求最小值。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithLooserConstraint.JPG" class="" width="500">
-
-<p>進一步的可以再延伸出，如果我並不是把超過三次項的權重設成0，而是只要其中有8項設權重設成0，就可以放寬這個constrain，讓regression可以更加的有彈性。這個放寬限制條件的二項式會比本來的二項式可以變化的項次更多，但也不像十次多項式這麼複雜。所以成求Ein時，只要確保權重為0的項次小於3個就可以了，但是這種離散的限制就像PLA一樣不容易求解，是NP-hard問題。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithSofterConstraint.JPG" class="" width="500">
-
-<p>原本的條件是算權重不是0的項次要小於3，我們可以把他轉換成將每個項次權重平均相加要小於上限制C，這樣就可以轉成比較好解的問題，而且權重越接近0的取平均會越小。C如果設定的越大，就會越接近十次多項式結果，且所有比較小的C的項次組合都會被比較大的C的項次組合包含。這個H(C)又可以被稱為regularized hypothesis，即加上限制條件的hypothesis，而透過規則化的hypothesis set裡所找到的最佳hypothesis又稱為W(REG)</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/TheLagrangeMultiplier.JPG" class="" width="500">
-
-<p>再來可以和之前一樣把式子轉換成矩陣的表示方法來解最佳化問題。原本我們可以透過走梯度反方向到W(lin)這個最佳解，但是現在加上了限制式，這個限制在幾何上是一個圓圈，找到前面所提到的規則化hpothesis最佳解W(REG)的話，就得同時往梯度反方向走而且不離開圓邊。又因為往圓的法向量(紅色向量)走就會離開圓邊，所以只能往垂直於法向量的分量走(綠色向量)，當持續走到梯度反方向要是和圓的法向量平行的話，就代表不能走了，即為找到最佳解。我們可以把兩個平行向量的比值設成2λ/N。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/AugmentedErr.JPG" class="" width="500">
-
-<p>再來可以把求梯度等於0轉換回求最小值的式子，即為Ein加上一組regularizer又可稱為augmented error Eaug(w)，如果預先先指定λ值就可以很容易的解這個式子。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/Result.JPG" class="" width="500">
-
-<p>所以只要加上一點regularizer就可以對模型結果作出適當調整，今天如果λ設成0的話就等同沒有regularized即為overfitting，λ設的太大則會造成underfitting，加上regularizer就會有類似懲罰的效果。這種的規則化方法又稱為weight-decay regularization，即把權重最小的規則化方法。而且這個規則化方法可以應用到linear regresion、logistic regression甚至是其他不同的transform。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegularizationAndVC.JPG" class="" width="500">
-
-<p>但究竟這個augmented error和之前學到的VC有什麼相關性呢？用求augmented error的方法來解本來不好解的constrain Ein，這裡對應到的VC保證為Eout會小於En加上一個constrain H(C)，所以作好Eaug就能把Eout間接的也作好。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/AnotherView.JPG" class="" width="500">
-
-<p>Augmented error和VC bound其實相同的地方在於都是在求複雜度，augmented error求的是單一個hypothesis的複雜度，而VC則是在求整個hypothesis集合的複雜度。這個augmented error如果可以表現更好，那麼Eaug可能是一個比Ein更好的代理人可以幫我們作到好的Eout。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/EffectiveVCDimension.JPG" class="" width="500">
-
-<p>其實使用regulization付出的VC dimension會比原本還要小，因為在實際上有N個特徵維度下，最終透過regulization將不會使用到那麼多的維度。這裡相比原本的d(VC)，可以稱為d(EFF)，其付出的維度會比本來的d(VC)還小。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/GeneralRegularizers.JPG" class="" width="500">
-
-<p>那到底該使用什麼樣的regularizer呢？今天如果在知道target特性的情況下，可以針對target特性來設計regularizer，比如說如果想要一個比較接近偶函數的函數話，就針對奇數次方讓他變小。又或者在選出一個比較能夠說服我們的regularizer，像是比較平滑或是簡單的regularizer，因為overfitting是noise造成的，noise就會造成不平滑，像是使用L1 regularizer。或者也可以找一個好使用好最佳化的regularizer，像是前面說到的weight-decay regularizer，又被稱為L2 regularizer。如果找到不好的regularizer，那就把λ設定成0就等同於拿掉regularizer的效果。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/L2AndL1.JPG" class="" width="500">
-
-<p>L2 Regularizer最大的好處就是他很好微分求最佳值，而L1在微分求最佳值的部份比較困難，且L1在求最佳值時很常發生在頂點上，意義就是某一些的權重w會是0，所以L1 Regularizer又被稱為sparse regularizer。透過L1就可以在高維度空間下(例如1000維)，找到一些w非0的項次(可能只有5維)，所以在最後的預測只要算非0項速度會比較快。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/OptimalLambda.JPG" class="" width="500">
-
-<p>那λ該怎麼選擇呢？很明顯的可以看到不管是stochastic noise或是deterministic noise，只要noise越大λ就要越大。下一講將會開始說明在使用規則化手法時，該如何有效的使用最佳的λ。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/Summary.JPG" class="" width="500">
-
-<p>總結來看，這堂課說明規則化就是在原本的hypothesis加上一個條件，並轉成一個Augmented Error，因為作了規則化所以有些維度就不會被使用到，因此VC維度就會下降成d(EFF)，而使用regularizer的使用方法可以針對target特性，或是使用容易說服自己的regularizer，還有也可以使用好最佳化的regularizer。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/14_handout.pdf">Machine Learning Foundation 14</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1588,7 +1586,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-count">49</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
