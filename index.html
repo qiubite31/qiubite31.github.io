@@ -126,6 +126,11 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
 
   </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
+
+  </li>
         <li class="menu-item menu-item-tags">
 
     <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
@@ -456,7 +461,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-07-17 15:36:48" itemprop="dateModified" datetime="2021-07-17T15:36:48+08:00">2021-07-17</time>
+                <time title="修改時間：2022-07-09 16:36:25" itemprop="dateModified" datetime="2022-07-09T16:36:25+08:00">2022-07-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -510,11 +515,11 @@
 <h4 id="修改url指到CanvasKit位置"><a href="#修改url指到CanvasKit位置" class="headerlink" title="修改url指到CanvasKit位置"></a>修改url指到CanvasKit位置</h4><p>透過--dart-define覆寫FLUTTER_WEB_CANVASKIT_URL<a target="_blank" rel="noopener" href="https://github.com/flutter/engine/blob/7b2db6dbe1c49a8004ff865607988eec36868ccc/lib/web_ui/lib/src/engine/canvaskit/initialization.dart#L51">環境變數</a>，並指到下載的CanvasKit檔案位置。因為這裡的預設根目錄會是web/，所以如果用上述的檔案放法的話只要給/就行了。這樣在profile模式下會自動在/web/profiling/讀取CanvasKit，在release模式會自動在根目錄(預設輸出的local位置為/web/，實際佈署會存在於根目錄)讀取CanvasKit。</p>
 <p>使用profile模式：</p>
 <blockquote>
-<p>flutter run -d chrome –profile  –dart-define=FLUTTER_WEB_CANVASKIT_URL=/</p>
+<p>flutter run -d chrome --profile  --dart-define=FLUTTER_WEB_CANVASKIT_URL=/</p>
 </blockquote>
 <p>使用release模式：</p>
 <blockquote>
-<p>flutter build web  –dart-define=FLUTTER_WEB_CANVASKIT_URL=/</p>
+<p>flutter build web  --dart-define=FLUTTER_WEB_CANVASKIT_URL=/</p>
 </blockquote>
 <p>使用profile模式也可以透過在VS Code<a target="_blank" rel="noopener" href="https://flutter.dev/docs/perf/rendering/ui-performance#run-in-profile-mode">設定launch.json檔</a>中的flutterMode與args參數，接著直接在VS Code執行啟動偵錯就可以進入profile模式。如果是使用release模式也可以透過<a target="_blank" rel="noopener" href="https://pub.dev/packages/dhttpd">dhttpd</a>在本地端啟動web server測試。</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// launch.json</span></span><br><span class="line"><span class="string">&quot;configurations&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Flutter&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;dart&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;program&quot;</span>: <span class="string">&quot;lib/main.dart&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;flutterMode&quot;</span>: <span class="string">&quot;profile&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;args&quot;</span>: [<span class="string">&quot;--dart-define=FLUTTER_WEB_CANVASKIT_URL=/&quot;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
@@ -1650,7 +1655,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
