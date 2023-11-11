@@ -201,6 +201,117 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/" class="post-title-link" itemprop="url">使用collections中的namedtuple來操作簡單的物件結構</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-03-02 00:00:00" itemprop="dateCreated datePublished" datetime="2017-03-02T00:00:00+08:00">2017-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/02/使用collections中的namedtuple來操作簡單的物件結構/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>tuple在python中是一種不可變動(immutable)的資料結構，相較於list是可變動的(mutable)，兩者共同都可以使用index來讀取值，但因為tuple為不可變動，所以一經宣告即無法修改其中的值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink = (<span class="string">&#x27;Black Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;sugar free&#x27;</span>)  <span class="comment"># 我要一杯紅茶，正常冰量不加糖</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink[<span class="number">0</span>]  <span class="comment"># 可以使用index來讀取tuple中的item</span></span><br><span class="line">Black Tea</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink[<span class="number">0</span>] = <span class="string">&#x27;Green Tea&#x27;</span>  <span class="comment"># tuple為不可變動，所以無法透過assign來修改其中的值</span></span><br><span class="line">TypeError: <span class="string">&#x27;tuple&#x27;</span> <span class="built_in">object</span> does <span class="keyword">not</span> support item assignment</span><br></pre></td></tr></table></figure>
+<p>tuple很適合用來儲存一些不需要頻繁變動的資料，但是在使用上要使用index來讀取tuple中item的值，若是tuple中的item數量少也許還沒問題，但如果tuple中的item數量很多，甚至是開發一段時間又沒寫註解，往往最後這種index的讀取就變成一種魔術數字(magic number)，造成維護上的困難。</p>
+<p>namedtuple是tuple的擴展，因為namedtuple在使用上可以透過類似讀取欄位(field)名稱的方式，來取用tuple不同的item資料，所以有時候namedtuple就很適合用來代替tuple儲存資料。如果有需要頻繁讀取tuple中的item，於是你開始想建立class和物件來操作，但是資料欄位又沒有到這麼複雜到需要額外建class，這種情況很適合。</p>
+<p>下面馬上來介紹一下namedtuple的使用方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Drink = namedtuple(<span class="string">&#x27;Drink&#x27;</span>, <span class="string">&#x27;product, ice, sugar&#x27;</span>)  <span class="comment"># 宣告一種名稱(Drink)且包含三個欄位(product, ice, sugar)</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>black_tea = Drink(<span class="string">&#x27;Black Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;sugar free&#x27;</span>)  <span class="comment"># 我要一杯紅茶，正常冰量不加糖</span></span><br><span class="line"></span><br><span class="line">Drink(product=<span class="string">&#x27;Black Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;sugar free&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>black_tea.product  <span class="comment"># 可以使用一開始定義的欄位名稱來讀取值</span></span><br><span class="line">Black Tea</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>black_tea[<span class="number">0</span>]  <span class="comment"># 當然也可以使用index來讀取值</span></span><br><span class="line">Black Tea</span><br></pre></td></tr></table></figure>
+<p>宣告namedtuple需要給定兩個參數，第一個是tuple的名稱(name)，再來是這個tuple包含的欄位名稱(field_name)。欄位名稱使用字串格式代入所有需要的欄位(其中的,可加可不加)。以上面的例子來看，tuple名稱就是Drink，欄位名稱是product, ice和sugar三個。之後透過宣告的namedtuple來儲存資料，就可以使用欄位名稱來讀取item值了!</p>
+<p>namedtuple可以和tuple一樣作unpack</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>product, ice, sugar = black_tea</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sugar</span><br><span class="line">sugar free</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ice</span><br><span class="line">normal</span><br></pre></td></tr></table></figure>
+<p>也有支援直接從list和dict轉成namedtuple</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>l = [<span class="string">&#x27;Bubble Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bubble_tea = Drink._make(l)  <span class="comment"># 使用_make來將list轉成namedtuple</span></span><br><span class="line">Drink(product=<span class="string">&#x27;Bubble Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;regular&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;product&#x27;</span>: <span class="string">&#x27;Bubble Tea&#x27;</span>, <span class="string">&#x27;ice&#x27;</span>: <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;sugar&#x27;</span>: <span class="string">&#x27;regular&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bubble_tea = Drink(**d)  <span class="comment"># 使用拆開映射運算符(double-star-operator)來拆開dict轉成namedtuple</span></span><br><span class="line">Drink(product=<span class="string">&#x27;Bubble Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;regular&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>將namedtuple轉成dict(此dict為collection裡面OrderDict)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>bubble_tea_dict = bubble_tea._asdict()</span><br><span class="line">OrderedDict([(<span class="string">&#x27;product&#x27;</span>, <span class="string">&#x27;Bubble Tea&#x27;</span>), (<span class="string">&#x27;ice&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>), (<span class="string">&#x27;sugar&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>)])</span><br></pre></td></tr></table></figure>
+<p>如果今天已經存在一個namedtuple，需要使用現存的namedtuple來新增一個新的namedtuple也可以使用_filed來辦到</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>Ingredient = namedtuple(<span class="string">&#x27;Ingredient&#x27;</span>, <span class="string">&#x27;tapioca_pearls, grass_jelly, flan&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Order = namedtuple(<span class="string">&#x27;Order&#x27;</span>, Drink._fields + Ingredient._fields)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我要一杯奶茶，正常冰半糖加布丁</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order = Order(<span class="string">&#x27;Milk Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;half sugar&#x27;</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">True</span>)</span><br><span class="line">Order(product=<span class="string">&#x27;Milk Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;half sugar&#x27;</span>, tapioca_pearls=<span class="literal">False</span>, grass_jelly=<span class="literal">False</span>, flan=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p>在開發過程中，如果可以巧妙的使用namedtuple，可以讓程式更加有可讀性，也可以讓幫助下降日後的維護成本!</p>
+<p><a target="_blank" rel="noopener" href="https://docs.python.org/3.6/library/collections.html#collections.namedtuple">Python docs - namedtuple() Factory Function for Tuples with Named Fields</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/11/14/nonlocal%E8%88%87global%E9%97%9C%E9%8D%B5%E5%AD%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -544,7 +655,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:53:00" itemprop="dateModified" datetime="2021-05-11T22:53:00+08:00">2021-05-11</time>
+                <time title="修改時間：2023-04-26 00:28:39" itemprop="dateModified" datetime="2023-04-26T00:28:39+08:00">2023-04-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -552,7 +663,7 @@
               </span>
               <span class="post-meta-item-text">分類於</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SQL/" itemprop="url" rel="index"><span itemprop="name">SQL</span></a>
+                  <a href="/categories/SQL-NoSQL/" itemprop="url" rel="index"><span itemprop="name">SQL&NoSQL</span></a>
                 </span>
             </span>
 
@@ -1214,7 +1325,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1227,7 +1338,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1262,7 +1373,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

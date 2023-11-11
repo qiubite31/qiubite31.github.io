@@ -201,6 +201,169 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2023/11/11/before-adopt-cassandra-you-need-to-know/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/11/11/before-adopt-cassandra-you-need-to-know/" class="post-title-link" itemprop="url">在採用Cassandra前你必須要知道的事-CQL不是SQL</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+              
+
+              <time title="創建時間：2023-11-11 15:43:00 / 修改時間：23:19:40" itemprop="dateCreated datePublished" datetime="2023-11-11T15:43:00+08:00">2023-11-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL-NoSQL/" itemprop="url" rel="index"><span itemprop="name">SQL&NoSQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/11/11/before-adopt-cassandra-you-need-to-know/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/11/11/before-adopt-cassandra-you-need-to-know/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。</p>
+<p>在導入的過程中當然沒有這麼順利，特別是對於只用過Oracle或是SQL Server等RDBMS技術，完全沒有碰過NoSQL的開發團隊，大家對於使用Cassandra總是有錯誤的想像，或是在不熟悉與不合適的使用情境下，最後造成大家與Cassandra「不歡而散」。</p>
+<p>這篇想開始談談實際使用Cassandra後會因為Cassandra的設計限制遇到的問題，希望大家在一頭熱投入Cassandra的研究前，可以評估使用情境是否適合。我特別推薦在準備DataStax的Cassandra Developer Certification時上到的一堂課，這堂<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=jYvKiewV-5Q&list=PL2g2h-wyI4SqIigskyJNAeL2vSTJZU_Qp">DS220</a>提到許多Cassandra在實在作data modeling會需要知道的技巧和特性。</p>
+<p>回到這次想談的，CQL不是SQL。</p>
+<p>在初期投入Cassandra技術評估，看到Cassandra支援CQL(Cassandra Query Language)時，肯定會讓RDBMS開發者眼睛一亮，這看起來多麼的熟悉，忍不住在比較NoSQL方案時在Cassandra蓋上一個優勝的章。當然我不能否認當初我們也這麼認為，一直到大家實際使用時，才會發現CQL和SQL有根本上的不同。</p>
+<h4 id="不是任意欄位都能FILTER"><a href="#不是任意欄位都能FILTER" class="headerlink" title="不是任意欄位都能FILTER"></a>不是任意欄位都能FILTER</h4><p>簡單來說，比起RDBMS的SQL查詢，Cassandra因為本身的設計，所以CQL本來就只能作到有限度的查詢。CQL不能像SQL一樣可以將任意欄位放在where條件執行查詢，而是只能針對設定成partition key和clustering key的欄位進行查詢，甚至對組成clustering key的欄位，還有查詢順序的限制。當然這裡我們就先不提建立secondary index或是materialize view的情況。</p>
+<p>拿下面這個簡單的員工資料表來說明。</p>
+<table>
+<thead>
+<tr>
+<th align="left">deptname</th>
+<th align="right">jobgrade</th>
+<th align="right">gender</th>
+<th align="right">emplid</th>
+<th align="center">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">HR</td>
+<td align="right">1</td>
+<td align="right">Male</td>
+<td align="right">001</td>
+<td align="center">Tom</td>
+</tr>
+<tr>
+<td align="left">HR</td>
+<td align="right">3</td>
+<td align="right">Female</td>
+<td align="right">002</td>
+<td align="center">Amy</td>
+</tr>
+<tr>
+<td align="left">Design</td>
+<td align="right">2</td>
+<td align="right">Male</td>
+<td align="right">003</td>
+<td align="center">John</td>
+</tr>
+<tr>
+<td align="left">Design</td>
+<td align="right">1</td>
+<td align="right">Female</td>
+<td align="right">004</td>
+<td align="center">Alice</td>
+</tr>
+<tr>
+<td align="left">HR</td>
+<td align="right">1</td>
+<td align="right">Male</td>
+<td align="right">005</td>
+<td align="center">Bob</td>
+</tr>
+<tr>
+<td align="left">Design</td>
+<td align="right">3</td>
+<td align="right">Male</td>
+<td align="right">006</td>
+<td align="center">Henry</td>
+</tr>
+</tbody></table>
+<p>在Cassandra的員工表作了以下設計，如果不說是Cassandra的話，看起來其實就和一般的RDBMS沒有差別。但在Cassandra中下面建立的員工表其實隱含了將deptName設定為partition key，clustering key設定為jobgrade、gender和emplid的意思。以下的語法可以把這個範例建起來，<a target="_blank" rel="noopener" href="https://astra.datastax.com/">DataStax</a>有提供線上的serverless database可以使用。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- create</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> CASSANDRA.EMPLOYEE (</span><br><span class="line">  deptName text,</span><br><span class="line">  jobgrade text,</span><br><span class="line">  empId text,</span><br><span class="line">  name text,</span><br><span class="line">  gender text,</span><br><span class="line">  <span class="keyword">primary</span> key(deptName, jobgrade, gender, empId)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;001&#x27;</span>, <span class="string">&#x27;Tom&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;002&#x27;</span>, <span class="string">&#x27;Amy&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;003&#x27;</span>, <span class="string">&#x27;John&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;004&#x27;</span>, <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;005&#x27;</span>, <span class="string">&#x27;Mary&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;006&#x27;</span>, <span class="string">&#x27;Henry&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- select</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE;</span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">002</span> <span class="operator">|</span>   Amy</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">2</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">003</span> <span class="operator">|</span>  John</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">006</span> <span class="operator">|</span> Henry</span><br></pre></td></tr></table></figure>
+<p>假設在RDBMS裡用以上建立的資料表，舉幾種查詢情境如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查詢jobgrade為1的員工資料</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查詢deptname為HR, gender為Male的名字</span></span><br><span class="line"><span class="keyword">SELECT</span> name </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> gender <span class="operator">=</span> <span class="string">&#x27;Male&#x27;</span></span><br><span class="line"></span><br><span class="line"> name</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">  Tom</span><br><span class="line"></span><br><span class="line"> <span class="comment">--查詢deptname為HR, jobgrade為1的員工資料 </span></span><br><span class="line"> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br></pre></td></tr></table></figure>
+
+<p>以上看起來很直覺的查詢，如果是在Cassandra的世界裡，執行第一支CQL會得到以下的錯誤：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING&quot;</span><br></pre></td></tr></table></figure>
+
+<p>Cassandra會將資料依partitiony key分散放到不同的partition存放，所以在CQL查詢中的第一個條件必須要帶partition key(也就是deptname)，Cassandra才能直接到指定的partition取回資料，用來加速資料查詢的速度。因此在不給定partition key條件下直接用jobgrade作filter是不允許的。</p>
+<p>第二支CQL執行則會得到以下的錯誤：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;PRIMARY KEY column &quot;gender&quot; cannot be restricted as preceding column &quot;jobgrade&quot; is not restricted&quot;</span><br></pre></td></tr></table></figure>
+
+<p>因為Cassandra的世界裡，會將一個partition內部的資料依據clustering key作排序。以員工資料表為例，會以deptname切partition後，再依序用jobgrade、gender和emplid排序。</p>
+<p>Casssandra透過預先排序的方式，在查詢資料時就可以得到排序結果，和SQL查詢完才作order by不同。因此Cassandra嚴格限制clustering key的欄位必須要依順序作filter，所以跳過jobgrade先查詢gender是不允許的。</p>
+<p>第三支CQL則因為符合partition和clustering限制所以可以成功執行。由以上可以發現，CQL雖然和SQL語法非常相似，但本質上Cassandra就是NoSQL資料庫，也有本身的設計限制。因此對於SQL使用者來說，千萬不要因為看到很像SQL的語法，就覺得可以很容易的上手使用！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1395,147 +1558,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/21/Machine-Learning-Techniques-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/21/Machine-Learning-Techniques-2/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第二講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2020-01-21 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-21T00:00:00+08:00">2020-01-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:44:29" itemprop="dateModified" datetime="2021-05-11T23:44:29+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/01/21/Machine-Learning-Techniques-2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/21/Machine-Learning-Techniques-2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>前面第一堂課在介紹線性的SVM，透過二次規畫找到最大margin的支撐向量來建立更強健的模型。這堂課將會延讀svm並加上非線性轉換的方式，讓SVM不止可以控制模型複雜度，也能結合特微轉換來提高模型效果。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/DualSVM.JPG" class="" width="500">
-
-<p>假設透過特徵轉換的方法將SVM轉為非線性，原本的x會被轉換到z空間，但又希望可以在解SVM最佳化問題時，能夠擺脫轉換到z空間高維度的依賴。即將非線性轉換轉成另一個對等問題，不管轉到幾維的空間，都只會有N個變數，變數數量不會和要轉換的維度的有關，這稱為原本SVM的對偶問題(dual problem)。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/LagrangeMultiplier.JPG" class="" width="500">
-
-<p>之前篇章在介紹regularization時，引入了Lagrange Multipliers的概念，將原本帶有W長度小於C的限制式，轉成加上Eaug後求最小值，其中λ會被乘上每個系數加進最佳化式子中。因為SVM也是一個有條件的最佳化問題，但是在引入λ時有別於regularization中被當作給定值，在SVM中會被當作未知的值來解最佳化問題。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/UnconstrainedSVM.JPG" class="" width="500">
-
-<p>為了把原本有限制式的SVM最佳化問題，在引入Lagrange Multiplier後轉成沒有限制式的問題，會將限制式移項乘上α(即λ在SVM文獻為α)後相加。但是將有限制式的最佳化的問題，轉成沒有限制式的最佳化的問題，是否能夠得到一樣的結果？老師在這裡舉了兩種例子來說明其實會得到一樣的結果。假設選到一組會違反原本限制式的B,W(即α乘上的項次會是正值)，這種最終會在解最小值SVM問題時被逃汰；相反的，如果選到一組符合原本限制式的B,W(即α乘上的項次會負值)，這種解反而在最後會被留下來。因此將限制式轉益沒有限制式的最佳化問題，其實只是把限制藏進求最大值的最佳化中。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/LagrangeDualProblem.JPG" class="" width="500">
-
-<p>在轉成無限制式的最佳化問題後，會發現假設在固定α之下，整個最佳化得出來的值會比任一的Lagrange值還要大，甚至取完最大值右邊的不等式也一樣成立，這個min和max互相交換稱為lagrange dual problem。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/StrongDualityQP.JPG" class="" width="500">
-
-<p>對於二次規畫，這個duel problem因為滿足強對偶關係，因此求出來的b,w,α值對於左右兩邊的式子都是最佳值，因此可以將原本左邊的最佳化問題，直接轉成解右邊的對偶問題來求最佳值。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/DualSimplification1.JPG" class="" width="500">
-
-<p>再進一步化解最佳化問題，如果要得到內部式子的最佳值，因為其為無限制的最佳化問題，因此最佳解會產生在梯度為0，即內部式子微分為0。首先對b微分後加進原本的式子，因為加進去的條件值為0時為最佳解，所以不止不會影響原本求出的最佳解，也可以同時去掉b這個項次。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/DualSimplification2.JPG" class="" width="500">
-
-<p>再來對w微分後加進原本的式子，可以將w轉換成α．y．z相乘，在去掉w項次後，也不需要對原本的w取最小值，並轉成一個只有對α作最佳化的問題，得到簡化版的對偶問題。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/KKTcondition.JPG" class="" width="500">
-
-<p>前面有提到如果要滿足對偶問題，即b,w,α的解對於左右兩邊的最佳化問題都是最佳值，需要滿足特定條件，這稱為KKT最佳化條件，再會來透過這些條件來解最佳的b,w。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/DualFormulationSVM.JPG" class="" width="500">
-
-<p>再來先乘上-1先將最大值問題轉成最小值問題，再把平方向解開後，就可以將每個條件丟進QP來解出最佳值。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/Optimal.JPG" class="" width="500">
-
-<p>如果今天在滿足KKT條件下要找到b,w的最佳值，首先要找到最佳的w，因為只有一條條件和w相關所以很容易找到最佳值。在找最佳的b時，共有2個條件和b相關，在第2個條件可以發現如果在α大於0的情況下，y(W．z + b)即需要等於1才能滿足條件，而這個值就是原本要找的最佳解，因此在解對偶問題時，可以同時找到SVM的支稱向量。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/SupportVectorRevisit.JPG" class="" width="500">
-
-<p>既然證明在α大於0的情況下，可以找到支撐向量，相反的回到原本的SVM概念，其意義在於如果可以知道有哪些支稱向量，就可以找到最大的margin，其他的點皆可以不管。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/RepresentHyperplane.JPG" class="" width="500">
-
-<p>SVM和PLA其實很相似都會找出區分不同類別資料的超平面，差別在於兩者著重的點是不同的，SVM是著重在使用支稱向量表現出來，而PLA是使用分類錯誤(犯錯)的點表現出來。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/TwoFormHardMarginSVM.JPG" class="" width="500">
-
-<p>上一講介紹的原始SVM為Hard-Margin SVM，透過求特定放縮後的b,w最佳值，他和要轉換的空間維度有關，適合維度較小的問題；而這一講的SVM是引入Lagrange的SVM，透過找最佳的支稱向量和α來重構邊界，並且和資料量的大小有關，適合資料量小的問題。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/AreWeDoneYet.JPG" class="" width="500">
-
-<p>但到目前為止仍然沒辦法完全擺脫處理高度空間維度轉換的問題，因為在QP求Q矩陣時，仍會碰到z向量內積的問題，z向量的維度等同於目前要解的維度。</p>
-<img src="/2020/01/21/Machine-Learning-Techniques-2/Summary.JPG" class="" width="500">
-
-<p>這一講提到透過對偶問題來移除對d維度的依賴，並引入Lagrange與KKT條件，透過QP來解出最佳值，並發現解出的最佳值就是支稱向量，並可以用來建立最大margin。下一講將會說明如何真正擺脫和d維度相關的計算。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/202_handout.pdf">Machine Learning Techniques 2</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1607,7 +1629,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1620,7 +1642,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1655,7 +1677,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

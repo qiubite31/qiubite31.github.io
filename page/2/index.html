@@ -201,6 +201,147 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/21/Machine-Learning-Techniques-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/21/Machine-Learning-Techniques-2/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第二講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2020-01-21 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-21T00:00:00+08:00">2020-01-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:44:29" itemprop="dateModified" datetime="2021-05-11T23:44:29+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/01/21/Machine-Learning-Techniques-2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/21/Machine-Learning-Techniques-2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前面第一堂課在介紹線性的SVM，透過二次規畫找到最大margin的支撐向量來建立更強健的模型。這堂課將會延讀svm並加上非線性轉換的方式，讓SVM不止可以控制模型複雜度，也能結合特微轉換來提高模型效果。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/DualSVM.JPG" class="" width="500">
+
+<p>假設透過特徵轉換的方法將SVM轉為非線性，原本的x會被轉換到z空間，但又希望可以在解SVM最佳化問題時，能夠擺脫轉換到z空間高維度的依賴。即將非線性轉換轉成另一個對等問題，不管轉到幾維的空間，都只會有N個變數，變數數量不會和要轉換的維度的有關，這稱為原本SVM的對偶問題(dual problem)。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/LagrangeMultiplier.JPG" class="" width="500">
+
+<p>之前篇章在介紹regularization時，引入了Lagrange Multipliers的概念，將原本帶有W長度小於C的限制式，轉成加上Eaug後求最小值，其中λ會被乘上每個系數加進最佳化式子中。因為SVM也是一個有條件的最佳化問題，但是在引入λ時有別於regularization中被當作給定值，在SVM中會被當作未知的值來解最佳化問題。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/UnconstrainedSVM.JPG" class="" width="500">
+
+<p>為了把原本有限制式的SVM最佳化問題，在引入Lagrange Multiplier後轉成沒有限制式的問題，會將限制式移項乘上α(即λ在SVM文獻為α)後相加。但是將有限制式的最佳化的問題，轉成沒有限制式的最佳化的問題，是否能夠得到一樣的結果？老師在這裡舉了兩種例子來說明其實會得到一樣的結果。假設選到一組會違反原本限制式的B,W(即α乘上的項次會是正值)，這種最終會在解最小值SVM問題時被逃汰；相反的，如果選到一組符合原本限制式的B,W(即α乘上的項次會負值)，這種解反而在最後會被留下來。因此將限制式轉益沒有限制式的最佳化問題，其實只是把限制藏進求最大值的最佳化中。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/LagrangeDualProblem.JPG" class="" width="500">
+
+<p>在轉成無限制式的最佳化問題後，會發現假設在固定α之下，整個最佳化得出來的值會比任一的Lagrange值還要大，甚至取完最大值右邊的不等式也一樣成立，這個min和max互相交換稱為lagrange dual problem。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/StrongDualityQP.JPG" class="" width="500">
+
+<p>對於二次規畫，這個duel problem因為滿足強對偶關係，因此求出來的b,w,α值對於左右兩邊的式子都是最佳值，因此可以將原本左邊的最佳化問題，直接轉成解右邊的對偶問題來求最佳值。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/DualSimplification1.JPG" class="" width="500">
+
+<p>再進一步化解最佳化問題，如果要得到內部式子的最佳值，因為其為無限制的最佳化問題，因此最佳解會產生在梯度為0，即內部式子微分為0。首先對b微分後加進原本的式子，因為加進去的條件值為0時為最佳解，所以不止不會影響原本求出的最佳解，也可以同時去掉b這個項次。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/DualSimplification2.JPG" class="" width="500">
+
+<p>再來對w微分後加進原本的式子，可以將w轉換成α．y．z相乘，在去掉w項次後，也不需要對原本的w取最小值，並轉成一個只有對α作最佳化的問題，得到簡化版的對偶問題。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/KKTcondition.JPG" class="" width="500">
+
+<p>前面有提到如果要滿足對偶問題，即b,w,α的解對於左右兩邊的最佳化問題都是最佳值，需要滿足特定條件，這稱為KKT最佳化條件，再會來透過這些條件來解最佳的b,w。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/DualFormulationSVM.JPG" class="" width="500">
+
+<p>再來先乘上-1先將最大值問題轉成最小值問題，再把平方向解開後，就可以將每個條件丟進QP來解出最佳值。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/Optimal.JPG" class="" width="500">
+
+<p>如果今天在滿足KKT條件下要找到b,w的最佳值，首先要找到最佳的w，因為只有一條條件和w相關所以很容易找到最佳值。在找最佳的b時，共有2個條件和b相關，在第2個條件可以發現如果在α大於0的情況下，y(W．z + b)即需要等於1才能滿足條件，而這個值就是原本要找的最佳解，因此在解對偶問題時，可以同時找到SVM的支稱向量。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/SupportVectorRevisit.JPG" class="" width="500">
+
+<p>既然證明在α大於0的情況下，可以找到支撐向量，相反的回到原本的SVM概念，其意義在於如果可以知道有哪些支稱向量，就可以找到最大的margin，其他的點皆可以不管。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/RepresentHyperplane.JPG" class="" width="500">
+
+<p>SVM和PLA其實很相似都會找出區分不同類別資料的超平面，差別在於兩者著重的點是不同的，SVM是著重在使用支稱向量表現出來，而PLA是使用分類錯誤(犯錯)的點表現出來。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/TwoFormHardMarginSVM.JPG" class="" width="500">
+
+<p>上一講介紹的原始SVM為Hard-Margin SVM，透過求特定放縮後的b,w最佳值，他和要轉換的空間維度有關，適合維度較小的問題；而這一講的SVM是引入Lagrange的SVM，透過找最佳的支稱向量和α來重構邊界，並且和資料量的大小有關，適合資料量小的問題。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/AreWeDoneYet.JPG" class="" width="500">
+
+<p>但到目前為止仍然沒辦法完全擺脫處理高度空間維度轉換的問題，因為在QP求Q矩陣時，仍會碰到z向量內積的問題，z向量的維度等同於目前要解的維度。</p>
+<img src="/2020/01/21/Machine-Learning-Techniques-2/Summary.JPG" class="" width="500">
+
+<p>這一講提到透過對偶問題來移除對d維度的依賴，並引入Lagrange與KKT條件，透過QP來解出最佳值，並發現解出的最佳值就是支稱向量，並可以用來建立最大margin。下一講將會說明如何真正擺脫和d維度相關的計算。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/202_handout.pdf">Machine Learning Techniques 2</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1373,153 +1514,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/25/Machine-Learning-Foundation-15/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/25/Machine-Learning-Foundation-15/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十五講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-10-25 00:00:00" itemprop="dateCreated datePublished" datetime="2017-10-25T00:00:00+08:00">2017-10-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/10/25/Machine-Learning-Foundation-15/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/25/Machine-Learning-Foundation-15/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上一堂課講到為了避免overfitting，可以使用regularization的技巧，把一個regularizer加在Ein上面，轉而求Augmented Error反而可以有效的解決模型複雜度太高的問題。這一堂課會講到該如何使用Validation的手法幫助選擇機器學習裡面不同的參數。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ManyModel.JPG" class="" width="500">
-
-<p>在訓練一個機器學習模型，其中會遇到很多的選擇，包含使用哪些演算法、使用多少資料、要使用什麼非線性轉換方法，甚至是要使用哪一種regularizer。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelection.JPG" class="" width="500">
-
-<p>Machine Learning裡面最實務的問題，就是如何作出好的選擇讓最後Eout可以作到最好，如果用視覺化的方法來作選擇，反而會受到自己的主觀影響，那到底該怎麼作選擇呢？</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelectionByEin.JPG" class="" width="500">
-
-<p>如果使用Ein來作模型選擇的話，就會受到overfitting的影響，越複雜的模型就越容易作好更好的Ein，但是會付出模型複雜度的代價，因為overfitting造成泛化能力變差，Eout反而也作不好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelectionByEtest.JPG" class="" width="500">
-
-<p>那如果我們可以拿到實際的測試資料，就拿實際的測試資料衡量模型表現就好了，但是實務上可能不會有這樣的實際測試資料。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/EinAndEtest.JPG" class="" width="500">
-
-<p>如果使用Ein來選模型不可行，而實務上又拿不到實際的資料該怎麼取平衡呢？我們可以使用手上的樣本資料，把一部份切出來當作看不到的測試資料，再拿剩下的資料作學習，並使用切出來的資料衡量模型的效果。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ValidationSet.JPG" class="" width="500">
-
-<p>原本的樣本資料D要負擔兩種角色，一個是透過D來求出最好的Ein，然後再把D丟進演算法得到一個Hypothesis G，前面有講到如果這樣的話很可能會造成overfitting問題，所以我們把資料分成train和validation，先使用train總共N-K筆資料練習出好的Ein，並得到Hypothesis G，最後再透過K筆validation資料來驗證G到底好還不好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelectionByEval.JPG" class="" width="500">
-
-<p>從前面講到的learning curve可以知道，如果使用較多的資料來訓練會得到比較好的結果，所以實務上雖然會使用D(train)來訓練出不同的Hypothesis，然後使用D(val)作評估並選出最好的模型，但是最後在選好模型之後，會再把全部的資料D丟進模型裡作訓練，因為使用全部的資料會比較用部份訓練資料所訓練出來的模型還要好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ValidaionPractice.JPG" class="" width="500">
-
-<p>從驗證資料量和Eout來分析可以看到黑線的Eout會很大，因為在使用複雜的模型之下可能因為overfitting的關係造成Eout作不好；而虛線是用Etest資料，但是這個最佳的測試資料常常是不存在的；紅色是只使用訓練資料建立模型得到的Eout，他會比藍色使用全部資料來訓練所得到的Eout還要來的高。至於為什麼使用訓練資料會比使用Ein還要來的差的原因，是因為當驗證資料量K越大，代表訓練資料就越小，可能產生underfitting使得模型怎麼樣都練習不好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/Dilemma.JPG" class="" width="500">
-
-<p>所以我們會遇到不知道該怎麼選擇驗證資料量K的情況，因為如果用了比較大的K，雖然可以確保validation和Eout可以比較接近，但卻會造成訓練資料的Eout和全部資料的Eout差很多；但如果使用小的K雖然可以確保訓練資料的Eout和全部資料的Eout很接近，但是就無法確保validation和Eout到底接不接近。實務上的K常使用N/5。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/K=1.JPG" class="" width="500">
-
-<p>假設今天設定K=1，並且重複抽出一筆當驗證算出error，再來把error作平均，就可以透過計算這個平均的error來推估Eout。而這種只抽一筆當驗證的方法就稱為leave-one-out的cross validation，因為每次都用N-K筆計算一個g，所以稱為交叉驗證。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/LOO.JPG" class="" width="500">
-
-<p>在使用leave-one-out cross validation可以有兩種方法，第一種是拿掉一個點，用剩下的點作迴歸，再計算驗證的點到迴歸的距離當作error；第二種是拿掉一個貫，用剩下的點中間取一個常數，再計算驗證的點到常數的距離當作error，透過比較這兩種方法得到的較小的error，就可以選出比較好的模型，也許使用計算迴歸不一定會得到比較小的error，反而使用常數來計算還得到較好的結果。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/GuaranteeOfLOO.JPG" class="" width="500">
-
-<p>而且leave-one-out cross validation的期望值，確實也可以證明和Eout是相近的，這個部份證明這裡就不多作說明了。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/LOOPractice.JPG" class="" width="500">
-
-<p>在實務上，如果使用Ein來選擇模型，使用越多的特徵雖然可以得到較小的Ein，但卻也可以造成overfitting，反而和Eout相差很大。但是如果使用leave-one-out cross validation的方法來選模型，確實可以找到一個比較接近Eout的結果，而且絕對對比Ein要來的好很多。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/DisadventageLOO.JPG" class="" width="500">
-
-<p>使用leave-one-out的最大問題，就是他會花很多的時間在作訓練，如果樣本資料有1000筆，每次都要拿999筆來訓練並重複作一千次才能取到平均的Error，所以在實務上leave-one-out要用來選擇模型可能比較不可行。第二個問題是leave-one-out因為每次只取一個點，所以他的變動程度很高，雖然有取平均，但是他本質上還是一個變動程度比較高的評估方法。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/VFoldCrossValidation.JPG" class="" width="500">
-
-<p>所以實務上，第一個希望可以降低訓練的次數，比起之前的1000次訓練，可以切成10份的方式，每次取9份作訓練1份作驗證後作平均，這樣就只需要作10次而不需要作到1000次。而且這個方法也可以作到交叉驗證的效果，leave-one-out其實也就是這種方法的極端例子。實務上比較常用的方法是切成十份，又可以稱為10-fold cross validation</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/FinalWord.JPG" class="" width="500">
-
-<p>使用cross validation在實務上會比只作一次validation當果會比較好也比較穩定，但是前提是在計算上是充許的，因為作k次的交叉驗證作平均需要額外的運算資源；而validation切5份或是10份就可以得到比較好的結果，不需要真的使用到leave-one-out。我們透過validation是可以讓我們選到一個比較好的模型，但是要注意的是，這個validation還是比最終使用測試資料的結果應該還是要樂觀的，只要真正應用在測試資料，你才會知道真的的效果如何。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/Summary.JPG" class="" width="500">
-
-<p>總結來說，這堂課學到使用Ein來選擇模型是很危險的，並談到leave-one-out cross validaion與實務上會使用到的k-fold corss validation可以用來作模型選擇。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/15_handout.pdf">Machine Learning Foundation 15</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1591,7 +1585,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1604,7 +1598,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1639,7 +1633,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。 在導入的過程中當然">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在採用Cassandra前你必須要知道的事-CQL不是SQL">
+<meta property="og:url" content="https://qiubite31.github.io/2023/11/11/before-adopt-cassandra-you-need-to-know/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。 在導入的過程中當然">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2023-11-11T07:43:00.000Z">
+<meta property="article:modified_time" content="2023-11-11T15:19:40.798Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Cassandra">
+<meta property="article:tag" content="NoSQL">
+<meta property="article:tag" content="CQL">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://qiubite31.github.io/2023/11/11/before-adopt-cassandra-you-need-to-know/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>在採用Cassandra前你必須要知道的事-CQL不是SQL | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2023/11/11/before-adopt-cassandra-you-need-to-know/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          在採用Cassandra前你必須要知道的事-CQL不是SQL
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+              
+
+              <time title="創建時間：2023-11-11 15:43:00 / 修改時間：23:19:40" itemprop="dateCreated datePublished" datetime="2023-11-11T15:43:00+08:00">2023-11-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL-NoSQL/" itemprop="url" rel="index"><span itemprop="name">SQL&NoSQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/11/11/before-adopt-cassandra-you-need-to-know/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/11/11/before-adopt-cassandra-you-need-to-know/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。</p>
+<p>在導入的過程中當然沒有這麼順利，特別是對於只用過Oracle或是SQL Server等RDBMS技術，完全沒有碰過NoSQL的開發團隊，大家對於使用Cassandra總是有錯誤的想像，或是在不熟悉與不合適的使用情境下，最後造成大家與Cassandra「不歡而散」。</p>
+<p>這篇想開始談談實際使用Cassandra後會因為Cassandra的設計限制遇到的問題，希望大家在一頭熱投入Cassandra的研究前，可以評估使用情境是否適合。我特別推薦在準備DataStax的Cassandra Developer Certification時上到的一堂課，這堂<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=jYvKiewV-5Q&list=PL2g2h-wyI4SqIigskyJNAeL2vSTJZU_Qp">DS220</a>提到許多Cassandra在實在作data modeling會需要知道的技巧和特性。</p>
+<p>回到這次想談的，CQL不是SQL。</p>
+<p>在初期投入Cassandra技術評估，看到Cassandra支援CQL(Cassandra Query Language)時，肯定會讓RDBMS開發者眼睛一亮，這看起來多麼的熟悉，忍不住在比較NoSQL方案時在Cassandra蓋上一個優勝的章。當然我不能否認當初我們也這麼認為，一直到大家實際使用時，才會發現CQL和SQL有根本上的不同。</p>
+<h4 id="不是任意欄位都能FILTER"><a href="#不是任意欄位都能FILTER" class="headerlink" title="不是任意欄位都能FILTER"></a>不是任意欄位都能FILTER</h4><p>簡單來說，比起RDBMS的SQL查詢，Cassandra因為本身的設計，所以CQL本來就只能作到有限度的查詢。CQL不能像SQL一樣可以將任意欄位放在where條件執行查詢，而是只能針對設定成partition key和clustering key的欄位進行查詢，甚至對組成clustering key的欄位，還有查詢順序的限制。當然這裡我們就先不提建立secondary index或是materialize view的情況。</p>
+<p>拿下面這個簡單的員工資料表來說明。</p>
+<table>
+<thead>
+<tr>
+<th align="left">deptname</th>
+<th align="right">jobgrade</th>
+<th align="right">gender</th>
+<th align="right">emplid</th>
+<th align="center">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">HR</td>
+<td align="right">1</td>
+<td align="right">Male</td>
+<td align="right">001</td>
+<td align="center">Tom</td>
+</tr>
+<tr>
+<td align="left">HR</td>
+<td align="right">3</td>
+<td align="right">Female</td>
+<td align="right">002</td>
+<td align="center">Amy</td>
+</tr>
+<tr>
+<td align="left">Design</td>
+<td align="right">2</td>
+<td align="right">Male</td>
+<td align="right">003</td>
+<td align="center">John</td>
+</tr>
+<tr>
+<td align="left">Design</td>
+<td align="right">1</td>
+<td align="right">Female</td>
+<td align="right">004</td>
+<td align="center">Alice</td>
+</tr>
+<tr>
+<td align="left">HR</td>
+<td align="right">1</td>
+<td align="right">Male</td>
+<td align="right">005</td>
+<td align="center">Bob</td>
+</tr>
+<tr>
+<td align="left">Design</td>
+<td align="right">3</td>
+<td align="right">Male</td>
+<td align="right">006</td>
+<td align="center">Henry</td>
+</tr>
+</tbody></table>
+<p>在Cassandra的員工表作了以下設計，如果不說是Cassandra的話，看起來其實就和一般的RDBMS沒有差別。但在Cassandra中下面建立的員工表其實隱含了將deptName設定為partition key，clustering key設定為jobgrade、gender和emplid的意思。以下的語法可以把這個範例建起來，<a target="_blank" rel="noopener" href="https://astra.datastax.com/">DataStax</a>有提供線上的serverless database可以使用。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- create</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> CASSANDRA.EMPLOYEE (</span><br><span class="line">  deptName text,</span><br><span class="line">  jobgrade text,</span><br><span class="line">  empId text,</span><br><span class="line">  name text,</span><br><span class="line">  gender text,</span><br><span class="line">  <span class="keyword">primary</span> key(deptName, jobgrade, gender, empId)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;001&#x27;</span>, <span class="string">&#x27;Tom&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;002&#x27;</span>, <span class="string">&#x27;Amy&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;003&#x27;</span>, <span class="string">&#x27;John&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;004&#x27;</span>, <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;005&#x27;</span>, <span class="string">&#x27;Mary&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;006&#x27;</span>, <span class="string">&#x27;Henry&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- select</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE;</span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">002</span> <span class="operator">|</span>   Amy</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">2</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">003</span> <span class="operator">|</span>  John</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">006</span> <span class="operator">|</span> Henry</span><br></pre></td></tr></table></figure>
+<p>假設在RDBMS裡用以上建立的資料表，舉幾種查詢情境如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查詢jobgrade為1的員工資料</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查詢deptname為HR, gender為Male的名字</span></span><br><span class="line"><span class="keyword">SELECT</span> name </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> gender <span class="operator">=</span> <span class="string">&#x27;Male&#x27;</span></span><br><span class="line"></span><br><span class="line"> name</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">  Tom</span><br><span class="line"></span><br><span class="line"> <span class="comment">--查詢deptname為HR, jobgrade為1的員工資料 </span></span><br><span class="line"> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br></pre></td></tr></table></figure>
+
+<p>以上看起來很直覺的查詢，如果是在Cassandra的世界裡，執行第一支CQL會得到以下的錯誤：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING&quot;</span><br></pre></td></tr></table></figure>
+
+<p>Cassandra會將資料依partitiony key分散放到不同的partition存放，所以在CQL查詢中的第一個條件必須要帶partition key(也就是deptname)，Cassandra才能直接到指定的partition取回資料，用來加速資料查詢的速度。因此在不給定partition key條件下直接用jobgrade作filter是不允許的。</p>
+<p>第二支CQL執行則會得到以下的錯誤：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;PRIMARY KEY column &quot;gender&quot; cannot be restricted as preceding column &quot;jobgrade&quot; is not restricted&quot;</span><br></pre></td></tr></table></figure>
+
+<p>因為Cassandra的世界裡，會將一個partition內部的資料依據clustering key作排序。以員工資料表為例，會以deptname切partition後，再依序用jobgrade、gender和emplid排序。</p>
+<p>Casssandra透過預先排序的方式，在查詢資料時就可以得到排序結果，和SQL查詢完才作order by不同。因此Cassandra嚴格限制clustering key的欄位必須要依順序作filter，所以跳過jobgrade先查詢gender是不允許的。</p>
+<p>第三支CQL則因為符合partition和clustering限制所以可以成功執行。由以上可以發現，CQL雖然和SQL語法非常相似，但本質上Cassandra就是NoSQL資料庫，也有本身的設計限制。因此對於SQL使用者來說，千萬不要因為看到很像SQL的語法，就覺得可以很容易的上手使用！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Cassandra/" rel="tag"># Cassandra</a>
+              <a href="/tags/NoSQL/" rel="tag"># NoSQL</a>
+              <a href="/tags/CQL/" rel="tag"># CQL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/" rel="prev" title="Flutter Web Migration - 使用conditional import處理跨平台功能">
+      <i class="fa fa-chevron-left"></i> Flutter Web Migration - 使用conditional import處理跨平台功能
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E6%98%AF%E4%BB%BB%E6%84%8F%E6%AC%84%E4%BD%8D%E9%83%BD%E8%83%BDFILTER"><span class="nav-number">1.</span> <span class="nav-text">不是任意欄位都能FILTER</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2023/11/11/before-adopt-cassandra-you-need-to-know/";
+    this.page.identifier = "2023/11/11/before-adopt-cassandra-you-need-to-know/";
+    this.page.title = "在採用Cassandra前你必須要知道的事-CQL不是SQL";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '67f2685db061e3f24d8bc849d76b731e',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
