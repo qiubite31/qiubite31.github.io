@@ -126,11 +126,6 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
 
   </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
-
-  </li>
         <li class="menu-item menu-item-tags">
 
     <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
@@ -197,6 +192,148 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/11/01/Machine-Learning-Foundation-16/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/11/01/Machine-Learning-Foundation-16/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十六講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-11-01 00:00:00" itemprop="dateCreated datePublished" datetime="2017-11-01T00:00:00+08:00">2017-11-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/11/01/Machine-Learning-Foundation-16/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/11/01/Machine-Learning-Foundation-16/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一堂提到validation的手法，透過留下用來驗證的資料模擬測試過程，並透過validation結果來選擇該使用什麼樣的模型。這一堂會提到三個在作機器學習時的小技巧。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/OccamRazor.JPG" class="" width="500">
+
+<p>Occam’s Razor在機器學習裡面意議是指不要對資料有過多的解釋，就是越簡單的解釋越好。以上面兩張圖的資料來看，左邊的模型符合直覺判斷，是一種比較容易而且 簡單的解釋，那到底什麼樣的模型才叫簡單的模型，而為什麼簡單的模型就比較好呢？</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/SimpleModel.JPG" class="" width="500">
+
+<p>簡單的hypothesis是指沒有過多的參數就是個簡單的hypothesis，而簡單的模型則是指模型包含了較少的hypothesis就是個簡單的模型，所以簡單在這裡就是指比較小的hypothesis和模型複雜度。而要得到簡單的解釋，除了一開始就使用簡單的模型之外，也可以在之前透過regularization來達成。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/SimpleIsBetter.JPG" class="" width="500">
+
+<p>那為什麼簡單的模型就比較好呢？如果今天使用簡單的模型就可以將資料分類正確，那某種程度上也就代表著資料背後的關聯性或是規律性是簡單的；相反的如果使用很複雜的模型，可能就無法知道資料背後的關聯性，因為不管是有關聯性的資料，或是雜訊很多的資料，都可以被複雜的模型分的開。所以如果使用簡單的模型來解釋資料，可以很直覺的看到資料間的顯著性，但是如果使用複雜的模型就辨別不出來，所以建議一開始推薦先使用線性模型。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/SamlingBias.JPG" class="" width="500">
+
+<p>第二個技巧會談到樣本的抽樣誤差，這裡用一個美國總統選舉的例子，來說明如果抽樣和要學習的結果不一致，並帶出抽樣誤差問題。如果在抽樣時就發生抽樣誤差，那麼在學習時就會產生偏差的結果，這就是為什麼前面課堂有說到訓練和測試的樣本資料要抽樣自相同的分配，訓練和測試的資料抽自相同的分配，才會得到預期中的學習效果，這就是我們VC中的重要假設。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/DealingSampleBias.JPG" class="" width="500">
+
+<p>這裡舉了一個實際上發生過的問題，如果訓練資料和驗證資料有有時間前後依序性(即一個人看過的電影順序)，而非隨機取樣的話，如果透過隨機取樣來建立訓練資料和驗證資料，那麼在學習和驗證中就會有問題。這時候為了讓測試和驗證可以盡可能的接近，例如訓練時可以把時間依序性較後面的權重調高，或是抽比較多時間依序較後面的資料來作驗證。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/VisualDataSnopping.JPG" class="" width="500">
+
+<p>再來第三個技巧則是談到之前說到偷看資料的問題，前面有說到如果偷看了資料，可能會把人腦學習到的，或是自己的偏差帶進機器學習裡面。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/DataSnopping.JPG" class="" width="500">
+
+<p>偷看資料其實比想像中更容易發生，不是只有用眼睛視覺化的偷看才叫偷看，而是你在處理資料的整個過程中，都算是間接的偷看了資料。如果使用這樣偷看過的資料，都會受到自己的主觀影響。假設今天有一組八年的交易資料，使用前六年當訓練，後兩年當測試。其中在將資料作放縮(Data Scaling)的資料處理過程中，如果不是將前六年作縮放，預測完再還原，而是直接將八年的資料都作放縮的話，就會得到紅色這條上升趨線。這樣將會得到一個太過於樂觀的學習結果，如果將這個結果用來實際投資可能會大大的失準。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/DataSnopping2.JPG" class="" width="500">
+
+<p>除了直接的視覺化偷看，或是使用統計分析間接的偷看，其實作在研究上也會發生。例如針對相同問題，不同的論文會都使用更好的模型來作的比以前好，這樣的過程就有點像你的論文間接的偷看了前面論文的結果，這樣就有點像某種程度的overfit了。正是所謂的如果你拷問資料過久了，他就會招拱一個好的hypothesis，但是這個hypothesis應該用測試資料可能效果不保證會好。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/DealingDataSnopping.JPG" class="" width="500">
+
+<p>但是完全不偷看其實很不容易，只能盡量的降低這中間的干擾，比如說小心的使用validation，或是把測試資料好好的先收好。所以要時時注意的是，記得要用專業知識來建立模型，而不是先偷看了資料來作決策。另外要時時存著懷疑每次作出來的結果，並懷疑這樣的分析結果是不是有受過汙染。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeRelateField.JPG" class="" width="500">
+
+<p>這堂課教到很多和三有關的東西，第一個是三個和機器學習相關的領域，Data Mining是希望在大量資料中找到找到有用或是重要的關聯，人工智慧是要讓機器作出有智慧的事情(像是自動駕駛)，機器學習可以說是實現人工智慧的方法，統計則是為了去對母體作出推論，所以統計方法也被大量的使用在機器學習上。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeTheoreticalBound.JPG" class="" width="500">
+
+<p>在機器學習背後理論的保證，如果只有一個hypothesis的情況下，Hoeffding可以情供測試驗證的保證，當有多個hypothesis的情況下，Multi-Bin Hoeffding可以提供在有限多個選擇下的保證，如果是無限多個選擇下，VC則是可以提供在無限多個hypothesis是供理論上的保證。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeLinearModel.JPG" class="" width="500">
+
+<p>在機器學習模型部份，PLA/pocket可以提供在線性可分下處理二元分類問題，在衡量上為讓0/1 err最小化，linear regression則是可以處理數值預測問題，在衡量上使用squared err最小化，logistic regression則可以處理軟性二元分類問題，在衡量上使用cross entropy最小化。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeKeyTool.JPG" class="" width="500">
+
+<p>另外還有學到三個重要的技巧，Feature Transform可以將簡單的線性模型轉成高維度的複雜模型，會得到較好的Ein但是也會付出較高的VC代價，Regularization則是相反，透過加上regularizer來讓VC代價變小，但是也會讓Ein變大，Validation則是在沒辦法拿到測試資料的情況下，留下一部份的資料當作驗證資料。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeLearningPrinciple.JPG" class="" width="500">
+
+<p>最後則是這堂課學到的三個注意的地方，要注意簡單模型是好的，而且要注意抽樣的偏差，最後要記得不能提看資料。</p>
+<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeFutureDirection.JPG" class="" width="500">
+
+<p>再來後面的課程還會上到如何使用不同的轉換方法，以即不同的規則化方法，或是在缺少label的情況下該如何進行訓練。</p>
+<p>總結這堂課程學到了很多機器學習背後的論理依據，而許多不同的機器學習方法將在另一堂機器學習技法課程教授！</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/16_handout.pdf">Machine Learning Foundation 16</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1461,142 +1598,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/16/Machine-Learning-Foundation-7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/08/16/Machine-Learning-Foundation-7/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第七講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-08-16 00:00:00" itemprop="dateCreated datePublished" datetime="2017-08-16T00:00:00+08:00">2017-08-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:00:30" itemprop="dateModified" datetime="2021-05-11T23:00:30+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/08/16/Machine-Learning-Foundation-7/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/16/Machine-Learning-Foundation-7/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在上一講中證明了如果存在break point，而且輸入點N夠大的情況下，Ein和Eout是會接近的。這一講會延續VC bound帶出VC Dimension。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/MoreOnGrowthFunction.JPG" class="" width="500">
-
-<p>前面有證明到，成長函式mH(N)會被上限函式B(N, k) bound住，然後上限函式又會被一個多項式N^k-1給bound住。所以我們可以直接使用N的k-1次方來表示成長函式。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/MoreOnVCBound.JPG" class="" width="500">
-
-<p>再來把N的k-1次方取代原本的成長函式mH(N)並代回原本的Hoeffding不等式中，他告訴我們1. 只要成長函式存在break point，即表示是個好的hypothesis且2. 輸入的N夠大，即表示是個好的D的情況下，再來配合3. 一個好的演算法，那麼就可以保證機器可以有學習的效果。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/VCDimension.JPG" class="" width="500">
-
-<p>VC dimension被定義為最大的非break point維度，所以當我們說在k點不能被shatter，那麼VC dimension就是k-1。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/FourVCDimension.JPG" class="" width="500">
-
-<p>依據VC dimension的定義，在PLA是在4點不能shatter，所以VC dimension為3。以前我們說成長函式mH(N)是有限的就是好的，現在我們可以說如果VC dimension是有限也就是好的。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/2DPLARevisited.JPG" class="" width="500">
-
-<p>有了VC dimension再回來看2D的PLA該怎麼學習，PLA可以在線性可分的資料D中找到g讓Ein為0，而VC dimension為3且N夠大的情況下，能推論Ein和Eout會很接近，即Ein和Eout差距很大的機率會很小，又因為Ein為0，所以可以知道Eout也會很接近0，就代表機器真的可以學習了。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/VCDimensionOfPerceptron.JPG" class="" width="500">
-
-<p>前面可以看到1維perceptron的VC dimension為2，2維的perceptron的VC dimension為3，這樣看起來似乎可以推論出d維度的VC dimension為d+1。當然這是正確的，因為後續可以證明出dVC &gt;= d+1和dVC &lt;= d+1</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/DegreeOfFreedom.JPG" class="" width="500">
-
-<p>VC dimension的物理意義大致上可以說是hypothesis集合在要作二元分類的狀況下，到底有多少的自由度。前面提到的VC dimension的定義是說，VC dimension在k-1的時候可以產生最多的dichotomy，所以這個自由度也就告訴我們hypothesis集合到底可以產生多少的dicotomy組合。以positive ray的例子來看，其有1個可以調整的參數，positive interval的例子則有2個可以調整的參數</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/PenaltyForModelComplexity.JPG" class="" width="500">
-
-<p>我們可以將VC bound的式子作一些調整轉換，其中把右邊壞事情發生的機率代換成δ，那麼好事情發生的機率就是1-δ，也就是Ein(g) - Eout(g) &lt;= ε，再用右邊的部份可以導出ε。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/PenaltyForModelComplexity2.JPG" class="" width="500">
-
-<p>好事情發生的機率，即Ein(g)和Eout(g)有多靠近，又可以稱為generalization eror，就是指舉一反三的效果好不好。衡量一個model的複雜度可以用Ω符號來表示，而VC dimension告訴我們的是，當model的複雜度越高的時候，就會產生penalty效應，有很高的機率Eout(g)會小於等於Ein(g)加上model的複雜度。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/TheVCMessage.JPG" class="" width="500">
-
-<p>以圖示來看這個現象，其中model複雜度會隨著VC dimension越大而變大；而VC dimension越大時，排列組合也會比較多，就比較有可能找到一個更小的Ein，所以Ein會降低。但是因為model複雜度的penalty效應，Eout並不會隨著Ein持續下降，而且到達一個臨界點時轉折變成一個山谷型，所以最好的VC dimension就是中間轉折的地方。這在機器學習上的意義就是，當我們使用很強大的hypothesis或是model，也會伴隨著model複雜度提高帶來的壞處，也就是把Ein作到最好，但也可能因為model複雜度的penalty讓Eout沒辦法作到最好，在使用機器學習上都需要進行取捨的地方。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/SampleComplexity.JPG" class="" width="500">
-
-<p>那麼到底需要多少的樣本資料，才能讓Ein和Eout很接近呢？假設今天要讓Ein和Eou相距ε為0.1而且δ壞事發生的機率為10%，如果是2D的perceptron其VC dimension為3，那需要有多少的資料才足夠呢？理論上可以推出29300筆可以滿足，大至上為10000 x dVC，但是實務上只需要10 x dVC的樣本數就足夠了。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/Summary.JPG" class="" width="500">
-
-<p>總結這一講的內容，主要在介紹VC dimension定義為最大的non-break point，且percepron的VC dimension為d+1，VC dimension其實際意義為可自由調整的參數，且VC dimension會影響到模型和樣本的複雜度</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/07_handout.pdf">Machine Learning Foundation 07</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
   </nav>
 
 
@@ -1664,7 +1669,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1677,7 +1682,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1712,7 +1717,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

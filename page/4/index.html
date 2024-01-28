@@ -126,11 +126,6 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
 
   </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
-
-  </li>
         <li class="menu-item menu-item-tags">
 
     <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
@@ -197,6 +192,138 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/16/Machine-Learning-Foundation-7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/08/16/Machine-Learning-Foundation-7/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第七講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-08-16 00:00:00" itemprop="dateCreated datePublished" datetime="2017-08-16T00:00:00+08:00">2017-08-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:00:30" itemprop="dateModified" datetime="2021-05-11T23:00:30+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/08/16/Machine-Learning-Foundation-7/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/16/Machine-Learning-Foundation-7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在上一講中證明了如果存在break point，而且輸入點N夠大的情況下，Ein和Eout是會接近的。這一講會延續VC bound帶出VC Dimension。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/MoreOnGrowthFunction.JPG" class="" width="500">
+
+<p>前面有證明到，成長函式mH(N)會被上限函式B(N, k) bound住，然後上限函式又會被一個多項式N^k-1給bound住。所以我們可以直接使用N的k-1次方來表示成長函式。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/MoreOnVCBound.JPG" class="" width="500">
+
+<p>再來把N的k-1次方取代原本的成長函式mH(N)並代回原本的Hoeffding不等式中，他告訴我們1. 只要成長函式存在break point，即表示是個好的hypothesis且2. 輸入的N夠大，即表示是個好的D的情況下，再來配合3. 一個好的演算法，那麼就可以保證機器可以有學習的效果。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/VCDimension.JPG" class="" width="500">
+
+<p>VC dimension被定義為最大的非break point維度，所以當我們說在k點不能被shatter，那麼VC dimension就是k-1。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/FourVCDimension.JPG" class="" width="500">
+
+<p>依據VC dimension的定義，在PLA是在4點不能shatter，所以VC dimension為3。以前我們說成長函式mH(N)是有限的就是好的，現在我們可以說如果VC dimension是有限也就是好的。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/2DPLARevisited.JPG" class="" width="500">
+
+<p>有了VC dimension再回來看2D的PLA該怎麼學習，PLA可以在線性可分的資料D中找到g讓Ein為0，而VC dimension為3且N夠大的情況下，能推論Ein和Eout會很接近，即Ein和Eout差距很大的機率會很小，又因為Ein為0，所以可以知道Eout也會很接近0，就代表機器真的可以學習了。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/VCDimensionOfPerceptron.JPG" class="" width="500">
+
+<p>前面可以看到1維perceptron的VC dimension為2，2維的perceptron的VC dimension為3，這樣看起來似乎可以推論出d維度的VC dimension為d+1。當然這是正確的，因為後續可以證明出dVC &gt;= d+1和dVC &lt;= d+1</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/DegreeOfFreedom.JPG" class="" width="500">
+
+<p>VC dimension的物理意義大致上可以說是hypothesis集合在要作二元分類的狀況下，到底有多少的自由度。前面提到的VC dimension的定義是說，VC dimension在k-1的時候可以產生最多的dichotomy，所以這個自由度也就告訴我們hypothesis集合到底可以產生多少的dicotomy組合。以positive ray的例子來看，其有1個可以調整的參數，positive interval的例子則有2個可以調整的參數</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/PenaltyForModelComplexity.JPG" class="" width="500">
+
+<p>我們可以將VC bound的式子作一些調整轉換，其中把右邊壞事情發生的機率代換成δ，那麼好事情發生的機率就是1-δ，也就是Ein(g) - Eout(g) &lt;= ε，再用右邊的部份可以導出ε。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/PenaltyForModelComplexity2.JPG" class="" width="500">
+
+<p>好事情發生的機率，即Ein(g)和Eout(g)有多靠近，又可以稱為generalization eror，就是指舉一反三的效果好不好。衡量一個model的複雜度可以用Ω符號來表示，而VC dimension告訴我們的是，當model的複雜度越高的時候，就會產生penalty效應，有很高的機率Eout(g)會小於等於Ein(g)加上model的複雜度。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/TheVCMessage.JPG" class="" width="500">
+
+<p>以圖示來看這個現象，其中model複雜度會隨著VC dimension越大而變大；而VC dimension越大時，排列組合也會比較多，就比較有可能找到一個更小的Ein，所以Ein會降低。但是因為model複雜度的penalty效應，Eout並不會隨著Ein持續下降，而且到達一個臨界點時轉折變成一個山谷型，所以最好的VC dimension就是中間轉折的地方。這在機器學習上的意義就是，當我們使用很強大的hypothesis或是model，也會伴隨著model複雜度提高帶來的壞處，也就是把Ein作到最好，但也可能因為model複雜度的penalty讓Eout沒辦法作到最好，在使用機器學習上都需要進行取捨的地方。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/SampleComplexity.JPG" class="" width="500">
+
+<p>那麼到底需要多少的樣本資料，才能讓Ein和Eout很接近呢？假設今天要讓Ein和Eou相距ε為0.1而且δ壞事發生的機率為10%，如果是2D的perceptron其VC dimension為3，那需要有多少的資料才足夠呢？理論上可以推出29300筆可以滿足，大至上為10000 x dVC，但是實務上只需要10 x dVC的樣本數就足夠了。</p>
+<img src="/2017/08/16/Machine-Learning-Foundation-7/Summary.JPG" class="" width="500">
+
+<p>總結這一講的內容，主要在介紹VC dimension定義為最大的non-break point，且percepron的VC dimension為d+1，VC dimension其實際意義為可自由調整的參數，且VC dimension會影響到模型和樣本的複雜度</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/07_handout.pdf">Machine Learning Foundation 07</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1290,117 +1417,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/03/07/Iterators%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/03/07/Iterators%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Iterators的概念與如何使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-03-07 00:00:00" itemprop="dateCreated datePublished" datetime="2017-03-07T00:00:00+08:00">2017-03-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/03/07/Iterators%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/07/Iterators的概念與如何使用/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>python中有些資料結構是可以透過for來loop裡面所有的item的，像是list, tuple, dict, str還有file都可以。在使用上其實for迴圈會呼叫物件中的iter()，此函式會回傳一個Iterator(迭代器)，Iterator會透過<strong>next</strong>函式來一次一次的取得下一個item，並在沒有下一個item的時候拋出StopIteration來告訴for迴圈迭代結束。</p>
-<p>像這種有按照Iteration Protocol定義<strong>iter</strong>和<strong>next</strong>的物件又被稱為Iterable</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> item <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> item <span class="keyword">in</span> (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> item <span class="keyword">in</span> &#123;<span class="string">&#x27;one&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;two&#x27;</span>: <span class="number">2</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> item <span class="keyword">in</span> <span class="string">&#x27;python&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">open</span>(<span class="string">&#x27;file&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>如果希望自己定義的物件是Iterable，只要透過在class內實作<strong>iter</strong>和<strong>next</strong>(讓python的build-in函式iter()和next()可以呼叫)就可以達成。</p>
-<p>假設我們建立了一個物件可以設定一個字串，並在每次iteration的時候透過ascii回傳每個字元的下一個字元</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Transform</span>:</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init</span>(<span class="params">self, data</span>):</span>        </span><br><span class="line">        self.data = data        </span><br><span class="line">        self.i = <span class="number">0</span>        </span><br><span class="line">        self.n = <span class="built_in">len</span>(data)    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">iter</span>(<span class="params">self</span>):</span>        </span><br><span class="line">        <span class="keyword">return</span> self    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">next</span>(<span class="params">self</span>):</span>        </span><br><span class="line">        <span class="keyword">if</span> self.i == self.n:            </span><br><span class="line">            <span class="keyword">raise</span> StopIteration        </span><br><span class="line">        item = <span class="built_in">chr</span>(<span class="built_in">ord</span>(self.data[self.i]) + <span class="number">1</span>)        </span><br><span class="line">        self.i = self.i + <span class="number">1</span>        </span><br><span class="line">        <span class="keyword">return</span> item</span><br></pre></td></tr></table></figure>
-<p>宣告一個Transform物件，並用for來讀取每一個值</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t = Transform(<span class="string">&#x27;python&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> item <span class="keyword">in</span> t:  <span class="comment"># for迴圈自動叫iter()，並用next()來作iteration</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>    <span class="built_in">print</span>(item)</span><br><span class="line">q</span><br><span class="line">z</span><br><span class="line">u</span><br><span class="line">i</span><br><span class="line">p</span><br><span class="line">o</span><br></pre></td></tr></table></figure>
-<p>宣告一個Transform物件，並呼叫iter並用next來讀取每一個值</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t = Transform(<span class="string">&#x27;python&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2 = <span class="built_in">iter</span>(t)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(t2)</span><br><span class="line">q</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(t2)</span><br><span class="line">z</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(t2)</span><br><span class="line">u</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(t2)</span><br><span class="line">i</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(t2)</span><br><span class="line">p</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(t2)</span><br><span class="line">o</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(t2)  <span class="comment"># 當沒有下一個item之前，會產生StopIteration</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">File &lt;stdin&gt;, line <span class="number">1</span>, <span class="keyword">in</span>     </span><br><span class="line">    <span class="built_in">next</span>(t2)</span><br><span class="line">StopIteration</span><br></pre></td></tr></table></figure>
-<p>除了透過定義<strong>iter</strong>和<strong>next</strong>讓自己的物件為iterable，也可以透過在class中定義<strong>getitem</strong>來達成。兩者只要有定義其中一種，都可以讓for loop來依序讀取物件中的item</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Transform</span>:</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init</span>(<span class="params">self, data</span>):</span>        </span><br><span class="line">        self.data = data        </span><br><span class="line">        self.i = <span class="number">0</span>        </span><br><span class="line">        self.n = <span class="built_in">len</span>(data)    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getitem</span>(<span class="params">self, i</span>):</span>        </span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">chr</span>(<span class="built_in">ord</span>(self.data[i]) + <span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t = Transform(<span class="string">&#x27;python&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> item <span class="keyword">in</span> t:  <span class="comment"># 透過定義__getitem__也可以讓物件為iterable，並可以使用在for loop</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>    <span class="built_in">print</span>(item)</span><br><span class="line">q</span><br><span class="line">z</span><br><span class="line">u</span><br><span class="line">i</span><br><span class="line">p</span><br><span class="line">o</span><br></pre></td></tr></table></figure>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/classes.html#iterators">Python docs - Iterators</a><br/><a target="_blank" rel="noopener" href="https://docs.python.org/dev/library/stdtypes.html#iterator-types">Python docs - Iterator types</a><br/><a target="_blank" rel="noopener" href="https://docs.python.org/dev/glossary.html#term-iterable">Python docs - Iterable</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
   </nav>
 
 
@@ -1468,7 +1488,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1481,7 +1501,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1516,7 +1536,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -29,7 +29,7 @@
 <meta property="og:description" content="過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。 在導入的過程中當然">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2023-11-11T07:43:00.000Z">
-<meta property="article:modified_time" content="2023-11-25T08:40:01.136Z">
+<meta property="article:modified_time" content="2024-01-27T14:29:39.207Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Cassandra">
 <meta property="article:tag" content="NoSQL">
@@ -129,11 +129,6 @@
         <li class="menu-item menu-item-home">
 
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
 
   </li>
         <li class="menu-item menu-item-tags">
@@ -237,7 +232,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2023-11-25 16:40:01" itemprop="dateModified" datetime="2023-11-25T16:40:01+08:00">2023-11-25</time>
+                <time title="修改時間：2024-01-27 22:29:39" itemprop="dateModified" datetime="2024-01-27T22:29:39+08:00">2024-01-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -347,15 +342,18 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查詢jobgrade為1的員工資料</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查詢deptname為HR, gender為Male的名字</span></span><br><span class="line"><span class="keyword">SELECT</span> name </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> gender <span class="operator">=</span> <span class="string">&#x27;Male&#x27;</span></span><br><span class="line"></span><br><span class="line"> name</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">  Tom</span><br><span class="line"></span><br><span class="line"> <span class="comment">--查詢deptname為HR, jobgrade為1的員工資料 </span></span><br><span class="line"> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br></pre></td></tr></table></figure>
 
 <p>以上看起來很直覺的查詢，如果是在Cassandra的世界裡，執行第一支CQL會得到以下的錯誤：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING&quot;</span><br></pre></td></tr></table></figure>
 
 <p>Cassandra會將資料依partitiony key分散放到不同的partition存放，所以在CQL查詢中的第一個條件必須要帶partition key(也就是deptname)，Cassandra才能直接到指定的partition取回資料，用來加速資料查詢的速度。因此在不給定partition key條件下直接用jobgrade作filter是不允許的。</p>
 <p>第二支CQL執行則會得到以下的錯誤：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;PRIMARY KEY column &quot;gender&quot; cannot be restricted as preceding column &quot;jobgrade&quot; is not restricted&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name </span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> gender <span class="operator">=</span> <span class="string">&#x27;Male&#x27;</span></span><br><span class="line"></span><br><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;PRIMARY KEY column &quot;gender&quot; cannot be restricted as preceding column &quot;jobgrade&quot; is not restricted&quot;</span><br></pre></td></tr></table></figure>
 
 <p>因為Cassandra的世界裡，會將一個partition內部的資料依據clustering key作排序。以員工資料表為例，會以deptname切partition後，再依序用jobgrade、gender和emplid排序。</p>
 <p>Casssandra透過預先排序的方式，在查詢資料時就可以得到排序結果，和SQL查詢完才作order by不同。因此Cassandra嚴格限制clustering key的欄位必須要依順序作filter，所以跳過jobgrade先查詢gender是不允許的。</p>
-<p>第三支CQL則因為符合partition和clustering限制所以可以成功執行。由以上可以發現，CQL雖然和SQL語法非常相似，但本質上Cassandra就是NoSQL資料庫，也有本身的設計限制。因此對於SQL使用者來說，千萬不要因為看到很像SQL的語法，就覺得可以很容易的上手使用！</p>
+<p>第三支CQL則因為符合partition和clustering限制所以可以成功執行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br></pre></td></tr></table></figure>
+
+<p>由以上可以發現，CQL雖然和SQL語法非常相似，但本質上Cassandra就是NoSQL資料庫，也有本身的設計限制。因此對於SQL使用者來說，千萬不要因為看到很像SQL的語法，就覺得可以很容易的上手使用！</p>
 
     </div>
 
@@ -379,7 +377,10 @@
     <a href="/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/" rel="prev" title="Flutter Web Migration - 使用conditional import處理跨平台功能">
       <i class="fa fa-chevron-left"></i> Flutter Web Migration - 使用conditional import處理跨平台功能
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2023/12/24/before-adopt-cassandra-you-need-to-know-cql-groupby/" rel="next" title="在採用Cassandra前你必須要知道的事-CQL怎麼GROUPBY">
+      在採用Cassandra前你必須要知道的事-CQL怎麼GROUPBY <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -474,7 +475,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -487,7 +488,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -522,7 +523,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

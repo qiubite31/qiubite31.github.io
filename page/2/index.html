@@ -126,11 +126,6 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
 
   </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a>
-
-  </li>
         <li class="menu-item menu-item-tags">
 
     <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
@@ -197,6 +192,153 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/30/Machine-Learning-Techniques-3/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第三講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2020-01-30 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-30T00:00:00+08:00">2020-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:45:05" itemprop="dateModified" datetime="2021-05-11T23:45:05+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/01/30/Machine-Learning-Techniques-3/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/30/Machine-Learning-Techniques-3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <img src="/2020/01/30/Machine-Learning-Techniques-3/DualSVMRevisit.JPG" class="" width="500">
+
+<p>上一講說明了dual SVM，好像可以讓SVM與高維度的z空間兩者可以脫鉤，但以計算的角度，仔細看會發現在整個求解過程中的Q矩陣還是會在z空間作內積。而在z空間的內積在運算可以拆成兩個部份，一個是先透過某個函式φ轉換到z空間，第二再進行轉換後的內積。但這樣的運算方法就會變成z空間的維度作內積。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/FastInnerProduct.JPG" class="" width="500">
+
+<p>透過這個polynomial transform可以發現，其實是能先在x維度作完內積，再作函式φ的轉換，這樣就可避免產生在z空間作內積的情況，透過這個簡化的方式計算內積稱為kernel function。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/KernelTrick.JPG" class="" width="500">
+
+<p>回到svm不管是在計算b和最佳的超平面gsvm時，都可以將kernel function應用在計算中。這種合併函式轉換和內積計算，來避免在在高級度空間進行內積計算的方法，又稱為kernel trick。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GemeralPoly2Kernel.JPG" class="" width="500">
+
+<p>延續前面的Poly-2 kernel例子，在每項前面再加上不同的係數，就能再對計算進一步簡化。雖然不同的函式都是轉換到相同的維度，但是會計算出不一樣的內積得到不同的距離，所以得到的幾合意義和算出來的SVM margin也會不同。其中最常使用的kernel為加上根號2與γ值的General Poly-2 kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/Poly2Action.JPG" class="" width="500">
+
+<p>舉例來說，中間為原本的Poly-2 kernel，而左右兩個為General Poly-2 kernel但代入不同的γ值，左邊帶很小的γ右邊帶很大的γ。可以看到得出的邊界是不同的，所以得出的支撐向量也不同(方框的點)。雖然三個kernel的邊界不同，margin的定義也不同，但這邊沒辦法說哪個邊界會比較好，因為三個kernel都可以把點分開。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GeneralPolyKernel.JPG" class="" width="500">
+
+<p>前面提到的Poly-2可以再加入ζ參數，就會形成一個包含3個參數的一般型態Polynomial Kernel，包含了(1)γ控制x內積算完後的放縮程度，和(2)ζ控制常數項與乘上轉換係數如何對應(3)Q代表poly作幾次方的轉換。而且不管作了幾次方的轉換，都是透遇kernel而不會在高維空間計算。使用高次方的轉換仍然可能會有overfit的風險，但SVM會透過找到最大margin來避免overfit，所以透過kernel可以讓SVM達到避免ovefit，又可以使用較複雜的模型，同時不需要高度的計算複雜度。SVM結合polynomial kernel又稱為Polynomial kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/LinearKernel.JPG" class="" width="500">
+
+<p>Polynomial kernel如果設定成1次轉換，γ設成1，ζ設成0的話，就等於是原本的linear kernel SVM。老師建議大家在使用SVM時，可以從linear SVM開始，如果linear就可以解決問題，就不需要作高次方的nonlinear轉換。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/InfiniteDimensionalTrasform.JPG" class="" width="500">
+
+<p>既然可以透過kernel trick來達成高維度轉換的運算，那是否有可能作到無限多維轉換呢？老師這裡透過證明可以發現，即使在無限多維的情況，使用高斯函數作轉換是可以辦到的。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GaussianSVM.JPG" class="" width="500">
+
+<p>所以高斯函數也是一種kernel trick的方法，讓資料映射到無限多維的空間後找到支撐向量和超平面。但其實際上的意義為他會產生以支撐向量為中心的高斯函數的線性組合，也常被稱為RBF(Radial Basis Function) kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GuassianSVMAction.JPG" class="" width="500">
+
+<p>到目前為止，SVM可以辦到使用kernel trick作無限多維的轉換後，再透過最大margin找到超平面，而SVM裡面的最大margin計算，可以對無限多維的轉換有一定程度的保護。但要注意SVM仍然會有overfit的問題，當γ越調越大時會使原本Gaussan裡面的σ變小Gaussian就會變尖(γ=1/2σ^2)，所以還是要小心γ參數的選用會決定SVM的表現，通常不建議使用太大的γ值。</p>
+<p>前面介紹到許多的kernel，不同的kernel也有其好處和壞處</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/LinearKernelProCon.JPG" class="" width="500">
+
+<ol>
+<li>Linear Kernel<br>最簡單的kernel，就是不作任何的維度轉換，其好處就是最簡單安全。除了QP好解之外也具有可解釋性，因為是線性所以可以透過每個特徵的權重來看出特徵的重要性，應該是遇到問題時要先被拿來嘗試使用的kernel。但其壞處在於問題如果是非線性的，那只靠線性沒辦法很好的解決問題。</li>
+</ol>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/PolynomialKernelProCon.JPG" class="" width="500">
+
+<ol start="2">
+<li>Polynomial Kernel<br>Polynomial的好處在經過非線性轉換後，會比linear限制還要少，而且可以透過設定Q來限制模型的維度。缺點在於Polynomial有3個要給定的參數較難選定，而且在計算值時QP不容易解，尤其是γ過大的時候，因此Polynomial比較適合用在心裡有假設而且使用比較小的Q。</li>
+</ol>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/GaussianKernelProCon.JPG" class="" width="500">
+
+<ol start="3">
+<li>Gaussian Kernel<br>Gaussian可以作到無限多維的轉換，所以會比Linear和Polynomial使用限制更少。而且Gaussian的數值會落在0到1之間，所以數值計算難度較低；又因為Gaussian只有一個參數要給定，比起Polynomial要選3個參數，Gaussian可以更容易作參數選擇。Gaussian的壞處在於被轉換到無限多維後，模型沒辦法容易的被解讀；另外他的速度會比單純使用線性還要慢，又因為轉換較複雜，因此使用的不好會造成overfit。</li>
+</ol>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/OtherValidKernel.JPG" class="" width="500">
+
+<p>Kernel表示一種特徵的相似度，但是不是任何相似度都能用來當作Kernel呢？這邊老師給出必須要滿足對稱性還有postive semi-definite兩種條件才能當作Kernel。</p>
+<img src="/2020/01/30/Machine-Learning-Techniques-3/Summary.JPG" class="" width="500">
+
+<p>這一講提到了如何透過kerlnel trick快速計算轉換和內積，避開最複雜的計算，另外也比較了不同的kernel的優點和缺點。</p>
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/203_handout.pdf">Machine Learning Techniques 3</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1372,152 +1514,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/11/01/Machine-Learning-Foundation-16/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/11/01/Machine-Learning-Foundation-16/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十六講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-11-01 00:00:00" itemprop="dateCreated datePublished" datetime="2017-11-01T00:00:00+08:00">2017-11-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/11/01/Machine-Learning-Foundation-16/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/11/01/Machine-Learning-Foundation-16/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上一堂提到validation的手法，透過留下用來驗證的資料模擬測試過程，並透過validation結果來選擇該使用什麼樣的模型。這一堂會提到三個在作機器學習時的小技巧。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/OccamRazor.JPG" class="" width="500">
-
-<p>Occam’s Razor在機器學習裡面意議是指不要對資料有過多的解釋，就是越簡單的解釋越好。以上面兩張圖的資料來看，左邊的模型符合直覺判斷，是一種比較容易而且 簡單的解釋，那到底什麼樣的模型才叫簡單的模型，而為什麼簡單的模型就比較好呢？</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/SimpleModel.JPG" class="" width="500">
-
-<p>簡單的hypothesis是指沒有過多的參數就是個簡單的hypothesis，而簡單的模型則是指模型包含了較少的hypothesis就是個簡單的模型，所以簡單在這裡就是指比較小的hypothesis和模型複雜度。而要得到簡單的解釋，除了一開始就使用簡單的模型之外，也可以在之前透過regularization來達成。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/SimpleIsBetter.JPG" class="" width="500">
-
-<p>那為什麼簡單的模型就比較好呢？如果今天使用簡單的模型就可以將資料分類正確，那某種程度上也就代表著資料背後的關聯性或是規律性是簡單的；相反的如果使用很複雜的模型，可能就無法知道資料背後的關聯性，因為不管是有關聯性的資料，或是雜訊很多的資料，都可以被複雜的模型分的開。所以如果使用簡單的模型來解釋資料，可以很直覺的看到資料間的顯著性，但是如果使用複雜的模型就辨別不出來，所以建議一開始推薦先使用線性模型。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/SamlingBias.JPG" class="" width="500">
-
-<p>第二個技巧會談到樣本的抽樣誤差，這裡用一個美國總統選舉的例子，來說明如果抽樣和要學習的結果不一致，並帶出抽樣誤差問題。如果在抽樣時就發生抽樣誤差，那麼在學習時就會產生偏差的結果，這就是為什麼前面課堂有說到訓練和測試的樣本資料要抽樣自相同的分配，訓練和測試的資料抽自相同的分配，才會得到預期中的學習效果，這就是我們VC中的重要假設。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/DealingSampleBias.JPG" class="" width="500">
-
-<p>這裡舉了一個實際上發生過的問題，如果訓練資料和驗證資料有有時間前後依序性(即一個人看過的電影順序)，而非隨機取樣的話，如果透過隨機取樣來建立訓練資料和驗證資料，那麼在學習和驗證中就會有問題。這時候為了讓測試和驗證可以盡可能的接近，例如訓練時可以把時間依序性較後面的權重調高，或是抽比較多時間依序較後面的資料來作驗證。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/VisualDataSnopping.JPG" class="" width="500">
-
-<p>再來第三個技巧則是談到之前說到偷看資料的問題，前面有說到如果偷看了資料，可能會把人腦學習到的，或是自己的偏差帶進機器學習裡面。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/DataSnopping.JPG" class="" width="500">
-
-<p>偷看資料其實比想像中更容易發生，不是只有用眼睛視覺化的偷看才叫偷看，而是你在處理資料的整個過程中，都算是間接的偷看了資料。如果使用這樣偷看過的資料，都會受到自己的主觀影響。假設今天有一組八年的交易資料，使用前六年當訓練，後兩年當測試。其中在將資料作放縮(Data Scaling)的資料處理過程中，如果不是將前六年作縮放，預測完再還原，而是直接將八年的資料都作放縮的話，就會得到紅色這條上升趨線。這樣將會得到一個太過於樂觀的學習結果，如果將這個結果用來實際投資可能會大大的失準。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/DataSnopping2.JPG" class="" width="500">
-
-<p>除了直接的視覺化偷看，或是使用統計分析間接的偷看，其實作在研究上也會發生。例如針對相同問題，不同的論文會都使用更好的模型來作的比以前好，這樣的過程就有點像你的論文間接的偷看了前面論文的結果，這樣就有點像某種程度的overfit了。正是所謂的如果你拷問資料過久了，他就會招拱一個好的hypothesis，但是這個hypothesis應該用測試資料可能效果不保證會好。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/DealingDataSnopping.JPG" class="" width="500">
-
-<p>但是完全不偷看其實很不容易，只能盡量的降低這中間的干擾，比如說小心的使用validation，或是把測試資料好好的先收好。所以要時時注意的是，記得要用專業知識來建立模型，而不是先偷看了資料來作決策。另外要時時存著懷疑每次作出來的結果，並懷疑這樣的分析結果是不是有受過汙染。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeRelateField.JPG" class="" width="500">
-
-<p>這堂課教到很多和三有關的東西，第一個是三個和機器學習相關的領域，Data Mining是希望在大量資料中找到找到有用或是重要的關聯，人工智慧是要讓機器作出有智慧的事情(像是自動駕駛)，機器學習可以說是實現人工智慧的方法，統計則是為了去對母體作出推論，所以統計方法也被大量的使用在機器學習上。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeTheoreticalBound.JPG" class="" width="500">
-
-<p>在機器學習背後理論的保證，如果只有一個hypothesis的情況下，Hoeffding可以情供測試驗證的保證，當有多個hypothesis的情況下，Multi-Bin Hoeffding可以提供在有限多個選擇下的保證，如果是無限多個選擇下，VC則是可以提供在無限多個hypothesis是供理論上的保證。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeLinearModel.JPG" class="" width="500">
-
-<p>在機器學習模型部份，PLA/pocket可以提供在線性可分下處理二元分類問題，在衡量上為讓0/1 err最小化，linear regression則是可以處理數值預測問題，在衡量上使用squared err最小化，logistic regression則可以處理軟性二元分類問題，在衡量上使用cross entropy最小化。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeKeyTool.JPG" class="" width="500">
-
-<p>另外還有學到三個重要的技巧，Feature Transform可以將簡單的線性模型轉成高維度的複雜模型，會得到較好的Ein但是也會付出較高的VC代價，Regularization則是相反，透過加上regularizer來讓VC代價變小，但是也會讓Ein變大，Validation則是在沒辦法拿到測試資料的情況下，留下一部份的資料當作驗證資料。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeLearningPrinciple.JPG" class="" width="500">
-
-<p>最後則是這堂課學到的三個注意的地方，要注意簡單模型是好的，而且要注意抽樣的偏差，最後要記得不能提看資料。</p>
-<img src="/2017/11/01/Machine-Learning-Foundation-16/ThreeFutureDirection.JPG" class="" width="500">
-
-<p>再來後面的課程還會上到如何使用不同的轉換方法，以即不同的規則化方法，或是在缺少label的情況下該如何進行訓練。</p>
-<p>總結這堂課程學到了很多機器學習背後的論理依據，而許多不同的機器學習方法將在另一堂機器學習技法課程教授！</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/16_handout.pdf">Machine Learning Foundation 16</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
   </nav>
 
 
@@ -1585,7 +1585,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1598,7 +1598,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1633,7 +1633,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
