@@ -196,6 +196,110 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/08/15/%E9%80%8F%E9%81%8Estar%E4%BE%86%E5%B0%8D%E7%BE%A4%E9%9B%86%E8%B3%87%E6%96%99Unpacking/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/15/%E9%80%8F%E9%81%8Estar%E4%BE%86%E5%B0%8D%E7%BE%A4%E9%9B%86%E8%B3%87%E6%96%99Unpacking/" class="post-title-link" itemprop="url">透過*和**來對群集資料Unpacking</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2016-08-15 00:00:00" itemprop="dateCreated datePublished" datetime="2016-08-15T00:00:00+08:00">2016-08-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/08/15/%E9%80%8F%E9%81%8Estar%E4%BE%86%E5%B0%8D%E7%BE%A4%E9%9B%86%E8%B3%87%E6%96%99Unpacking/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/15/透過star來對群集資料Unpacking/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在處理python的序列資料(tuple, list)或是映射資料(dict)，並要把資料傳入function時，可使用*和**運算符來分別對兩種資料作unpacking並傳入函式</p>
+<p>針對序列(tuple, list)可以使用拆開序列運算符(sequence unpacking operator)，在變數前加上*前綴來達成</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">product</span>(<span class="params">a, b, c</span>):</span></span><br><span class="line">    <span class="keyword">return</span> a * b * c</span><br><span class="line">    </span><br><span class="line">T = (<span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>)</span><br><span class="line">product(T[<span class="number">0</span>], T[<span class="number">1</span>], T[<span class="number">2</span>])  <span class="comment"># 用切片讀出tuple資料傳入函式</span></span><br><span class="line">product(*T)  <span class="comment"># 直接將tuple unpacking成3個資料項傳入函式</span></span><br><span class="line">product(T[<span class="number">0</span>], *T[<span class="number">1</span>:])  <span class="comment"># 先切出1個資料項，再拆開2個資料項</span></span><br><span class="line"></span><br><span class="line">L = [<span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>]</span><br><span class="line">product(L[<span class="number">0</span>], L[<span class="number">1</span>], L[<span class="number">2</span>])  <span class="comment"># 用切片讀出list資料傳入函式</span></span><br><span class="line">product(*L)  <span class="comment"># 直接將list unpacking成3個資料項傳入函式</span></span><br><span class="line">product(L[<span class="number">0</span>], *L[<span class="number">1</span>:])  <span class="comment"># 先切出1個資料項，再拆開2個資料項</span></span><br></pre></td></tr></table></figure>
+<p>上面的範列product函式會接受3個引數，透過*來直接對序列作unpacking，就能將序列內的資料項直接傳入函式，而不用先讀出來或是對序列作切片(slice)</p>
+<p>針對映射資料(dict)則是使用拆開映射運算符(mapping unpacking operator)，在變數前加上**前綴</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">5</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">10</span>&#125;</span><br><span class="line">product(**D)</span><br></pre></td></tr></table></figure>
+<p>上面範例會將dic以key-value拆開，在傳入函式後會將每個key的value分配給與key相同名稱的參數(parameter)。要注意的是，如果字典裡面的key和函式參數對應不起來，則會引發TypeError。</p>
+<p>除非函式的參數有設定預設值(Default)，例如以下範例函式參數d有預計值20，若字典沒有d，d在函式中就會帶入預設值而不會引發TypeError</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">product</span>(<span class="params">a, b, c, d=<span class="number">20</span></span>):</span></span><br><span class="line">    <span class="keyword">return</span> a * b * c * d</span><br><span class="line">    </span><br><span class="line">D = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">5</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">10</span>&#125;</span><br><span class="line">product(**D)</span><br></pre></td></tr></table></figure>
+<p>參考資料:<br/><a href="/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/">函式參數預設值請參考: 位置引數(Positional Argument)與關鍵字引數(Keyword Argument)</a><br/><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists">Python docs - unpacking argument lists</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/08/08/%E4%BD%BF%E7%94%A8format%E8%88%87locals%E9%80%B2%E8%A1%8C%E5%AD%97%E4%B8%B2%E6%A0%BC%E5%BC%8F%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -372,7 +476,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">52</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -385,7 +489,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

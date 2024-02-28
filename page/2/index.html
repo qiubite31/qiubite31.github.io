@@ -196,6 +196,137 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/02/05/Machine-Learning-Techniques-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/02/05/Machine-Learning-Techniques-4/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第四講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2020-02-05 00:00:00" itemprop="dateCreated datePublished" datetime="2020-02-05T00:00:00+08:00">2020-02-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:45:13" itemprop="dateModified" datetime="2021-05-11T23:45:13+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/02/05/Machine-Learning-Techniques-4/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/05/Machine-Learning-Techniques-4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <img src="/2020/02/05/Machine-Learning-Techniques-4/HardMarginCons.JPG" class="" width="500">
+
+<p>上一講教了透過kernel trick來處理dual SVM中的轉換與內積，並介紹了不同的kernel function，從線性到無限多維轉換的Gaussian，但SVM還是有可能會overfit。overfit有兩種可能的原因，第一種為使用了過度複雜的轉換，第二種則是堅持要把所有資料完全的切分開來。以上面這個例子來說，如果可以容忍有錯誤分類，但可以使用簡單的線性切分也可以得到不錯的邊界；相反的，如果使用比較複雜的轉換確實完美的將資料都區分正確，反而容易造成overfit。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/GiveUpExample.JPG" class="" width="500">
+
+<p>但該如何解決這個問題呢？之前在講pocket演算法時，pocket會找到能分錯資料最少的超平面，但hard-margin SVM除了要求要全部分對之外，還要選w長度最小的超平面。所以如果可以讓SVM也能像pocket一樣容忍一些錯誤，即不管部份分錯的點，就能達到某種程度的條件放寬。這邊引入C參數來代表放寬條件的相對重要性，C較大時代表越重視不要犯錯越好，C越小時代表越重視w長度，即分對的資料的margin越寬越好。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMargin1.JPG" class="" width="500">
+
+<p>但放寬後的新問題將會違反QP的條件(min為二次式，條件要為一次式)，而且在允許犯錯的情況下，沒有辦法分辦到底犯錯的嚴重程度(小錯或是大錯)。為了解決這兩個問題，引入ξn來紀錄離想要的值(是否靠近1)有多近，即將犯了幾個錯誤轉成犯了多大的錯誤。除了可以解決無法分辨犯錯程度的問題，也可以讓問題符合QP。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMargin2.JPG" class="" width="500">
+
+<p>如同前面說的，C可以用來控制large margin和margin violation，越大的C代表越重視分類的正確性，而越小的C代表margin可以比較大，但會造成某些資料分錯。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/SimplifyBeta.JPG" class="" width="500">
+
+<p>當我們將Hard-Margin轉成Soft-Margin後，再來就是將它轉成對偶問題，就可以如同Hard-Margin一樣引入不同不同維度轉換的kernel function。第一步就是帶入Lagrange，有別於原本的Hard-Margin只需要帶入一個α，因為這邊分成兩個部分，因此分別帶入α和β。再進一步將ξn作微分拿掉ξ，可以發現在最佳解的位置C會等於αn+βn，就可以將βn簡化成C-αn，又因前後兩項分別都有C-αn互相消掉，所以可以再將式子簡化。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/OtherSimplify.JPG" class="" width="500">
+
+<p>到這邊可以發現內部要解的問題其實就和之前的Hard-Margin SVM相同，只差在外面的條件帶入了C的限制，所以這邊可以和之前一樣分別對b和w作微分來得到Soft-Margin SVM的對偶問題。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMarginSVMDual.JPG" class="" width="500">
+
+<p>再仔細看一下Soft-Margin SVM的對偶問題，可以發現和Hard-Margin SVM的對偶問題幾乎一樣，只差在現在α會有一個上限值C，而這個C是來自引入β後得到的。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMarginGaussianSVM.JPG" class="" width="500">
+
+<p>當我們把Gaussian SVM用在Soft-Margin上並調整不同的C值時，可以發現最左邊當C設成1的時候，會得到一個邊界但有部份的資料是分錯的；當C一直調到到100可以發現邊界會越來越複雜，但是分錯的資料會越來越少。其中最右邊的邊界雖然可以讓所有的資料分對，但也可以造成雜訊的容忍度下降，也就是容易造成overfit，因此C和γ值需要慎選。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/SelectionbyCrossValidation.JPG" class="" width="500">
+
+<p>介紹完Soft-Margin和kernel，參數該怎麼選呢?第一個方法可以嘗試使用cross validation的方式，並帶入不同的C和γ值來找到比較好的參數組合。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/LeaveOneOutError.JPG" class="" width="500">
+
+<p>另一個有趣的方法則是使用Leave-One-Out CV，SVM在使用Leave-One-Out CV的error會小於等於support vector的比例(support vector的數量除上所有樣本數)，其概念為即使少了non support vector(non-SV)的點，結果並不會影響到margin的計算。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/SelectionbySV.JPG" class="" width="500">
+
+<p>所以也可以嘗使用support vector的數量來選擇模型，因此在作cross validation前可以透過檢查support vector的數量，去掉support vector數量較多的組合作模型的安全檢查。</p>
+<img src="/2020/02/05/Machine-Learning-Techniques-4/summary.JPG" class="" width="500">
+
+<p>總結這堂課介紹了soft-margin SVM，其核心概念在於不強求把所有的類別都分對，並加上犯錯的程度大小的懲罰項。在推導的部份，Soft-Margin和Hard-Margin結果幾乎一樣，只差在Soft-Margin在αn會存在上限值C。而SVM可以將資料分成三種，分別為non-SV、存在邊界上的free-SV與可能違反邊界的SV。最後在model selection可以使用cross-validation或是參數SV的數量來作選擇。</p>
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/204_handout.pdf">Machine Learning Techniques 4</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/30/Machine-Learning-Techniques-3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1401,119 +1532,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/12/05/keras-intro/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/05/keras-intro/" class="post-title-link" itemprop="url">第一次使用Keras就上手</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-12-05 00:00:00" itemprop="dateCreated datePublished" datetime="2017-12-05T00:00:00+08:00">2017-12-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-06-21 16:32:49" itemprop="dateModified" datetime="2021-06-21T16:32:49+08:00">2021-06-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/12/05/keras-intro/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/12/05/keras-intro/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近正在學習Andrea在Coursera上開的Deep Learning課程，之前工作關係有接觸到keras，而且使用起來還滿容易上手的，所以就嘗試拿了MNIST資料集來試玩看看</p>
-<p>首先載入手寫辨識資料集mnist，這個資料集還滿廣泛被拿來使用的，而且在keras也可以直接載入，另外也會用到最基本的keras Sequential model。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.datasets </span><br><span class="line"><span class="keyword">import</span> mnistfrom keras.models </span><br><span class="line"><span class="keyword">import</span> Sequentialfrom keras.layers </span><br><span class="line"><span class="keyword">import</span> Denseimport numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model = Sequential()</span><br><span class="line">(x_train, y_train), (x_test, y_test) = mnist.load_data()</span><br></pre></td></tr></table></figure>
-<p>再來直接宣告一個sequential模型，並載入訓練和測試資料集</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x_train = np.reshape(x_train, (x_train.shape[<span class="number">0</span>], -<span class="number">1</span>))/<span class="number">255</span></span><br><span class="line">x_test = np.reshape(x_test, (x_test.shape[<span class="number">0</span>], -<span class="number">1</span>))/<span class="number">255</span></span><br><span class="line"></span><br><span class="line">y_train = np.eye(<span class="number">10</span>)[y_train.reshape(-<span class="number">1</span>)]</span><br><span class="line">y_test = np.eye(<span class="number">10</span>)[y_test.reshape(-<span class="number">1</span>)]</span><br></pre></td></tr></table></figure>
-<p>接著要先處理一下載入的資料，在x資料的部份要先將原本28×28的維度轉成1×784輸入，這裡可以使用numpy的reshape來處理，再來再將資料除上255作正規化。另外在label y資料集的部份則要作one-hot encoding，將每個標籤轉成長度為10的向量，並用0和1來表示屬於哪一個類別。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x_train.shape</span><br><span class="line">(<span class="number">60000</span>, <span class="number">784</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x_test.shape</span><br><span class="line">(<span class="number">60000</span>, <span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y_train.shape</span><br><span class="line">(<span class="number">10000</span>, <span class="number">784</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y_test.shape</span><br><span class="line">(<span class="number">10000</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-<p>可以看到處理完後的資料維度</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model.add(Dense(units=<span class="number">256</span>, activation=<span class="string">&#x27;relu&#x27;</span>, input_dim=<span class="number">28</span>*<span class="number">28</span>))</span><br><span class="line">model.add(Dense(units=<span class="number">10</span>, activation=<span class="string">&#x27;softmax&#x27;</span>))</span><br></pre></td></tr></table></figure>
-<p>再來加入兩個layer，即只使用一個hidden layer和一個output layer，其中hidden layer有256顆神經元，output layer有10顆，並透過softmax輸出結果</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model.<span class="built_in">compile</span>(loss=<span class="string">&#x27;categorical_crossentropy&#x27;</span>,</span><br><span class="line">              optimizer=<span class="string">&#x27;Adam&#x27;</span>,              </span><br><span class="line">              metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br></pre></td></tr></table></figure>
-<p>接著開始設定使用什麼loss function與最佳化的方法，還有要評估模型的指標</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model.fit(x_train, y_train, epochs=<span class="number">10</span>, batch_size=<span class="number">32</span>)</span><br></pre></td></tr></table></figure>
-<p>接著就開始訓練，其中會設定訓練的週期與每一次的批數</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_and_metrics = model.evaluate(x_train, y_train, batch_size=<span class="number">128</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(loss_and_metrics)</span><br><span class="line">loss=<span class="number">0.007</span>, acc=<span class="number">0.998</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_and_metrics = model.evaluate(x_test, y_test, batch_size=<span class="number">128</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(loss_and_metrics)</span><br><span class="line">loss=<span class="number">0.08</span>, acc=<span class="number">0.979</span></span><br></pre></td></tr></table></figure>
-<p>中間可以看到訓練的過程，在訓練完畢說可以透過evaluate來評估model在訓練資料集，還有測試資料集的正確率。</p>
-<p>keras在建立模型非常方便使用，可以很容易的加入需要的hidden layer數，而且針對常使用的activation function, loss function和最佳化的方法都有支援，如果需要快速的建出模型來作應用非常的推薦。另外keras也有支援CNN還有RNN，下次會用別的資料來試試看囉！</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://keras.io/getting-started/sequential-model-guide/">Keras Getting Start</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1585,7 +1603,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">52</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1598,7 +1616,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

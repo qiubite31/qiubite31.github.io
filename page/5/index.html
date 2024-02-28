@@ -196,6 +196,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/03/14/Generator%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/14/Generator%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Generator的概念與如何使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-03-14 00:00:00" itemprop="dateCreated datePublished" datetime="2017-03-14T00:00:00+08:00">2017-03-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/03/14/Generator%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/14/Generator的概念與如何使用/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>generator本身也是iterator，和iterator不同的地方在於generator會透過function宣告的方式，但有別於一般的function直接return回傳值，generator的function會在”有需要”的時候，使用yield來回傳值。為什麼稱為”有需要”的時候呢？因為generator在每次呼叫next()回傳值後，會記下所有的資料並保留最後一次執行狀態，直到下一次呼叫next()才會再繼續執行未結束的狀態。我們可以看一下下面這個範例:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">transform</span>(<span class="params">data</span>):</span>    </span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> data:        </span><br><span class="line">        <span class="keyword">yield</span> <span class="built_in">chr</span>(<span class="built_in">ord</span>(char) + <span class="number">1</span>)  <span class="comment"># 透過yield回傳值後留存狀態</span></span><br></pre></td></tr></table></figure>
+<p>在每一次呼叫next()時，generator才會開始執行，並且每次執行到yield回傳值後停止，並保留執行狀態直到下一次呼叫next()才繼續執行。當generator終止後呼叫next()則會發生StopIteration。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>char = transform(<span class="string">&#x27;python&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">q</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">z</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">i</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">p</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">p</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">o</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">File &lt;stdin&gt;, line <span class="number">1</span>, <span class="keyword">in</span>     </span><br><span class="line">    <span class="built_in">next</span>(char)StopIteration</span><br></pre></td></tr></table></figure>
+<p>也可以使用for loop來呼叫generator</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> char <span class="keyword">in</span> transform(<span class="string">&#x27;python&#x27;</span>):     </span><br><span class="line">    <span class="built_in">print</span>(char)</span><br><span class="line"></span><br><span class="line">q</span><br><span class="line">z</span><br><span class="line">u</span><br><span class="line">i</span><br><span class="line">p</span><br><span class="line">o</span><br></pre></td></tr></table></figure>
+<p>使用generator最大的好處在於可以有效的處理一次性使用大量使用Memory的情況，將要一次性處理的過程拆成generator分次執行。例如當需要讀取很大的檔案處理時(甚至是多個很大的檔案)。而且使用generator可以降低iterator在loop的維度，讓程式碼可以更加的乾淨。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_line_title</span>(<span class="params">file_name</span>):</span>    </span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_name:        </span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">open</span>(file, mode=<span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>):            </span><br><span class="line">            <span class="keyword">if</span> line.istitle():                </span><br><span class="line">                <span class="keyword">yield</span> line</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>lines = get_line_title(file_name)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>    <span class="built_in">print</span>(line)</span><br></pre></td></tr></table></figure>
+<p>上面的範例會產生generator並逐次判斷每一行內容，並回傳所有的標題。其中會用到兩個for loop和一個邏輯判斷，我們可以改寫成下面這樣，把讀取的部份和邏輯判斷的部份拆開來。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_line</span>(<span class="params">files</span>):</span>    </span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> files:        </span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">open</span>(file, mode=<span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>):            <span class="keyword">yield</span> line</span><br><span class="line">        </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_title</span>(<span class="params">lines</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> (line <span class="keyword">for</span> line <span class="keyword">in</span> lines <span class="keyword">if</span> line.istitle())</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>all_line = get_line(file_name)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> title <span class="keyword">in</span> get_title(all_line):</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>    <span class="built_in">print</span>(title)</span><br></pre></td></tr></table></figure>
+<p>如果善用generator可以有效的管理Memory的使用，也可以讓程式碼更加的有可讀性!</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/classes.html#generators">Python Docs - Generators</a><br/><a target="_blank" rel="noopener" href="http://anandology.com/python-practice-book/iterators.html">Iterators &amp; Generators</a><br/><a target="_blank" rel="noopener" href="https://realpython.com/blog/python/introduction-to-python-generators/">Introduction to Python Generators</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/03/07/Iterators%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1143,110 +1249,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/08/15/%E9%80%8F%E9%81%8Estar%E4%BE%86%E5%B0%8D%E7%BE%A4%E9%9B%86%E8%B3%87%E6%96%99Unpacking/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/08/15/%E9%80%8F%E9%81%8Estar%E4%BE%86%E5%B0%8D%E7%BE%A4%E9%9B%86%E8%B3%87%E6%96%99Unpacking/" class="post-title-link" itemprop="url">透過*和**來對群集資料Unpacking</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2016-08-15 00:00:00" itemprop="dateCreated datePublished" datetime="2016-08-15T00:00:00+08:00">2016-08-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/08/15/%E9%80%8F%E9%81%8Estar%E4%BE%86%E5%B0%8D%E7%BE%A4%E9%9B%86%E8%B3%87%E6%96%99Unpacking/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/15/透過star來對群集資料Unpacking/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在處理python的序列資料(tuple, list)或是映射資料(dict)，並要把資料傳入function時，可使用*和**運算符來分別對兩種資料作unpacking並傳入函式</p>
-<p>針對序列(tuple, list)可以使用拆開序列運算符(sequence unpacking operator)，在變數前加上*前綴來達成</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">product</span>(<span class="params">a, b, c</span>):</span></span><br><span class="line">    <span class="keyword">return</span> a * b * c</span><br><span class="line">    </span><br><span class="line">T = (<span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>)</span><br><span class="line">product(T[<span class="number">0</span>], T[<span class="number">1</span>], T[<span class="number">2</span>])  <span class="comment"># 用切片讀出tuple資料傳入函式</span></span><br><span class="line">product(*T)  <span class="comment"># 直接將tuple unpacking成3個資料項傳入函式</span></span><br><span class="line">product(T[<span class="number">0</span>], *T[<span class="number">1</span>:])  <span class="comment"># 先切出1個資料項，再拆開2個資料項</span></span><br><span class="line"></span><br><span class="line">L = [<span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>]</span><br><span class="line">product(L[<span class="number">0</span>], L[<span class="number">1</span>], L[<span class="number">2</span>])  <span class="comment"># 用切片讀出list資料傳入函式</span></span><br><span class="line">product(*L)  <span class="comment"># 直接將list unpacking成3個資料項傳入函式</span></span><br><span class="line">product(L[<span class="number">0</span>], *L[<span class="number">1</span>:])  <span class="comment"># 先切出1個資料項，再拆開2個資料項</span></span><br></pre></td></tr></table></figure>
-<p>上面的範列product函式會接受3個引數，透過*來直接對序列作unpacking，就能將序列內的資料項直接傳入函式，而不用先讀出來或是對序列作切片(slice)</p>
-<p>針對映射資料(dict)則是使用拆開映射運算符(mapping unpacking operator)，在變數前加上**前綴</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">5</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">10</span>&#125;</span><br><span class="line">product(**D)</span><br></pre></td></tr></table></figure>
-<p>上面範例會將dic以key-value拆開，在傳入函式後會將每個key的value分配給與key相同名稱的參數(parameter)。要注意的是，如果字典裡面的key和函式參數對應不起來，則會引發TypeError。</p>
-<p>除非函式的參數有設定預設值(Default)，例如以下範例函式參數d有預計值20，若字典沒有d，d在函式中就會帶入預設值而不會引發TypeError</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">product</span>(<span class="params">a, b, c, d=<span class="number">20</span></span>):</span></span><br><span class="line">    <span class="keyword">return</span> a * b * c * d</span><br><span class="line">    </span><br><span class="line">D = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">5</span>, <span class="string">&#x27;c&#x27;</span>: <span class="number">10</span>&#125;</span><br><span class="line">product(**D)</span><br></pre></td></tr></table></figure>
-<p>參考資料:<br/><a href="/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/">函式參數預設值請參考: 位置引數(Positional Argument)與關鍵字引數(Keyword Argument)</a><br/><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists">Python docs - unpacking argument lists</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1318,7 +1320,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">52</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1331,7 +1333,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

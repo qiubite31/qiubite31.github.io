@@ -196,6 +196,119 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/12/05/keras-intro/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/12/05/keras-intro/" class="post-title-link" itemprop="url">第一次使用Keras就上手</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-12-05 00:00:00" itemprop="dateCreated datePublished" datetime="2017-12-05T00:00:00+08:00">2017-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-06-21 16:32:49" itemprop="dateModified" datetime="2021-06-21T16:32:49+08:00">2021-06-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/12/05/keras-intro/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/12/05/keras-intro/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近正在學習Andrea在Coursera上開的Deep Learning課程，之前工作關係有接觸到keras，而且使用起來還滿容易上手的，所以就嘗試拿了MNIST資料集來試玩看看</p>
+<p>首先載入手寫辨識資料集mnist，這個資料集還滿廣泛被拿來使用的，而且在keras也可以直接載入，另外也會用到最基本的keras Sequential model。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.datasets </span><br><span class="line"><span class="keyword">import</span> mnistfrom keras.models </span><br><span class="line"><span class="keyword">import</span> Sequentialfrom keras.layers </span><br><span class="line"><span class="keyword">import</span> Denseimport numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model = Sequential()</span><br><span class="line">(x_train, y_train), (x_test, y_test) = mnist.load_data()</span><br></pre></td></tr></table></figure>
+<p>再來直接宣告一個sequential模型，並載入訓練和測試資料集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x_train = np.reshape(x_train, (x_train.shape[<span class="number">0</span>], -<span class="number">1</span>))/<span class="number">255</span></span><br><span class="line">x_test = np.reshape(x_test, (x_test.shape[<span class="number">0</span>], -<span class="number">1</span>))/<span class="number">255</span></span><br><span class="line"></span><br><span class="line">y_train = np.eye(<span class="number">10</span>)[y_train.reshape(-<span class="number">1</span>)]</span><br><span class="line">y_test = np.eye(<span class="number">10</span>)[y_test.reshape(-<span class="number">1</span>)]</span><br></pre></td></tr></table></figure>
+<p>接著要先處理一下載入的資料，在x資料的部份要先將原本28×28的維度轉成1×784輸入，這裡可以使用numpy的reshape來處理，再來再將資料除上255作正規化。另外在label y資料集的部份則要作one-hot encoding，將每個標籤轉成長度為10的向量，並用0和1來表示屬於哪一個類別。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>x_train.shape</span><br><span class="line">(<span class="number">60000</span>, <span class="number">784</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x_test.shape</span><br><span class="line">(<span class="number">60000</span>, <span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y_train.shape</span><br><span class="line">(<span class="number">10000</span>, <span class="number">784</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y_test.shape</span><br><span class="line">(<span class="number">10000</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<p>可以看到處理完後的資料維度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model.add(Dense(units=<span class="number">256</span>, activation=<span class="string">&#x27;relu&#x27;</span>, input_dim=<span class="number">28</span>*<span class="number">28</span>))</span><br><span class="line">model.add(Dense(units=<span class="number">10</span>, activation=<span class="string">&#x27;softmax&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<p>再來加入兩個layer，即只使用一個hidden layer和一個output layer，其中hidden layer有256顆神經元，output layer有10顆，並透過softmax輸出結果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model.<span class="built_in">compile</span>(loss=<span class="string">&#x27;categorical_crossentropy&#x27;</span>,</span><br><span class="line">              optimizer=<span class="string">&#x27;Adam&#x27;</span>,              </span><br><span class="line">              metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>接著開始設定使用什麼loss function與最佳化的方法，還有要評估模型的指標</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model.fit(x_train, y_train, epochs=<span class="number">10</span>, batch_size=<span class="number">32</span>)</span><br></pre></td></tr></table></figure>
+<p>接著就開始訓練，其中會設定訓練的週期與每一次的批數</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_and_metrics = model.evaluate(x_train, y_train, batch_size=<span class="number">128</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(loss_and_metrics)</span><br><span class="line">loss=<span class="number">0.007</span>, acc=<span class="number">0.998</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_and_metrics = model.evaluate(x_test, y_test, batch_size=<span class="number">128</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(loss_and_metrics)</span><br><span class="line">loss=<span class="number">0.08</span>, acc=<span class="number">0.979</span></span><br></pre></td></tr></table></figure>
+<p>中間可以看到訓練的過程，在訓練完畢說可以透過evaluate來評估model在訓練資料集，還有測試資料集的正確率。</p>
+<p>keras在建立模型非常方便使用，可以很容易的加入需要的hidden layer數，而且針對常使用的activation function, loss function和最佳化的方法都有支援，如果需要快速的建出模型來作應用非常的推薦。另外keras也有支援CNN還有RNN，下次會用別的資料來試試看囉！</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://keras.io/getting-started/sequential-model-guide/">Keras Getting Start</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/11/01/Machine-Learning-Foundation-16/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1455,149 +1568,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/24/Machine-Learning-Foundation-8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/08/24/Machine-Learning-Foundation-8/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第八講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-08-24 00:00:00" itemprop="dateCreated datePublished" datetime="2017-08-24T00:00:00+08:00">2017-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:08:50" itemprop="dateModified" datetime="2021-05-11T23:08:50+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/08/24/Machine-Learning-Foundation-8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/24/Machine-Learning-Foundation-8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <img src="/2017/08/24/Machine-Learning-Foundation-8/roadmap.JPG" class="" width="500">
-
-<p>先來複習一下前面課程，從前面的課程可以得知，在有限的VC維度下，且有大的樣本N並且Ein是夠小的，滿足三個條件我們就可以讓機器可以學習。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/RecapLearningFlow.JPG" class="" width="500">
-
-<p>那如果今天在整個學習流程中，未知的目標函式在產生x時有雜訊發生，會發生什麼事呢？這堂課主要就是在說明，如果資料有雜訊，到底會不會對學習造成影響。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/Noice.JPG" class="" width="500">
-
-<p>事實上雜訊是有可能發生的，比如說在審核信用卡的例子，可能在y產生雜訊，即發不發信用卡被錯誤標記；也可能在x產生雜訊，這就發生在蒐集資料時產生的錯誤。那麼究竟有雜訊會不會對VC維產生影響呢？</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/ProbabilitiesMarbles.JPG" class="" width="500">
-
-<p>我們一樣從前面的抽彈珠例子來看，本來如果f(x)和h(x)相等時是綠色，不相等是橘色，今天如果有雜訊發生，代表y和f(x)會不相等(明明要核卡但沒有)。雜訊就可以假設成一種會變顏色的彈珠，有時是綠色有時是橘色，雖然會有這種雜訊的彈珠出現，但是因為雜訊變色彈珠是少數，我們仍然可以透過抽樣的方式來計算橘色和綠色彈珠的比率，所以VC維還是會work的。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/TargetDistribution.JPG" class="" width="500">
-
-<p>這邊會帶出目標分配P(y|x)，以二元分類o和x的例子來看，如果我們已知P(o|x)是70%，P(x|x)是30%，在這個情況下我們會選擇o，但是剩下的30%可以看成雜訊。即最好的預測是o，而雜訊發生的機率是30%。所以在這裡機器學習要作到的，就是在點x找到最理想的mini-target。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/TheNewLearningFlow.JPG" class="" width="500">
-
-<p>最後再把雜訊加進去後，可以把目標函式f(x)改變成mini-target P(y|x)加上雜訊，而這個y會用來在最後評估g和f是否接近。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/PointwiseErrMeasure.JPG" class="" width="500">
-
-<p>之前談到的錯誤衡量方式為分類錯誤(又稱為0/1錯誤)，就是直覺的判斷g(x)和f(x)是否相等，不管是Ein或是Eout都可以對每一個點各自作判斷(稱為pointwise)是否發生錯誤。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/TwoErrMeasures.JPG" class="" width="500">
-
-<p>這種0/1錯誤衡量會用在分類問題上，除了分類錯誤外，另外常用的錯誤衡量方式為Squred Err，判斷每一個y到理想的y的距離，這種則常用在數值型的機器學習問題，像是迴歸分析。在不同的機器學習問題，會使用最適合的錯誤衡量方法。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/LearningFlowWiErrMeasure.JPG" class="" width="500">
-
-<p>當我們把錯誤衡量加上去，這個選擇的錯誤衡量會用來評估g(x)和f(x)是否相等。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/ChoiceErrMeasure.JPG" class="" width="500">
-
-<p>在0/1分類時，可能會有兩種分錯的情況，以指紋判斷正不正確來說明，一種為false reject，就是指原本是正確的，但是被判成錯誤；另一種為false accept，是指原本是錯誤的，但是被判成正確。看起來都是錯誤，但是這兩種錯誤會在不同的應用上有不同的重要性。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/FingerprintVerificationOfSupermarket.JPG" class="" width="500">
-
-<p>以超市的應用為例，如果超市透過指紋來判斷是不是要給折扣，今天判斷錯誤造成該給折扣卻沒給(false reject)讓顧客不開心，損失了這個客戶可能造成超市的損失；相比之下，如果是不該給折扣卻給了(false accept)，頂多只是超市有一點損失而已沒什麼大不了。所以以超市來看，false reject的成本會比false accept高。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/FingerprintVerificationOfCIA.JPG" class="" width="500">
-
-<p>以CIA應用為例，今天如果有人沒有權限但是卻被判斷有權限可以看資料(false accept)，這將是個很嚴重的錯誤；那如果是有權限但是被判斷成沒有權限(false reject)，其實只的造成員工的不開心而已。和超市相比，他的false accept成本可能就會遠遠大於false reject。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/LearningFlowWiAlgo.JPG" class="" width="500">
-
-<p>那麼到底該怎麼樣去衡量雜訊造成的實際應用錯誤呢？我們會透過設計友善的演算法來找到還可以接受的錯誤衡量方法。所以相比於實際的錯誤err，在設計演算法會透過計算一個另一個err hat，來試圖讓錯誤衡量可以更多的方便。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/MinEinForWeightClassify.JPG" class="" width="500">
-
-<p>前面講到的又稱為有權重的分類問題(weight classification)，不同的例子會有不同的重要性。因為已經證明在有雜訊的情況下VC維仍然是可行的，所以我們只要確保Ein是最小的，就可以保證Eout是最小的。我們總共學過兩個讓Ein最小化的方法，第一個是PLA，PLA就會等所有的資料都分對就結束，即Ein為0；如果PLA跑不完的話，可以用另外的Pocket演算法，Pocket演算法可以把加權錯誤比較好的放入pocket。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/WeightedPocketAlgo.JPG" class="" width="500">
-
-<p>如果我們要把0/1分類問題加上權重，其實可以簡單的把-1的資料複製成1000次，就會很像他有帶權重1000。實際並不的真的複製，原本的pocket會輪流拜訪每一個點，當我們這種-1的點讓他有1000倍的機率更容易被拜訪到，其實就可以達到類似的效果。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/summary.JPG" class="" width="500">
-
-<p>總結來說，這堂課首先說明了有雜訊的情況下，會使用一個機率函式P(y|x)來取代f(x)，再來會使用適合的錯誤衡量方法來作評估，但是錯誤衡量方法有時並不容易給，所以會透過比較友善的演算法設計來達成。最後說到兩種不同的錯誤會有不同的權重，且這個權重可以透過虛擬複製的方法達成。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/08_handout.pdf">Machine Learning Foundation 08</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1669,7 +1639,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">52</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1682,7 +1652,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

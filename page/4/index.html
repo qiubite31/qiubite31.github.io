@@ -196,6 +196,149 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/24/Machine-Learning-Foundation-8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/08/24/Machine-Learning-Foundation-8/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第八講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-08-24 00:00:00" itemprop="dateCreated datePublished" datetime="2017-08-24T00:00:00+08:00">2017-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:08:50" itemprop="dateModified" datetime="2021-05-11T23:08:50+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/08/24/Machine-Learning-Foundation-8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/24/Machine-Learning-Foundation-8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <img src="/2017/08/24/Machine-Learning-Foundation-8/roadmap.JPG" class="" width="500">
+
+<p>先來複習一下前面課程，從前面的課程可以得知，在有限的VC維度下，且有大的樣本N並且Ein是夠小的，滿足三個條件我們就可以讓機器可以學習。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/RecapLearningFlow.JPG" class="" width="500">
+
+<p>那如果今天在整個學習流程中，未知的目標函式在產生x時有雜訊發生，會發生什麼事呢？這堂課主要就是在說明，如果資料有雜訊，到底會不會對學習造成影響。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/Noice.JPG" class="" width="500">
+
+<p>事實上雜訊是有可能發生的，比如說在審核信用卡的例子，可能在y產生雜訊，即發不發信用卡被錯誤標記；也可能在x產生雜訊，這就發生在蒐集資料時產生的錯誤。那麼究竟有雜訊會不會對VC維產生影響呢？</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/ProbabilitiesMarbles.JPG" class="" width="500">
+
+<p>我們一樣從前面的抽彈珠例子來看，本來如果f(x)和h(x)相等時是綠色，不相等是橘色，今天如果有雜訊發生，代表y和f(x)會不相等(明明要核卡但沒有)。雜訊就可以假設成一種會變顏色的彈珠，有時是綠色有時是橘色，雖然會有這種雜訊的彈珠出現，但是因為雜訊變色彈珠是少數，我們仍然可以透過抽樣的方式來計算橘色和綠色彈珠的比率，所以VC維還是會work的。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/TargetDistribution.JPG" class="" width="500">
+
+<p>這邊會帶出目標分配P(y|x)，以二元分類o和x的例子來看，如果我們已知P(o|x)是70%，P(x|x)是30%，在這個情況下我們會選擇o，但是剩下的30%可以看成雜訊。即最好的預測是o，而雜訊發生的機率是30%。所以在這裡機器學習要作到的，就是在點x找到最理想的mini-target。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/TheNewLearningFlow.JPG" class="" width="500">
+
+<p>最後再把雜訊加進去後，可以把目標函式f(x)改變成mini-target P(y|x)加上雜訊，而這個y會用來在最後評估g和f是否接近。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/PointwiseErrMeasure.JPG" class="" width="500">
+
+<p>之前談到的錯誤衡量方式為分類錯誤(又稱為0/1錯誤)，就是直覺的判斷g(x)和f(x)是否相等，不管是Ein或是Eout都可以對每一個點各自作判斷(稱為pointwise)是否發生錯誤。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/TwoErrMeasures.JPG" class="" width="500">
+
+<p>這種0/1錯誤衡量會用在分類問題上，除了分類錯誤外，另外常用的錯誤衡量方式為Squred Err，判斷每一個y到理想的y的距離，這種則常用在數值型的機器學習問題，像是迴歸分析。在不同的機器學習問題，會使用最適合的錯誤衡量方法。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/LearningFlowWiErrMeasure.JPG" class="" width="500">
+
+<p>當我們把錯誤衡量加上去，這個選擇的錯誤衡量會用來評估g(x)和f(x)是否相等。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/ChoiceErrMeasure.JPG" class="" width="500">
+
+<p>在0/1分類時，可能會有兩種分錯的情況，以指紋判斷正不正確來說明，一種為false reject，就是指原本是正確的，但是被判成錯誤；另一種為false accept，是指原本是錯誤的，但是被判成正確。看起來都是錯誤，但是這兩種錯誤會在不同的應用上有不同的重要性。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/FingerprintVerificationOfSupermarket.JPG" class="" width="500">
+
+<p>以超市的應用為例，如果超市透過指紋來判斷是不是要給折扣，今天判斷錯誤造成該給折扣卻沒給(false reject)讓顧客不開心，損失了這個客戶可能造成超市的損失；相比之下，如果是不該給折扣卻給了(false accept)，頂多只是超市有一點損失而已沒什麼大不了。所以以超市來看，false reject的成本會比false accept高。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/FingerprintVerificationOfCIA.JPG" class="" width="500">
+
+<p>以CIA應用為例，今天如果有人沒有權限但是卻被判斷有權限可以看資料(false accept)，這將是個很嚴重的錯誤；那如果是有權限但是被判斷成沒有權限(false reject)，其實只的造成員工的不開心而已。和超市相比，他的false accept成本可能就會遠遠大於false reject。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/LearningFlowWiAlgo.JPG" class="" width="500">
+
+<p>那麼到底該怎麼樣去衡量雜訊造成的實際應用錯誤呢？我們會透過設計友善的演算法來找到還可以接受的錯誤衡量方法。所以相比於實際的錯誤err，在設計演算法會透過計算一個另一個err hat，來試圖讓錯誤衡量可以更多的方便。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/MinEinForWeightClassify.JPG" class="" width="500">
+
+<p>前面講到的又稱為有權重的分類問題(weight classification)，不同的例子會有不同的重要性。因為已經證明在有雜訊的情況下VC維仍然是可行的，所以我們只要確保Ein是最小的，就可以保證Eout是最小的。我們總共學過兩個讓Ein最小化的方法，第一個是PLA，PLA就會等所有的資料都分對就結束，即Ein為0；如果PLA跑不完的話，可以用另外的Pocket演算法，Pocket演算法可以把加權錯誤比較好的放入pocket。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/WeightedPocketAlgo.JPG" class="" width="500">
+
+<p>如果我們要把0/1分類問題加上權重，其實可以簡單的把-1的資料複製成1000次，就會很像他有帶權重1000。實際並不的真的複製，原本的pocket會輪流拜訪每一個點，當我們這種-1的點讓他有1000倍的機率更容易被拜訪到，其實就可以達到類似的效果。</p>
+<img src="/2017/08/24/Machine-Learning-Foundation-8/summary.JPG" class="" width="500">
+
+<p>總結來說，這堂課首先說明了有雜訊的情況下，會使用一個機率函式P(y|x)來取代f(x)，再來會使用適合的錯誤衡量方法來作評估，但是錯誤衡量方法有時並不容易給，所以會透過比較友善的演算法設計來達成。最後說到兩種不同的錯誤會有不同的權重，且這個權重可以透過虛擬複製的方法達成。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/08_handout.pdf">Machine Learning Foundation 08</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/16/Machine-Learning-Foundation-7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1311,112 +1454,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/03/14/Generator%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/03/14/Generator%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Generator的概念與如何使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-03-14 00:00:00" itemprop="dateCreated datePublished" datetime="2017-03-14T00:00:00+08:00">2017-03-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/03/14/Generator%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/14/Generator的概念與如何使用/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>generator本身也是iterator，和iterator不同的地方在於generator會透過function宣告的方式，但有別於一般的function直接return回傳值，generator的function會在”有需要”的時候，使用yield來回傳值。為什麼稱為”有需要”的時候呢？因為generator在每次呼叫next()回傳值後，會記下所有的資料並保留最後一次執行狀態，直到下一次呼叫next()才會再繼續執行未結束的狀態。我們可以看一下下面這個範例:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">transform</span>(<span class="params">data</span>):</span>    </span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> data:        </span><br><span class="line">        <span class="keyword">yield</span> <span class="built_in">chr</span>(<span class="built_in">ord</span>(char) + <span class="number">1</span>)  <span class="comment"># 透過yield回傳值後留存狀態</span></span><br></pre></td></tr></table></figure>
-<p>在每一次呼叫next()時，generator才會開始執行，並且每次執行到yield回傳值後停止，並保留執行狀態直到下一次呼叫next()才繼續執行。當generator終止後呼叫next()則會發生StopIteration。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>char = transform(<span class="string">&#x27;python&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">q</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">z</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">i</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">p</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">p</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">o</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">File &lt;stdin&gt;, line <span class="number">1</span>, <span class="keyword">in</span>     </span><br><span class="line">    <span class="built_in">next</span>(char)StopIteration</span><br></pre></td></tr></table></figure>
-<p>也可以使用for loop來呼叫generator</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> char <span class="keyword">in</span> transform(<span class="string">&#x27;python&#x27;</span>):     </span><br><span class="line">    <span class="built_in">print</span>(char)</span><br><span class="line"></span><br><span class="line">q</span><br><span class="line">z</span><br><span class="line">u</span><br><span class="line">i</span><br><span class="line">p</span><br><span class="line">o</span><br></pre></td></tr></table></figure>
-<p>使用generator最大的好處在於可以有效的處理一次性使用大量使用Memory的情況，將要一次性處理的過程拆成generator分次執行。例如當需要讀取很大的檔案處理時(甚至是多個很大的檔案)。而且使用generator可以降低iterator在loop的維度，讓程式碼可以更加的乾淨。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_line_title</span>(<span class="params">file_name</span>):</span>    </span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> file_name:        </span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">open</span>(file, mode=<span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>):            </span><br><span class="line">            <span class="keyword">if</span> line.istitle():                </span><br><span class="line">                <span class="keyword">yield</span> line</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>lines = get_line_title(file_name)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>    <span class="built_in">print</span>(line)</span><br></pre></td></tr></table></figure>
-<p>上面的範例會產生generator並逐次判斷每一行內容，並回傳所有的標題。其中會用到兩個for loop和一個邏輯判斷，我們可以改寫成下面這樣，把讀取的部份和邏輯判斷的部份拆開來。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_line</span>(<span class="params">files</span>):</span>    </span><br><span class="line">    <span class="keyword">for</span> file <span class="keyword">in</span> files:        </span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">open</span>(file, mode=<span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>):            <span class="keyword">yield</span> line</span><br><span class="line">        </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_title</span>(<span class="params">lines</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> (line <span class="keyword">for</span> line <span class="keyword">in</span> lines <span class="keyword">if</span> line.istitle())</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>all_line = get_line(file_name)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">for</span> title <span class="keyword">in</span> get_title(all_line):</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>    <span class="built_in">print</span>(title)</span><br></pre></td></tr></table></figure>
-<p>如果善用generator可以有效的管理Memory的使用，也可以讓程式碼更加的有可讀性!</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://docs.python.org/3/tutorial/classes.html#generators">Python Docs - Generators</a><br/><a target="_blank" rel="noopener" href="http://anandology.com/python-practice-book/iterators.html">Iterators &amp; Generators</a><br/><a target="_blank" rel="noopener" href="https://realpython.com/blog/python/introduction-to-python-generators/">Introduction to Python Generators</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1488,7 +1525,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">52</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1501,7 +1538,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

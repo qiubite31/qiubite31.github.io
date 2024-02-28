@@ -196,6 +196,133 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2024/01/27/before-adopt-cassandra-you-need-to-know-cql-orderby/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/27/before-adopt-cassandra-you-need-to-know-cql-orderby/" class="post-title-link" itemprop="url">在採用Cassandra前你必須要知道的事-CQL怎麼ORDERBY</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2024-01-27 18:34:38" itemprop="dateCreated datePublished" datetime="2024-01-27T18:34:38+08:00">2024-01-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2024-02-29 00:52:52" itemprop="dateModified" datetime="2024-02-29T00:52:52+08:00">2024-02-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL-NoSQL/" itemprop="url" rel="index"><span itemprop="name">SQL&NoSQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2024/01/27/before-adopt-cassandra-you-need-to-know-cql-orderby/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2024/01/27/before-adopt-cassandra-you-need-to-know-cql-orderby/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>SQL開發者在查詢完資料後，往往會使用ORDER BY語法對查詢結果作排序調整。Cassandra的排序是對partition中的資料作排序，而且這個排序必須在建立資料表時就先定義好，並不能在查詢時使用任意的欄位改變排序。</p>
+<p>Cassandra在建立資料表時定義的partition key決定資料存放的位置，並在每份partion中使用clustering key決定資料的排序，而且資料在寫入Cassandra時就會依據clustering key定義的欄位順序將資料排序好。</p>
+<p>以下用員工表範例來作說明：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- create</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> CASSANDRA.EMPLOYEE (</span><br><span class="line">  deptName text,</span><br><span class="line">  jobgrade text,</span><br><span class="line">  empId text,</span><br><span class="line">  name text,</span><br><span class="line">  gender text,</span><br><span class="line">  <span class="keyword">primary</span> key(deptName, jobgrade, gender, empId)</span><br><span class="line">) <span class="keyword">WITH</span> CLUSTERING <span class="keyword">ORDER</span> <span class="keyword">BY</span> (jobgrade <span class="keyword">ASC</span>, gender <span class="keyword">ASC</span>, empId <span class="keyword">ASC</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;001&#x27;</span>, <span class="string">&#x27;Tom&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;002&#x27;</span>, <span class="string">&#x27;Amy&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;003&#x27;</span>, <span class="string">&#x27;John&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;004&#x27;</span>, <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;005&#x27;</span>, <span class="string">&#x27;Mary&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;006&#x27;</span>, <span class="string">&#x27;Henry&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- select</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE;</span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">002</span> <span class="operator">|</span>   Amy</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">2</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">003</span> <span class="operator">|</span>  John</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">006</span> <span class="operator">|</span> Henry</span><br></pre></td></tr></table></figure>
+
+<h4 id="在建立資料表時決定資料排序"><a href="#在建立資料表時決定資料排序" class="headerlink" title="在建立資料表時決定資料排序"></a>在建立資料表時決定資料排序</h4><p>從以上的範例可以看到定義的clustering key包含了jobgrade、gender和empId，也可以發現資料查詢出來預設就會依照這三個欄位排序。因為Cassandra在執行資料寫入時，就已經將排序完成了，所以查詢出來就是排序後的結果。<br>像是HR部門的資料，雖然有一筆jobgrade為1的資料後來才寫入，但仍然會被排序在jobgrade為3的資料前面。</p>
+<p>我們可以嘗試再寫入一筆測試看看：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;007&#x27;</span>, <span class="string">&#x27;Grace&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;Design&#x27;</span>;</span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">2</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">007</span> <span class="operator">|</span> Grace</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">2</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">003</span> <span class="operator">|</span>  John</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">006</span> <span class="operator">|</span> Henry</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>從上面新增的資料和查詢結果，可以發現這筆資料先依jobgrade被排序在1和3中間，再依gender排序在Male前面。</p>
+<h4 id="ORDER-BY的使用限制"><a href="#ORDER-BY的使用限制" class="headerlink" title="ORDER BY的使用限制"></a>ORDER BY的使用限制</h4><p>也因為Cassandra的特性，在下CQL查詢時使用ORDER BY時會有以下幾個限制:</p>
+<ol>
+<li>ORDER BY只能支援partition key有給定的情況</li>
+<li>ORDER BY的欄位必須被定義在clustering key中</li>
+<li>ORDER BY的欄位順序必須符合clustering key定義的順序</li>
+<li>ORDER BY的欄位正/逆排方向必須和clustering key定義的欄位正/逆排方向一致</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 對HR部門的職等作逆排序</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span> <span class="comment">-- 符合限制1</span></span><br><span class="line"> <span class="keyword">ORDER</span> <span class="keyword">BY</span> jobgrade <span class="keyword">DESC</span>; <span class="comment">-- 符合限制2</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">002</span> <span class="operator">|</span>  Amy</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br></pre></td></tr></table></figure>
+
+<h5 id="必須依照clustering-key順序"><a href="#必須依照clustering-key順序" class="headerlink" title="必須依照clustering key順序"></a>必須依照clustering key順序</h5><p>Cassandra可以將原本定義好的排序在查詢時轉向，因此會將資料依jobgrade改成從大到小排序。又因為資料已經依clustering key的欄位順序與方向關係儲存下來了，所以gender和empid會連帶隨jobgrade的排序轉向而一起轉向。</p>
+<p>接著再來看下面這支CQL，如果不依clustering key定義的欄位順序排序會發生什麼事：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 對HR部門的員工編號與性別逆排序</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span> <span class="comment">-- 符合限制1</span></span><br><span class="line"> <span class="keyword">ORDER</span> <span class="keyword">BY</span> empid <span class="keyword">DESC</span>, gender <span class="keyword">DESC</span>; <span class="comment">-- 違反限制2&amp;3 (跳過jobgrade且欄位順序不符)</span></span><br><span class="line"></span><br><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Order by currently only supports the ordering of columns following their declared order in the PRIMARY KEY&quot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span> <span class="comment">-- 符合限制1</span></span><br><span class="line">   <span class="keyword">AND</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span> </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> gender <span class="keyword">DESC</span>, empid <span class="keyword">DESC</span>;  <span class="comment">-- 符合限制2&amp;3 (已綁定jobgrade且剩下欄位順序正確)</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br></pre></td></tr></table></figure>
+
+<p>如果想對員工編號與性別作逆排序，這時會違反clustering key的順序，就會看到Cassandra跳出Order by只支援PRIMARY KEY宣告的欄位順序的錯誤訊息。因為Cassandra在建立資料表時就已經決定好資料儲存的順序，除非對前面順序的clustering key下filter否則不能跳過，並且排序的欄位順序須符合clustering key的定義。</p>
+<h5 id="必須符合clustering-key排序方向"><a href="#必須符合clustering-key排序方向" class="headerlink" title="必須符合clustering key排序方向"></a>必須符合clustering key排序方向</h5><p>接著再來看下面這支CQL，如果欄位正/逆排方向和clustering key定義的欄位正/逆排方向不一致會發生什麼事：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span> <span class="comment">-- 符合限制1</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> jobgrade <span class="keyword">DESC</span>, gender <span class="keyword">ASC</span>, empid <span class="keyword">DESC</span>;  <span class="comment">-- 符合限制2&amp;3但違反限制4</span></span><br><span class="line"></span><br><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Unsupported order by relation&quot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span> <span class="comment">-- 符合限制1</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> jobgrade <span class="keyword">DESC</span>, gender <span class="keyword">DESC</span>, empid <span class="keyword">DESC</span>;  <span class="comment">-- 符合限制2&amp;3&amp;4</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">002</span> <span class="operator">|</span>  Amy</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br></pre></td></tr></table></figure>
+
+<p>因為建資料表時已經決定每個欄位的排序方向組合，因為在查詢時如果要作排序轉向，就必須要滿足每個欄位的方向都作轉向。以這個資料表為例，三個欄位宣告為ASC，在排序轉向時就必須都要是DESC，否則Cassandra是無法把順序排出來的。</p>
+<p>如果排序結果又沒辦法透過CQL達成的話，只能重建新的資料表，或是將資料表讀進程式裡面再作排序了。</p>
+<p>為了讓資料查詢的速度可以提升，Cassandra嚴格限制資料排序都必須要預先設計與定義，即查詢出來就是排序好的結果，而不是在查詢時才作排序。正因為Cassandra的data modeling是query-driven的，必須先分析未來資料查詢的需求包含查詢欄位、排序順序，這可能會和RDBMS的使用經驗不同，也是在使用Cassandra前必須要有的思維轉換。</p>
+<p>參考資料: </p>
+<p><a target="_blank" rel="noopener" href="https://docs.datastax.com/en/dse/6.7/cql/cql/cql_reference/cql_commands/cqlSelect.html#cqlSelect__compound-primary-keys">DataStax document - Using compound primary keys and sorting results</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=svoI3ytd-TQ">Dear DataStax Episode 18: How can you order by any field in Cassandra?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2023/12/24/before-adopt-cassandra-you-need-to-know-cql-groupby/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -227,7 +354,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-01-28 15:57:24" itemprop="dateModified" datetime="2024-01-28T15:57:24+08:00">2024-01-28</time>
+                <time title="修改時間：2024-02-29 00:50:56" itemprop="dateModified" datetime="2024-02-29T00:50:56+08:00">2024-02-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,13 +404,13 @@
 <p>假設在RDBMS裡用以上建立的資料表，舉幾種查詢情境如下:</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 依部門計數</span></span><br><span class="line"><span class="keyword">SELECT</span> deptname, <span class="built_in">count</span>(<span class="operator">*</span>) </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptname</span><br><span class="line"></span><br><span class="line">  deptname <span class="operator">|</span> count</span><br><span class="line"><span class="comment">----------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>     <span class="number">3</span></span><br><span class="line">   Design <span class="operator">|</span>     <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 依職等計數</span></span><br><span class="line"><span class="keyword">SELECT</span> jobgrade, <span class="built_in">count</span>(<span class="operator">*</span>) </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">GROUP</span> <span class="keyword">BY</span> jobgrade</span><br><span class="line"></span><br><span class="line"> jobgrade <span class="operator">|</span> count</span><br><span class="line"><span class="comment">----------+-------</span></span><br><span class="line">        <span class="number">1</span> <span class="operator">|</span>     <span class="number">3</span></span><br><span class="line">        <span class="number">2</span> <span class="operator">|</span>     <span class="number">1</span></span><br><span class="line">        <span class="number">2</span> <span class="operator">|</span>     <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 依部門, 職等計數</span></span><br><span class="line"><span class="keyword">SELECT</span> deptname, jobgrade, <span class="built_in">count</span>(<span class="operator">*</span>) </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptname, jobgrade</span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> count</span><br><span class="line"><span class="comment">----------+----------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>     <span class="number">2</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>     <span class="number">1</span></span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>     <span class="number">1</span></span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">2</span> <span class="operator">|</span>     <span class="number">1</span></span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>     <span class="number">1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>如同在Cassandra查詢資料一樣，Cassandra對於使用聚合函式也是有所限制。在使用聚合函式時，只能針對被設定為primary key的欄位使用GROUP BY，也就是聚合函式只能用在被定義為partition key或是clustering key的欄位，而且嚴格限制GROUP BY的順序。以下我們看在Cassandra執行第一支CQL的結果：</p>
+<h4 id="只能用在primary-key"><a href="#只能用在primary-key" class="headerlink" title="只能用在primary key"></a>只能用在primary key</h4><p>如同在Cassandra查詢資料一樣，Cassandra對於使用聚合函式也是有所限制。在使用聚合函式時，只能針對被設定為primary key的欄位使用GROUP BY，也就是聚合函式只能用在被定義為partition key或是clustering key的欄位，而且嚴格限制GROUP BY的順序。以下我們看在Cassandra執行第一支CQL的結果：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 依部門計數</span></span><br><span class="line"><span class="keyword">SELECT</span> deptname, <span class="built_in">count</span>(<span class="operator">*</span>) </span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptname</span><br><span class="line"></span><br><span class="line">  deptname <span class="operator">|</span> count</span><br><span class="line"><span class="comment">----------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>     <span class="number">3</span></span><br><span class="line">   Design <span class="operator">|</span>     <span class="number">3</span></span><br><span class="line"></span><br><span class="line">Warnings :</span><br><span class="line">Aggregation query used <span class="keyword">without</span> <span class="keyword">partition</span> key</span><br></pre></td></tr></table></figure>
 <p>因為deptname在這張表是partition key因此這支CQL可以被執行，但同時Cassandra會附帶警告訊息，表示這個聚合查詢沒有使用partition key。原因在於Cassandra會使用partition key在cluster中存放資料，如果沒有在CQL中使用partition key當作查詢條件，CQL在執行時便會在Cassandra cluster中遍尋(Full Scan)所有的資料，這會造成效能降低與資源浪費。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 依部門計數</span></span><br><span class="line"><span class="keyword">SELECT</span> deptname, <span class="built_in">count</span>(<span class="operator">*</span>) </span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line"> <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptname</span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> count</span><br><span class="line"><span class="comment">----------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>     <span class="number">3</span></span><br></pre></td></tr></table></figure>
 
 <p>如果加上deptname當作查詢條件就不會出現警告訊息，這時Cassandra會直接從存放資料的node取出deptname=HR的資料作計數，而不需要遍尋整座Cassandra cluster。</p>
-<p>接著我們看第二支CQL，第二支CQL在執行時會出現以下的錯誤：</p>
+<h4 id="必須依照primary-key順序"><a href="#必須依照primary-key順序" class="headerlink" title="必須依照primary key順序"></a>必須依照primary key順序</h4><p>接著我們看第二支CQL，第二支CQL在執行時會出現以下的錯誤：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 依職等計數</span></span><br><span class="line"><span class="keyword">SELECT</span> jobgrade, <span class="built_in">count</span>(<span class="operator">*</span>) </span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">GROUP</span> <span class="keyword">BY</span> jobgrade</span><br><span class="line"></span><br><span class="line"> InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Group by currently only support groups of columns following their declared order in the PRIMARY KEY&quot;</span><br></pre></td></tr></table></figure>
 
 <p>當在Cassandra中執行GROUP BY時，必須要依照primary key的順序，也就是deptname、jobgrade和gender這個順序，跳過deptname直接使用jobgrade或是gender作GROUP BY是不允許的。</p>
@@ -1399,137 +1526,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/02/05/Machine-Learning-Techniques-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/05/Machine-Learning-Techniques-4/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第四講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2020-02-05 00:00:00" itemprop="dateCreated datePublished" datetime="2020-02-05T00:00:00+08:00">2020-02-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:45:13" itemprop="dateModified" datetime="2021-05-11T23:45:13+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/02/05/Machine-Learning-Techniques-4/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/05/Machine-Learning-Techniques-4/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <img src="/2020/02/05/Machine-Learning-Techniques-4/HardMarginCons.JPG" class="" width="500">
-
-<p>上一講教了透過kernel trick來處理dual SVM中的轉換與內積，並介紹了不同的kernel function，從線性到無限多維轉換的Gaussian，但SVM還是有可能會overfit。overfit有兩種可能的原因，第一種為使用了過度複雜的轉換，第二種則是堅持要把所有資料完全的切分開來。以上面這個例子來說，如果可以容忍有錯誤分類，但可以使用簡單的線性切分也可以得到不錯的邊界；相反的，如果使用比較複雜的轉換確實完美的將資料都區分正確，反而容易造成overfit。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/GiveUpExample.JPG" class="" width="500">
-
-<p>但該如何解決這個問題呢？之前在講pocket演算法時，pocket會找到能分錯資料最少的超平面，但hard-margin SVM除了要求要全部分對之外，還要選w長度最小的超平面。所以如果可以讓SVM也能像pocket一樣容忍一些錯誤，即不管部份分錯的點，就能達到某種程度的條件放寬。這邊引入C參數來代表放寬條件的相對重要性，C較大時代表越重視不要犯錯越好，C越小時代表越重視w長度，即分對的資料的margin越寬越好。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMargin1.JPG" class="" width="500">
-
-<p>但放寬後的新問題將會違反QP的條件(min為二次式，條件要為一次式)，而且在允許犯錯的情況下，沒有辦法分辦到底犯錯的嚴重程度(小錯或是大錯)。為了解決這兩個問題，引入ξn來紀錄離想要的值(是否靠近1)有多近，即將犯了幾個錯誤轉成犯了多大的錯誤。除了可以解決無法分辨犯錯程度的問題，也可以讓問題符合QP。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMargin2.JPG" class="" width="500">
-
-<p>如同前面說的，C可以用來控制large margin和margin violation，越大的C代表越重視分類的正確性，而越小的C代表margin可以比較大，但會造成某些資料分錯。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/SimplifyBeta.JPG" class="" width="500">
-
-<p>當我們將Hard-Margin轉成Soft-Margin後，再來就是將它轉成對偶問題，就可以如同Hard-Margin一樣引入不同不同維度轉換的kernel function。第一步就是帶入Lagrange，有別於原本的Hard-Margin只需要帶入一個α，因為這邊分成兩個部分，因此分別帶入α和β。再進一步將ξn作微分拿掉ξ，可以發現在最佳解的位置C會等於αn+βn，就可以將βn簡化成C-αn，又因前後兩項分別都有C-αn互相消掉，所以可以再將式子簡化。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/OtherSimplify.JPG" class="" width="500">
-
-<p>到這邊可以發現內部要解的問題其實就和之前的Hard-Margin SVM相同，只差在外面的條件帶入了C的限制，所以這邊可以和之前一樣分別對b和w作微分來得到Soft-Margin SVM的對偶問題。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMarginSVMDual.JPG" class="" width="500">
-
-<p>再仔細看一下Soft-Margin SVM的對偶問題，可以發現和Hard-Margin SVM的對偶問題幾乎一樣，只差在現在α會有一個上限值C，而這個C是來自引入β後得到的。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/SoftMarginGaussianSVM.JPG" class="" width="500">
-
-<p>當我們把Gaussian SVM用在Soft-Margin上並調整不同的C值時，可以發現最左邊當C設成1的時候，會得到一個邊界但有部份的資料是分錯的；當C一直調到到100可以發現邊界會越來越複雜，但是分錯的資料會越來越少。其中最右邊的邊界雖然可以讓所有的資料分對，但也可以造成雜訊的容忍度下降，也就是容易造成overfit，因此C和γ值需要慎選。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/SelectionbyCrossValidation.JPG" class="" width="500">
-
-<p>介紹完Soft-Margin和kernel，參數該怎麼選呢?第一個方法可以嘗試使用cross validation的方式，並帶入不同的C和γ值來找到比較好的參數組合。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/LeaveOneOutError.JPG" class="" width="500">
-
-<p>另一個有趣的方法則是使用Leave-One-Out CV，SVM在使用Leave-One-Out CV的error會小於等於support vector的比例(support vector的數量除上所有樣本數)，其概念為即使少了non support vector(non-SV)的點，結果並不會影響到margin的計算。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/SelectionbySV.JPG" class="" width="500">
-
-<p>所以也可以嘗使用support vector的數量來選擇模型，因此在作cross validation前可以透過檢查support vector的數量，去掉support vector數量較多的組合作模型的安全檢查。</p>
-<img src="/2020/02/05/Machine-Learning-Techniques-4/summary.JPG" class="" width="500">
-
-<p>總結這堂課介紹了soft-margin SVM，其核心概念在於不強求把所有的類別都分對，並加上犯錯的程度大小的懲罰項。在推導的部份，Soft-Margin和Hard-Margin結果幾乎一樣，只差在Soft-Margin在αn會存在上限值C。而SVM可以將資料分成三種，分別為non-SV、存在邊界上的free-SV與可能違反邊界的SV。最後在model selection可以使用cross-validation或是參數SV的數量來作選擇。</p>
-<p>參考資料:<br><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/204_handout.pdf">Machine Learning Techniques 4</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1601,7 +1597,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">52</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1614,7 +1610,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
