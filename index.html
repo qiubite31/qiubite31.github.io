@@ -196,6 +196,121 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/" class="post-title-link" itemprop="url">在採用Cassandra前你必須要知道的事-沒有JOIN</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2024-02-28 14:23:30" itemprop="dateCreated datePublished" datetime="2024-02-28T14:23:30+08:00">2024-02-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2024-03-03 17:42:34" itemprop="dateModified" datetime="2024-03-03T17:42:34+08:00">2024-03-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL-NoSQL/" itemprop="url" rel="index"><span itemprop="name">SQL&NoSQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>關聯式資料庫的使用者在使用Cassandra設計資料模型時，通常第一個會遇到的問題就是不能使用join。Cassandra明確說明不支援join，建議的方式為建立一個反正規化(Denormalization)的資料表。</p>
+<h4 id="什麼叫反正規化-Denormalization"><a href="#什麼叫反正規化-Denormalization" class="headerlink" title="什麼叫反正規化(Denormalization)"></a>什麼叫反正規化(Denormalization)</h4><p>有別於關聯式資料庫的正規化(Normalization)設計，透過減少資料庫內的資料冗餘(Data Redundancy)和去除相依性來增進資料的一致性。這種方式的缺點在當資料被拆成多個資料表後，依不同使用情境下將資料join起來查詢時，會導致效能不佳。</p>
+<p>而反正規化則是相反，反正規化會增加資料冗餘或是對資料進行分組，來得到最佳化的讀取效能。所以在反正規化的實例中，會把預先join完的資料建成一張資料表，這時就會有同一份資料被複製成多張資料表的情況。</p>
+<h4 id="怎麼將反正規化應用在資料設計"><a href="#怎麼將反正規化應用在資料設計" class="headerlink" title="怎麼將反正規化應用在資料設計"></a>怎麼將反正規化應用在資料設計</h4><h5 id="關聯式資料庫正規化設計"><a href="#關聯式資料庫正規化設計" class="headerlink" title="關聯式資料庫正規化設計"></a>關聯式資料庫正規化設計</h5><p>舉DataStax的課程<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PL2g2h-wyI4SqIigskyJNAeL2vSTJZU_Qp">DS220.08</a>範例來說明。這個範例為電影資料庫被設計成videos、users和comments三張資料表。</p>
+<img src="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/typical_relational_structure.png" class="" width="500">
+
+<p>如果想要依電影標題查詢評論時，可以使用videos的id和comments的video_id將兩張表join起來，這時就可以使用videos的title欄位查詢出對應的comment資訊。</p>
+<img src="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/query_comment_by_video.png" class="" width="500">
+
+<p>如果要依會員帳號查詢評論時，則是使用users的id和comments的user_id將兩張表join起來，接著就可以使用users的login欄位查詢出該會員帳號留過的評論。</p>
+<img src="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/query_comment_by_user.png" class="" width="500">
+
+<h5 id="Cassandra反正規化設計"><a href="#Cassandra反正規化設計" class="headerlink" title="Cassandra反正規化設計"></a>Cassandra反正規化設計</h5><p>在Cassandra的反正規化資料模型設計會直接建立成兩張資料表，並透過不同的primary key來提供兩種查詢方式。第一張comments_by_video會將video_title設定成partition key，第二張comments_by_user會將user_login設計成partition key。</p>
+<img src="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/denormalizing_for_query_performance.png" class="" width="500">
+
+<p>因為Cassandra會使用partition key決定存放資料的位置，因為在作Cassandra的資料模型設計時，要查詢的欄位都必須被設計成partition key才能達到最佳的查詢效能。以這個例子來說，這兩張表的建立資料表指令如下，可以看的出來兩張資料表幾乎有共通的欄位，只差在partition key的設計不同。</p>
+<img src="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/denormalizing_for_query_performance2.png" class="" width="500">
+
+<p>這就是反正規化中對資料作pre-join並且會將資料複製成多張資料表的作法。而目的就是為了要讓查詢的效能可以最佳化，不需要在查詢時面對可能不可控的join結果，或是複雜的join行為帶來的查詢效能低落。</p>
+<p><a target="_blank" rel="noopener" href="https://cassandra.apache.org/doc/stable/cassandra/data_modeling/data_modeling_rdbms.html#no-joins">Cassandra Data Modeling - No Join</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=PcH9b0janp0">DS220.08 Denormalization</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2024/01/27/before-adopt-cassandra-you-need-to-know-cql-orderby/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -227,7 +342,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-02-29 00:52:52" itemprop="dateModified" datetime="2024-02-29T00:52:52+08:00">2024-02-29</time>
+                <time title="修改時間：2024-03-03 14:46:12" itemprop="dateModified" datetime="2024-03-03T14:46:12+08:00">2024-03-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -302,6 +417,7 @@
 <p>如果排序結果又沒辦法透過CQL達成的話，只能重建新的資料表，或是將資料表讀進程式裡面再作排序了。</p>
 <p>為了讓資料查詢的速度可以提升，Cassandra嚴格限制資料排序都必須要預先設計與定義，即查詢出來就是排序好的結果，而不是在查詢時才作排序。正因為Cassandra的data modeling是query-driven的，必須先分析未來資料查詢的需求包含查詢欄位、排序順序，這可能會和RDBMS的使用經驗不同，也是在使用Cassandra前必須要有的思維轉換。</p>
 <p>參考資料: </p>
+<p><a target="_blank" rel="noopener" href="https://cassandra.apache.org/doc/stable/cassandra/data_modeling/data_modeling_rdbms.html#sorting-is-a-design-decision">Cassandra Data Modeling - Sorting is a design decision</a></p>
 <p><a target="_blank" rel="noopener" href="https://docs.datastax.com/en/dse/6.7/cql/cql/cql_reference/cql_commands/cqlSelect.html#cqlSelect__compound-primary-keys">DataStax document - Using compound primary keys and sorting results</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=svoI3ytd-TQ">Dear DataStax Episode 18: How can you order by any field in Cassandra?</a></p>
 
@@ -1386,146 +1502,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/02/14/Machine-Learning-Techniques-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/14/Machine-Learning-Techniques-5/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第五講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2020-02-14 00:00:00" itemprop="dateCreated datePublished" datetime="2020-02-14T00:00:00+08:00">2020-02-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:45:21" itemprop="dateModified" datetime="2021-05-11T23:45:21+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/02/14/Machine-Learning-Techniques-5/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/14/Machine-Learning-Techniques-5/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <img src="/2020/02/14/Machine-Learning-Techniques-5/wrapup.JPG" class="" width="500">
-
-<p>上一堂講到在允許違反部份邊界下，引入C當作懲罰值，將Hard-Margin SVM轉成Soft-Margin。而Soft-Margin的對偶問題和Hard-Margin非常相似，只差在對偶問題中的α有上限值C。這堂課會談如果將kernel trick引入logistic regression可以怎麼作。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/SlackVariable.JPG" class="" width="500">
-
-<p>回顧Soft-Margin SVM，裡面發生的違反邊界會被紀錄在ξn裡面，而ξn會是1-yn(W．Zn+b)，因為會紀錄下與1的距離來表式違反的程度和嚴重性；相反的在沒有違反下ξn值為0。再來可以把ξn寫成另一個更簡單的式子，即為轉換成對1-yn(W．Zn+b)和0之間取最大值來算出ξn，並帶入SVM的最佳化式子中，將ξn轉成b和w算出來的結果。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/UnconstrainForm.JPG" class="" width="500">
-
-<p>這個轉換後的最佳式其實和之前教過的regularization非常相似，就是在求長度w控制複雜度之下加上regularization項次。所以從這裡可以看到，Soft-Margin SVM其實可以從regularization推導過來，但上一講會選擇從Hard-Margin推導過來的原因是因為這個式子並不是一個QP問題，而且在兩項取最大值時也會有微分求解問題。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/SVMasRegularization.JPG" class="" width="500">
-
-<p>在前面課程推導對偶問題時有提到SVM和regularization的相似地方，而這裡可以看到Soft-Margin SVM其實就和L2 regularization是相似的，所以SVM的large margin就是一個對regularization的實現。但其中細部的差異在於Soft-Margin會使用到特別的error表示，而C的大小即為控制regularization的程度(越大的C代表越小的regularization)。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/AlgorithmErrorMeasure.JPG" class="" width="500">
-
-<p>在計算zero-one error時會是一個像階梯狀的函數，因為ys是正的error為0(猜的方向正確)，ys如果是負的error為1(猜的方向錯誤)。而SVM的error會由兩個線段組成，在ys離1越遠error會越大，而ys為正時error為0，SVM的error為zero-one error的上限，所以Soft-Margin也是在間接的把zeor-one error作好。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/SVMandLogisticRegression.JPG" class="" width="500">
-
-<p>如果將SVM和logistic regression比較的話，從圖上可以發現logistic regression會和SVM很接近，進一步將ys在正無限大和負無限大比較時，兩者的error也是相近的，所以SVM其實也很像在作L2-regularized，因為在加上error項後，其實error項和logistic regression的error項非常接近。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/LinearModelClassification.JPG" class="" width="500">
-
-<p>在比較三種兩元分類方法，最一開始教的PLA需要在線性可分的情況下才好作，如果在線性不可分要透過pocket也不好達成；logistic regression的函數有很好的最佳化性質，而且加上L2-regularized後還能對模型的複雜度有一定的保護；Soft-Margin SVM差異在於最佳化使用了QP，並且在有large margin的理論保證，其error的計算方式雖然和logistic regression不同，但確實非常接近，而且兩者都是在作最佳化zero-one error的上限值。因此regularized logistic regression其實就幾乎是在作Soft-Margin SVM。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/BinaryClassfication.JPG" class="" width="500">
-
-<p>在二元分類問題中可以有兩種簡易的方法，第一種是透過SVM找到最佳的b和w，再直接丟進logistic reression作出二元分類，但這樣的手法就缺少了點logistic regression像是maximum likelihood的特色；第二種則是將SVM找到的最佳b和w，放進logistic regression當作始初解，之後再作最佳化找到最佳解，但這樣和本來logistic regression用其他初始解再找最佳解的結果相同，而且解變動後也失去了SVM的特性。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/TwoLevelLearning.JPG" class="" width="500">
-
-<p>如果要同時有兩種方法的特性，可以先作SVM找到分數，再加上放縮的A與平移的B，最後再放進logistic regression訓練，其意義為先透過SVM找到最佳的超平面，再透過logistic regression作放縮與平移調整到最佳。也就是先透過SVM當作轉換，再丟進logistic regression作兩階段的的學習。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/ProbabilisticSVM.JPG" class="" width="500">
-
-<p>透過這樣的方式就可得到SVM的Soft binary clasifier，因為引入縮放和平移所以會和原本的SVM會不太相同，在求解logistic regression時可以使用Gradient Descent即可。到這裡我們透過kernel SVM去推論logistic regression在z空間的近似解，但這裡不是真的在z空間解出logistic regression，而且透過SVM在z空間找近似解。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/KeyBehindKernelTrick.JPG" class="" width="500">
-
-<p>複習一下SVM能使用kernel的關鍵點，是在於將W．Z的內積問題，將W轉換成一堆Z的線性組合，成為求Z．Z內積問題，這時候就能讓kernel上場。在SVM中，W就是Zn的線性組合，組合的系數就是對偶問題的解；PLA的W也是Zn的線性組合，組合的系數取決定每次犯錯的修正，而logistic regression中的W也是Zn的線性組合，這些系數來自梯度下降最終求得的結果。所以這些方法應該都能夠應用kernel trick輕易的在取得z空間的解，最好的W即可透過這些Zn來表達出來。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/RepresenterTheorem.JPG" class="" width="500">
-
-<p>老師在這裡用例子證明任何的L2-regularized線性模型皆可以應用kernel。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/KernelLogisticRegression.JPG" class="" width="500">
-
-<p>因此，在L2-regularized的logistic regression，就可以將W替換成Zn的線性組合，從求W轉成求所有β系數。在將Zn線數組合代進入取代W後，就能將Z．Z的部份使用kernel，接著就可以透過梯度下降來求最佳解，這就是kernel logistic regression。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/KLROtherView.JPG" class="" width="500">
-
-<p>如果看這個kernel logistic regreaaion，先從β的角度看起來就像是在求β的線性組合，而且其中還將kernel用來作轉換與正規化；如果是從w角度來看，即為藏有kernel轉換與L2正規化的線性模型。但要注意常常β解出來會有很多0。</p>
-<img src="/2020/02/14/Machine-Learning-Techniques-5/Summary.JPG" class="" width="500">
-
-<p>總結這堂課從將Soft-Margin SVM解釋成使用hinge error的regularize model，再進一步和L2-regularized logistic regresion比較兩者的相似性，透過結合兩者建立two-level learning應用在Soft Binary Classification，最後真的證明logistic regression也可以應用kernel並求出z空間的解，但會付出解出來很多β會為0的代價。</p>
-<p>參考資料:<br><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/205_handout.pdf">Machine Learning Techniques 5</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1597,7 +1573,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">53</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1610,7 +1586,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

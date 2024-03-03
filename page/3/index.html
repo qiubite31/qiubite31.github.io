@@ -196,6 +196,142 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/02/05/andrew-deep-learning-course5-week1/" class="post-title-link" itemprop="url">Andrew深度學習課程五 - Sequence Model第1周筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2018-02-05 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-05T00:00:00+08:00">2018-02-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:30:11" itemprop="dateModified" datetime="2021-05-11T23:30:11+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/02/05/andrew-deep-learning-course5-week1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/02/05/andrew-deep-learning-course5-week1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>有序列性質的資料(sequence data)可以泛指輸入資料(X)是有序列的，或是輸出資料(Y)是有序列的。比如說在翻譯問題上，輸入和輸出都是有序列性的句子；但在情感分析問題上，輸入會是一個有序列性質的評論句子，但是輸出為情感的等級或是分數。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/sequence_model_example.JPG" class="" width="500">
+
+<p>量化句子的方法可以使用詞庫加上one-hot encoding，可以透過自己建立或是使用已存在的詞庫，並將詞庫使用one-hot encoding作編碼來將文字資料作量化產生可以用來學習的輸入資料X。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/Representing_words.JPG" class="" width="500">
+
+<p>如果使用一般標準的類神經網路會有什麼問題呢？1. 每一個訓練資料的輸入和輸出的長度不同，不好處理。2. 在不同文字中的不同位置無法學習出共同的特徵。如果要像CNN一樣能夠在不同的訓練資料的不同位置中學習到共同的特徵，就必須要透過RNN來達成。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/recurrent_neural_networks.JPG" class="" width="500">
+
+<p>Recurrent Neural Network(RNN)在每個訓練樣本會共同相同的weight和activation function。RNN會將每一個字詞X&lt; i &gt;經過激活函式後的結果，再傳給下一個字詞X&lt; i+1 &gt;，所以每個字詞會拿到由前面傳遞過來的資訊。但是只拿到前面字詞的資訊是不夠的，例如在判斷Teddy時，就需要使用字詞後面的句子內容，才能夠有效的區分Teddy究竟是指總統還是玩具。這時會使用到雙向的RNN(BRNN)才能夠解決這個問題。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/why_not_standard_network.JPG" class="" width="500">
+
+<p>前面有提到RNN的輸入和輸出長度可能會不一樣長，針對不同輸入輸出長度可分為不同類型的RNN。在翻釋問題上，不同的語言可能翻譯後的長度都不同，這是一個Many to Many問題；如果是情感分析會將一則評論輸出成正反或是1到5星等級，屬於Many to One問題；One to Many會適用在像是音樂生成，給定一種音樂類型來產生一首音樂；One to One這種類型就是一般的神經網路了。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/RNN_type.JPG" class="" width="500">
+
+<p>RNN可以被應用在建立語言模型(Language Model)，例如在語音辨識中，透過語言模型可以透過計算不同輸出句子的機率，來辨識出哪一個句子是最符合的輸出。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/language_model.JPG" class="" width="500">
+
+<p>把每個句字斷詞並量化後，就可以丟進RNN來建立模型。舉例來說，在訓練時，將第一層RNN輸入空向量，再將本來的實際詞Y&lt; i &gt;從第兩次RNN依序丟進去訓練，就可以建立模型來預測某段句子後會接什麼樣的詞。即輸入Cats average，判斷下個接每個詞的機率。所以可以透過將每個詞依序輸入來計算出在給定某個句子下，輸出某個詞的機率。在這裡可以透過外部詞典，並使用softmax來算出每個詞的機率</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/language_model_rnn.JPG" class="" width="500">
+
+<p>進一步我們就可以使用這個模型來隨機的產生句子，首先先隨機選出一個詞，接著將每個詞依序丟進下個結點來產生新的詞，直到取出字尾EOS或是設定一個固定的句子長度終止。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/sample_sentense_word_level.JPG" class="" width="500">
+
+<p>除了使用詞(Word-level)來組成句子，也可以使用字元(Character-level)來建且模型組成句子。如果使用字元來組成句子，那麼每一個輸出就是一個字元而非一個詞，好處在於不用怕取到辭典裡面沒有的詞，壞處則會產生更長的句子，也會降低訓練速度，所以目前經常是使用詞來建立模型。</p>
+<h1 id="梯度消失-Gradient-Vanishing"><a href="#梯度消失-Gradient-Vanishing" class="headerlink" title="梯度消失(Gradient Vanishing)"></a>梯度消失(Gradient Vanishing)</h1><p>如果句子太長的話，使得神經網路過於深，會讓梯度在作back propagation時很難影響到前面的layer，產生梯度消失現象。對於RNN來說，實際上的影響在於如果太前面的神經元，將會無法去記住前面的詞(例如區分單數詞或是複數詞)。因此，傳統的RNN的輸出結果主要會受到接近神經元的影響，較遠的神經元不容易影響到最終的輸出。比起梯度爆炸容易被發現與處理，梯度消失反而不容易被處理，而且更容易影響到RNN的訓練結果。</p>
+<p>Gate Recurrent Unit(GRU)是一個改善RNN長期記憶問題的方法，他引入了memory cell(C)的概念，在這裡的C就等同於activation function的輸出a，這個memory cell會將長期的記憶儲存下來，並用一個帶使用sigmoid轉換後的Γu值來判斷要不要選擇忘記之前的記憶並更新，還是要保留之前的記憶，直到不需時再忘記。實際上為什麼應用GRU會改善梯度消失的現象，主是要在Γu值透過sigmoid轉換後如數數值很小那麼就可能會非常的接近0，在這個情況下，C&lt; t &gt;就會非常接近C&lt; t-1 &gt;並很容易的保存較遠的記憶來大幅改善梯度消失的現象。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/GRU.JPG" class="" width="500">
+
+<p>另一個常用的方法為Long Short Term Memory(LSTM)，在LSTM裡面C不再等同於a，LSTM會用到3種gate，分別為update gate, forget gate和output gate。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/GRU_and_LSTM.JPG" class="" width="500">
+
+<p>透過update gate和forget gate來決定是否保存較長遠的記憶，並透過output gate來輸出a到下一個神經元。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/LSTM.JPG" class="" width="500">
+
+<p>如果要同時合併前後神經元的資訊，就得使用Bidrectional RNN(BRNN)。BRNN除了從左到右作forward propagation外，也會從右到左作forward propagation。在輸出資料時，會同時輸入兩個方向進入activation function。而其中每個神經元也可以是GRU或是LSTM，所以實務上也會使用LSTM結合BRNN來建立模型。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/BRNN.JPG" class="" width="500">
+
+<p>RNN可以疊多層起來變成深度的RNN模型，本來RNN每一個順序都只有連接一個神經元，但也可以在每一個序順接處多個神經元來建立深度的RNN模型，甚至結合GRU和LSTM與BRNN來建立複雜的RNN模型。不過因為深度的RNN在訓練是非常耗資源的，所以不太常見到超過3層的RNN模型。</p>
+<img src="/2018/02/05/andrew-deep-learning-course5-week1/Deep_RNN.JPG" class="" width="500">
+
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/nlp-sequence-models">Deep Learning Course 5 - Sequece Models</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/12/05/keras-intro/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1462,112 +1598,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/" class="post-title-link" itemprop="url">使用assert來實作，第一次寫測試就上手</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-09-07 00:00:00" itemprop="dateCreated datePublished" datetime="2017-09-07T00:00:00+08:00">2017-09-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:11:21" itemprop="dateModified" datetime="2021-05-11T23:11:21+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/07/使用assert來實作第一次寫測試就上手/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>雖然python已經有很好用的測試框架可以使用，不過對於剛開始想要自己寫測試的人，這些框架該怎麼使用還是需要花點時間學習一番。在真正進入使用測試框架之後，不彷先來作個簡單的測試感覺一下，其實我們可以很簡單的使用python的assert來實作看看。</p>
-<p>假設今天要設計提款功能，其中有兩個函式，一個會回傳存款減去提款剩下的金額，一個會檢查提款金額只能以1000為單位。所以這台atm很簡單，就是只讓你提1000為單位的金額，而且不能提超過你餘額的錢。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">withdraw</span>(<span class="params">deposit, money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> deposit - money</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_withdraw</span>(<span class="params">money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;accept&#x27;</span> <span class="keyword">if</span> money % <span class="number">1000</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;refuse&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>接著就是來寫一個測試用的function class，把要測試的不同條件寫進去，如果全pass就給個PASS訊息。function class只是一個簡單的方法把函式都集中起來，當然可以再作不同的變化。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TaskTest</span>(<span class="params"><span class="built_in">object</span></span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1200</span>, <span class="number">2000</span>) &amp;lt; <span class="number">0</span>, <span class="string">&#x27;存款小於提款不能允許提出&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">3000</span>, <span class="number">2000</span>) &gt; <span class="number">0</span>, <span class="string">&#x27;存款大於提款需允許提出&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;ALL withdraw PASS!&#x27;</span>)    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_check_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1300</span>) == <span class="string">&#x27;refuse&#x27;</span>, <span class="string">&#x27;提款金額非以1000為單位必須拒絕&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1000</span>) == <span class="string">&#x27;accept&#x27;</span>, <span class="string">&#x27;提款金額以1000為單位必須接受&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;All check_withdraw test PASS!&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>接著就開始執行測試囉!</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester = TaskTest()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_withdraw(withdraw)</span><br><span class="line">ALL withdraw PASS!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_check_withdraw(check_withdraw)</span><br><span class="line">All check_withdraw test PASS!</span><br></pre></td></tr></table></figure>
-<p>那如果今天有人不小心動到函式內容，1000被改成1300會發生什麼事情呢？</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_withdraw</span>(<span class="params">money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;accept&#x27;</span> <span class="keyword">if</span> money % <span class="number">1300</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;refuse&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>一樣執行看看，就會發現在作檢查提款的測試時被assert中斷了!當測試沒測過就可以趕快回去檢查一下程式碼究竟發生什麼問題了</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester = TaskTest()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_withdraw(withdraw)</span><br><span class="line">ALL withdraw PASS!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_check_withdraw(check_withdraw)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;assert.py&quot;</span>, line <span class="number">23</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    tester.test_check_withdraw(check_withdraw)</span><br><span class="line">  File <span class="string">&quot;assert.py&quot;</span>, line <span class="number">15</span>, <span class="keyword">in</span> test_check_withdraw</span><br><span class="line">    <span class="keyword">assert</span> func(<span class="number">1300</span>) == <span class="string">&#x27;refuse&#x27;</span>, <span class="string">&#x27;提款金額非以1000為單位必須拒絕&#x27;</span></span><br><span class="line">AssertionError: 提款金額非以<span class="number">1000</span>為單位必須拒絕</span><br></pre></td></tr></table></figure>
-<p>第一次寫測試其實可以從python的assert開始玩起，自己就可以簡單寫單元測試囉！針對已經是大型的系統就可以考慮使用一些python的測試框架作單元測試或是整合測試。如果像這樣的單元測試要一進步的話，可以先從使用python的<a target="_blank" rel="noopener" href="https://docs.python.org/3.4/library/unittest.html">unittest</a>開始！</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1639,7 +1669,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">53</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1652,7 +1682,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

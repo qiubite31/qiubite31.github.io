@@ -196,6 +196,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/" class="post-title-link" itemprop="url">使用assert來實作，第一次寫測試就上手</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-09-07 00:00:00" itemprop="dateCreated datePublished" datetime="2017-09-07T00:00:00+08:00">2017-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:11:21" itemprop="dateModified" datetime="2021-05-11T23:11:21+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/07/使用assert來實作第一次寫測試就上手/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>雖然python已經有很好用的測試框架可以使用，不過對於剛開始想要自己寫測試的人，這些框架該怎麼使用還是需要花點時間學習一番。在真正進入使用測試框架之後，不彷先來作個簡單的測試感覺一下，其實我們可以很簡單的使用python的assert來實作看看。</p>
+<p>假設今天要設計提款功能，其中有兩個函式，一個會回傳存款減去提款剩下的金額，一個會檢查提款金額只能以1000為單位。所以這台atm很簡單，就是只讓你提1000為單位的金額，而且不能提超過你餘額的錢。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">withdraw</span>(<span class="params">deposit, money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> deposit - money</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_withdraw</span>(<span class="params">money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;accept&#x27;</span> <span class="keyword">if</span> money % <span class="number">1000</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;refuse&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>接著就是來寫一個測試用的function class，把要測試的不同條件寫進去，如果全pass就給個PASS訊息。function class只是一個簡單的方法把函式都集中起來，當然可以再作不同的變化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TaskTest</span>(<span class="params"><span class="built_in">object</span></span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1200</span>, <span class="number">2000</span>) &amp;lt; <span class="number">0</span>, <span class="string">&#x27;存款小於提款不能允許提出&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">3000</span>, <span class="number">2000</span>) &gt; <span class="number">0</span>, <span class="string">&#x27;存款大於提款需允許提出&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;ALL withdraw PASS!&#x27;</span>)    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_check_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1300</span>) == <span class="string">&#x27;refuse&#x27;</span>, <span class="string">&#x27;提款金額非以1000為單位必須拒絕&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1000</span>) == <span class="string">&#x27;accept&#x27;</span>, <span class="string">&#x27;提款金額以1000為單位必須接受&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;All check_withdraw test PASS!&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>接著就開始執行測試囉!</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester = TaskTest()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_withdraw(withdraw)</span><br><span class="line">ALL withdraw PASS!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_check_withdraw(check_withdraw)</span><br><span class="line">All check_withdraw test PASS!</span><br></pre></td></tr></table></figure>
+<p>那如果今天有人不小心動到函式內容，1000被改成1300會發生什麼事情呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_withdraw</span>(<span class="params">money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;accept&#x27;</span> <span class="keyword">if</span> money % <span class="number">1300</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;refuse&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>一樣執行看看，就會發現在作檢查提款的測試時被assert中斷了!當測試沒測過就可以趕快回去檢查一下程式碼究竟發生什麼問題了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester = TaskTest()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_withdraw(withdraw)</span><br><span class="line">ALL withdraw PASS!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_check_withdraw(check_withdraw)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;assert.py&quot;</span>, line <span class="number">23</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    tester.test_check_withdraw(check_withdraw)</span><br><span class="line">  File <span class="string">&quot;assert.py&quot;</span>, line <span class="number">15</span>, <span class="keyword">in</span> test_check_withdraw</span><br><span class="line">    <span class="keyword">assert</span> func(<span class="number">1300</span>) == <span class="string">&#x27;refuse&#x27;</span>, <span class="string">&#x27;提款金額非以1000為單位必須拒絕&#x27;</span></span><br><span class="line">AssertionError: 提款金額非以<span class="number">1000</span>為單位必須拒絕</span><br></pre></td></tr></table></figure>
+<p>第一次寫測試其實可以從python的assert開始玩起，自己就可以簡單寫單元測試囉！針對已經是大型的系統就可以考慮使用一些python的測試框架作單元測試或是整合測試。如果像這樣的單元測試要一進步的話，可以先從使用python的<a target="_blank" rel="noopener" href="https://docs.python.org/3.4/library/unittest.html">unittest</a>開始！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/24/Machine-Learning-Foundation-8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1348,112 +1454,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/05/20/%E4%BD%BF%E7%94%A8Python%E8%A3%9D%E9%A3%BE%E5%99%A8(Decorator)%E5%B0%8D%E5%87%BD%E5%BC%8F%E5%AF%A6%E4%BD%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/05/20/%E4%BD%BF%E7%94%A8Python%E8%A3%9D%E9%A3%BE%E5%99%A8(Decorator)%E5%B0%8D%E5%87%BD%E5%BC%8F%E5%AF%A6%E4%BD%9C/" class="post-title-link" itemprop="url">使用Python裝飾器(Decorator)對函式實作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-05-20 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-20T00:00:00+08:00">2017-05-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/05/20/%E4%BD%BF%E7%94%A8Python%E8%A3%9D%E9%A3%BE%E5%99%A8(Decorator)%E5%B0%8D%E5%87%BD%E5%BC%8F%E5%AF%A6%E4%BD%9C/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/20/使用Python裝飾器(Decorator)對函式實作/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Python中的decorator是一種對python語法的轉換寫法，使用decorator可以更方便的對函式作修改，也可以提高程式的可讀性。但是decorator只是一種語法糖，使用decorator並不會對語法產生改變，只是讓程式寫法可以更加的簡潔，並且讓開發者可以更方便的使用。</p>
-<p>下面開始來說明一下，如何使用decorator來實作在函式的修改:</p>
-<p>假設我們寫了一個執行sql的函式:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_execute</span>(<span class="params">sql</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;execute select sql query!&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>如果我們想要對這個執行sql的函式，用一個debug模式來包起來，並在debug模式印出執行的sql與執行的時間，這時可以透過<a href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">closure</a>來處理函式</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug_query</span>(<span class="params">func</span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">debug_execute</span>(<span class="params">sql</span>):</span>        </span><br><span class="line">        exec_msg = func(sql)        </span><br><span class="line">        exec_time = datetime.now()        </span><br><span class="line">        debug_msg = <span class="string">&quot;&quot;&quot;        </span></span><br><span class="line"><span class="string">        Execute: &#123;sql&#125;        </span></span><br><span class="line"><span class="string">        Result: &#123;exec_msg&#125;        </span></span><br><span class="line"><span class="string">        Execute Time: &#123;exec_time&#125;&quot;&quot;&quot;</span>        </span><br><span class="line">        <span class="keyword">return</span> debug_msg.<span class="built_in">format</span>(**<span class="built_in">locals</span>())    </span><br><span class="line">    <span class="keyword">return</span> debug_execute</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = <span class="string">&#x27;SELECT * FROM TABLE&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>select_execute(sql)  <span class="comment"># 不使用debug模式來執行select sql</span></span><br><span class="line">execute select sql query!</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = debug_query(select_execute)  <span class="comment"># 使用debug模式來執行select sql</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(sql)</span><br><span class="line">Execute: SELECT * FROM TABLE</span><br><span class="line">Result: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.953792</span></span><br></pre></td></tr></table></figure>
-<p>從上面的範例可以看到，先將執行sql的函式傳入外部函式，並在內部函式捕捉後，加上debug要印的部份進行改寫，這樣就可以將執行sql的函式包裝成debug模式。下面是使用decorator的寫法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@debug_query</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_execute</span>(<span class="params">sql</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;execute select sql query!&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>select_execute(sql)</span><br><span class="line">Execute: SELECT * FROM TABLE</span><br><span class="line">Result: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.953792</span></span><br></pre></td></tr></table></figure>
-<p>只要透過@和改寫的函式名稱，就可以簡化函式傳遞的語法，讓程式碼可以更加簡潔並達到相同效果</p>
-<p>decorator也可以支援帶參數，如果今天要簡單的多印出一行debug宣告，並指定是哪一種query type作說明，可以透過多加上一層outter函式來傳入參數</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug_describe</span>(<span class="params">query_type</span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">debug_query</span>(<span class="params">func</span>):</span>        </span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">debug_execute</span>(<span class="params">sql</span>):</span>            </span><br><span class="line">            exec_msg = func(sql)            </span><br><span class="line">            exec_time = datetime.now()            </span><br><span class="line">            descirbe = <span class="string">&#x27;It is &#123;&#125; debug mode&#x27;</span>.<span class="built_in">format</span>(query_type)            </span><br><span class="line">            debug_msg = <span class="string">&quot;&quot;&quot;            </span></span><br><span class="line"><span class="string">            &#123;descirbe&#125;            </span></span><br><span class="line"><span class="string">            Execute: &#123;sql&#125;            </span></span><br><span class="line"><span class="string">            Result: &#123;exec_msg&#125;            </span></span><br><span class="line"><span class="string">            Execute Time: &#123;exec_time&#125;&quot;&quot;&quot;</span>            </span><br><span class="line">            <span class="keyword">return</span> debug_msg.<span class="built_in">format</span>(**<span class="built_in">locals</span>())       </span><br><span class="line">        <span class="keyword">return</span> debug_execute    </span><br><span class="line">    <span class="keyword">return</span> debug_query</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = debug_describe(<span class="string">&#x27;select&#x27;</span>)(select_execute)  <span class="comment"># 不使用decorator寫法</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(sql)</span><br><span class="line">It <span class="keyword">is</span> select debug mode</span><br><span class="line">Execute: SELECT * FROM TABLEResult: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.962798</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@debug_describe(<span class="params"><span class="string">&#x27;select&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_execute</span>(<span class="params">sql</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;execute select sql query!&#x27;</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>select_execute(sql)  <span class="comment"># 使用decorator寫法It is select debug mode</span></span><br><span class="line">Execute: SELECT * FROM TABLE</span><br><span class="line">Result: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.962798</span></span><br></pre></td></tr></table></figure>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://wiki.python.org/moin/PythonDecorators">PythonDecorators</a><br/><a target="_blank" rel="noopener" href="https://codequs.com/p/Ski411egq/understanding-decorators-in-python/">Understanding Decorators in Python</a><br/><a target="_blank" rel="noopener" href="http://ot-note.logdown.com/posts/67571/-decorator-with-without-arguments-in-function-class-form">Python Decorator 四種寫法範例 Code</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1525,7 +1525,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">53</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1538,7 +1538,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

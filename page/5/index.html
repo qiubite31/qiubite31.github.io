@@ -196,6 +196,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/05/20/%E4%BD%BF%E7%94%A8Python%E8%A3%9D%E9%A3%BE%E5%99%A8(Decorator)%E5%B0%8D%E5%87%BD%E5%BC%8F%E5%AF%A6%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/05/20/%E4%BD%BF%E7%94%A8Python%E8%A3%9D%E9%A3%BE%E5%99%A8(Decorator)%E5%B0%8D%E5%87%BD%E5%BC%8F%E5%AF%A6%E4%BD%9C/" class="post-title-link" itemprop="url">使用Python裝飾器(Decorator)對函式實作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-05-20 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-20T00:00:00+08:00">2017-05-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/05/20/%E4%BD%BF%E7%94%A8Python%E8%A3%9D%E9%A3%BE%E5%99%A8(Decorator)%E5%B0%8D%E5%87%BD%E5%BC%8F%E5%AF%A6%E4%BD%9C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/20/使用Python裝飾器(Decorator)對函式實作/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Python中的decorator是一種對python語法的轉換寫法，使用decorator可以更方便的對函式作修改，也可以提高程式的可讀性。但是decorator只是一種語法糖，使用decorator並不會對語法產生改變，只是讓程式寫法可以更加的簡潔，並且讓開發者可以更方便的使用。</p>
+<p>下面開始來說明一下，如何使用decorator來實作在函式的修改:</p>
+<p>假設我們寫了一個執行sql的函式:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_execute</span>(<span class="params">sql</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;execute select sql query!&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>如果我們想要對這個執行sql的函式，用一個debug模式來包起來，並在debug模式印出執行的sql與執行的時間，這時可以透過<a href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">closure</a>來處理函式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug_query</span>(<span class="params">func</span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">debug_execute</span>(<span class="params">sql</span>):</span>        </span><br><span class="line">        exec_msg = func(sql)        </span><br><span class="line">        exec_time = datetime.now()        </span><br><span class="line">        debug_msg = <span class="string">&quot;&quot;&quot;        </span></span><br><span class="line"><span class="string">        Execute: &#123;sql&#125;        </span></span><br><span class="line"><span class="string">        Result: &#123;exec_msg&#125;        </span></span><br><span class="line"><span class="string">        Execute Time: &#123;exec_time&#125;&quot;&quot;&quot;</span>        </span><br><span class="line">        <span class="keyword">return</span> debug_msg.<span class="built_in">format</span>(**<span class="built_in">locals</span>())    </span><br><span class="line">    <span class="keyword">return</span> debug_execute</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sql = <span class="string">&#x27;SELECT * FROM TABLE&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>select_execute(sql)  <span class="comment"># 不使用debug模式來執行select sql</span></span><br><span class="line">execute select sql query!</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = debug_query(select_execute)  <span class="comment"># 使用debug模式來執行select sql</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(sql)</span><br><span class="line">Execute: SELECT * FROM TABLE</span><br><span class="line">Result: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.953792</span></span><br></pre></td></tr></table></figure>
+<p>從上面的範例可以看到，先將執行sql的函式傳入外部函式，並在內部函式捕捉後，加上debug要印的部份進行改寫，這樣就可以將執行sql的函式包裝成debug模式。下面是使用decorator的寫法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@debug_query</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_execute</span>(<span class="params">sql</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;execute select sql query!&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>select_execute(sql)</span><br><span class="line">Execute: SELECT * FROM TABLE</span><br><span class="line">Result: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.953792</span></span><br></pre></td></tr></table></figure>
+<p>只要透過@和改寫的函式名稱，就可以簡化函式傳遞的語法，讓程式碼可以更加簡潔並達到相同效果</p>
+<p>decorator也可以支援帶參數，如果今天要簡單的多印出一行debug宣告，並指定是哪一種query type作說明，可以透過多加上一層outter函式來傳入參數</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug_describe</span>(<span class="params">query_type</span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">debug_query</span>(<span class="params">func</span>):</span>        </span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">debug_execute</span>(<span class="params">sql</span>):</span>            </span><br><span class="line">            exec_msg = func(sql)            </span><br><span class="line">            exec_time = datetime.now()            </span><br><span class="line">            descirbe = <span class="string">&#x27;It is &#123;&#125; debug mode&#x27;</span>.<span class="built_in">format</span>(query_type)            </span><br><span class="line">            debug_msg = <span class="string">&quot;&quot;&quot;            </span></span><br><span class="line"><span class="string">            &#123;descirbe&#125;            </span></span><br><span class="line"><span class="string">            Execute: &#123;sql&#125;            </span></span><br><span class="line"><span class="string">            Result: &#123;exec_msg&#125;            </span></span><br><span class="line"><span class="string">            Execute Time: &#123;exec_time&#125;&quot;&quot;&quot;</span>            </span><br><span class="line">            <span class="keyword">return</span> debug_msg.<span class="built_in">format</span>(**<span class="built_in">locals</span>())       </span><br><span class="line">        <span class="keyword">return</span> debug_execute    </span><br><span class="line">    <span class="keyword">return</span> debug_query</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func = debug_describe(<span class="string">&#x27;select&#x27;</span>)(select_execute)  <span class="comment"># 不使用decorator寫法</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>func(sql)</span><br><span class="line">It <span class="keyword">is</span> select debug mode</span><br><span class="line">Execute: SELECT * FROM TABLEResult: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.962798</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@debug_describe(<span class="params"><span class="string">&#x27;select&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_execute</span>(<span class="params">sql</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;execute select sql query!&#x27;</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>select_execute(sql)  <span class="comment"># 使用decorator寫法It is select debug mode</span></span><br><span class="line">Execute: SELECT * FROM TABLE</span><br><span class="line">Result: execute select sql query!</span><br><span class="line">Execute Time: <span class="number">2017</span>-05-<span class="number">20</span> <span class="number">16</span>:09:<span class="number">08.962798</span></span><br></pre></td></tr></table></figure>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://wiki.python.org/moin/PythonDecorators">PythonDecorators</a><br/><a target="_blank" rel="noopener" href="https://codequs.com/p/Ski411egq/understanding-decorators-in-python/">Understanding Decorators in Python</a><br/><a target="_blank" rel="noopener" href="http://ot-note.logdown.com/posts/67571/-decorator-with-without-arguments-in-function-class-form">Python Decorator 四種寫法範例 Code</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/03/14/Generator%E7%9A%84%E6%A6%82%E5%BF%B5%E8%88%87%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1143,112 +1249,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/" class="post-title-link" itemprop="url">位置引數(Positional Argument)與關鍵字引數(Keyword Argument)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2016-08-22 00:00:00" itemprop="dateCreated datePublished" datetime="2016-08-22T00:00:00+08:00">2016-08-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/22/位置引數-Positional-Argument-與關鍵字引數-Keyword-Argument/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Python函式參數所接收的引數(Argument)，主要可以分成兩種，分別為位置引數(Positional Argument)和關鍵字引數(Keyword Argment)，以下我們先來看個例子，說明什麼是位置引數</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, math_score, eng_weight, math_weight</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_scoremath_weight</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.5</span>, <span class="number">0.5</span>)</span><br><span class="line"><span class="number">85</span></span><br></pre></td></tr></table></figure>
-<p>假設今天我們寫了一個簡單的函式來計算小考的平均成績，共有英文和數學兩科，兩科各有一個權重比例來計算出綜合成績。這個函式要傳入4個引數，所以在呼叫時我們必須提供所有的引數(即4個)，而傳入的引數會被設成相應位置上參數的值。</p>
-<p>eng_score被設成80、eng_weight被設成0.2、math_score被設成90、math_weight被設成0.8，這就是位置引數</p>
-<p>函式接收的參數，也可以指定一個預設值。假設預設的計算分數的權重都是固定一半一半，我們可以在函式撰寫時就給予一個預設的權重值。有預設值的參數為選用參數，在沒有傳入引數的情況下，python會使用預設值；而沒有預計值的參數為必要參數，在呼叫函式時必須傳入所有必要參數</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, math_score, eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_scoremath_weight</span><br></pre></td></tr></table></figure>
-<p>若要改變參數的預設值，我們也可以直接使用額外的位置引數，就可以取代原來的預設值，或者也可以使用關鍵字引數來傳遞引數。以下為幾個呼叫的範例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>)  <span class="comment"># 省略且不指定有預設值的參數</span></span><br><span class="line"><span class="number">85</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(eng_score=<span class="number">80</span>, eng_weight=<span class="number">0.2</span>, math_score=<span class="number">90</span>, math_weight=<span class="number">0.8</span>)  <span class="comment"># 使用關鍵字引數，可隨意安排順序</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, math_weight=<span class="number">0.8</span>, eng_weight=<span class="number">0.2</span>)  <span class="comment"># 混用位置和關鍵字引數</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line"><span class="number">88</span></span><br></pre></td></tr></table></figure>
-<p>其中可以看到使用關鍵字引數的好處在於，關鍵字引數可以讓函式呼叫變得具彈性，即針對自己所需的選用參數來指定引數；甚至也可以讓函式呼叫更加具可讀性，特別在傳入布林引數時。例如在排序時決定要不要作逆向排序，sorted(text, reverse=True)比起sorted(text, True)可讀性來的更高</p>
-<p>有兩個要注意的地方，第一個是函式語法不允許具預設值的參數之後接非預設值的參數，會引發SyntaxError。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, eng_weight=<span class="number">0.5</span>, math_score, math_weight=<span class="number">0.5</span></span>):</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>SyntaxError</span><br></pre></td></tr></table></figure>
-<p>再來是傳入函式的引數，若是位置引數和關鍵字引數混用的話，位置引數務必放在關鍵字引數的前面，否則也是會引發SyntaxError。所以total_score(math_weight=0.8, eng_weight=0.2, 80, 90)是不行的</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1320,7 +1320,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">53</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1333,7 +1333,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
