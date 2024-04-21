@@ -196,6 +196,151 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/12/Machine-Learning-Foundation-9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/09/12/Machine-Learning-Foundation-9/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第九講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-09-12 00:00:00" itemprop="dateCreated datePublished" datetime="2017-09-12T00:00:00+08:00">2017-09-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:12:35" itemprop="dateModified" datetime="2021-05-11T23:12:35+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/09/12/Machine-Learning-Foundation-9/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/12/Machine-Learning-Foundation-9/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上堂課講到err的衡量方法有兩種，其中一種squared err就是這這堂課Regression就會用到的err衡量方法。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/CreditLimitProblem.JPG" class="" width="500">
+
+<p>regression會拿來解連續型資料的問題，以前面提過的信用卡案例來說，regression就不是拿來用在判斷要不要發給信用卡，而且會決定發卡的額度上限是多少，依然是一個機器學習問題。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/LinearRegressionHypothesis.JPG" class="" width="500">
+
+<p>前面的例子也有說到，不同的資料特徵值可能會有不同的重要性，所以會有一個權重w來表示每個x的重要性加權。這有點累似之前的perceptron，但差別是perceptron是用來作二元分類，所以會再取sign判斷正負號，而這裡的regression是不用的。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/IllustrationLinearRegression.JPG" class="" width="500">
+
+<p>linear regression的hypothesis主要會找到一條線(或超平面)來盡量滿足所有的資料點，而資料點和線或是平面的距離就稱為residuals(餘數)，或是可以稱為誤差，我們會希望這個餘數越小越好，因為越小就代表hypothesis越正確。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/ErrorMeasure.JPG" class="" width="500">
+
+<p>一開始有講到，linear regression最常使用的錯誤衡量方法就是sqiared err。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/MatrixEin.JPG" class="" width="500">
+
+<p>在regression求Ein時，可以把運算過程轉換成向量矩陣運算</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/MinEin.JPG" class="" width="500">
+
+<p>在求Ein最小值的過程只有W是未知的，而這個Ein(w)會是一個convex函式，在反覆修正W最終會得到一個最低點，也就可以找到Ein最小值，可以找透過找梯度為0來找到這個最低點。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/Gradient.JPG" class="" width="500">
+
+<p>中間會將梯度函式重新整理，在梯度等於0的情況下，最終會找到最好的W。在求W的過程中會帶出pseudo-inverse的概感，使用pseudo-inverse和y就可以求出最好的W。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/IsRegressionLearning.JPG" class="" width="500">
+
+<p>這樣看起來直接計算出W好像有一步登天的感覺不像機器學習，但事實上linear regression可以說是機器學習方法，因為確實可以找到Ein，當你認同VC維那麼好的Ein就會有好的Eout，而且在計算過程中，其實背後也有很多的步驟進行並非一步就達成。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/IsRegressionLearning2.JPG" class="" width="500">
+
+<p>要怎麼確定linear regression真的可以學的好呢？可以透過對多的Ein的平均來衡量，而這個Ein的平均大概會等於noise level(資料的雜訊)×(1-d+1/N)，所以如果資料量越多得到的結果就會越好。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/GeometricViewHatMatrix.JPG" class="" width="500">
+
+<p>以幾何上來說來說明，y是一個N維的向量，X是在N維上的一個小空間，而y(hat)會落在這個小空間裡。linear regression的目的就是讓y和y(hat)可以最小，最小的距離就是y到y(hat)的線性投影，所以linear regression的hypothesis的目的就是把任何一個向量投影到x空間中。因為H作了投影，而I-H等同就是在求餘數，即y-y(hat)。這之中會存在一個特性trace(I-H) = N-(d+1)。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/AnIllustrativeProof.JPG" class="" width="500">
+
+<p>y為f(x)加上noise，Ein其實就是把I-H用在noise向量上，最後推導出來Ein平均為noise level×(1-d+1/N)，Eout平均推導出來剛好相反，為noise level×(1-d+1/N)。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/TheLearningCurve.JPG" class="" width="500">
+
+<p>從Ein和Eout可以畫出leraning curve，當資料量N越大時可以看到Ein和Eout的變化，Eout會越加越少，Ein會越減越少，兩者都會收斂。VC求的是最壞的情形，而我們現在是求平均的情形，但兩者會得到類似的結果，所以可以說linear regression在N夠大時，並在noise不是太多的情況下，確實是可以學習的。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/LinearClassification.JPG" class="" width="500">
+
+<p>和之前的線性分類相比，分類的y是兩元類別，迴歸是一個連續型實數；分類會取sign轉成二元類別而迴歸不用；在錯誤衡量方法，分類是用0/1 error而迴歸是用squared error。因為迴歸的運算可以很有效的得到解答，那麼是不是可以把linear regression拿來解分類問題嗎？</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/RelationOfTwoError.JPG" class="" width="500">
+
+<p>其實兩者最大的不同就是在錯誤的衡量，可以發現迴歸的平方錯誤會比分類0/1的錯誤還大。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/RegressionForClassification.JPG" class="" width="500">
+
+<p>接著把VC放進來分類問題，因為regression的squared錯誤會比0/1錯誤還大，分類會被regression bound住。所以如果可以把regression作的很好，就可以把分類作的很好，甚至可能把Eout也作好。所以確實可以用regression來取代作分類問題，會比較好解，但是效果確不一定比較好，因為其錯誤為分類的上界。</p>
+<p>有個好的辦法是，先透過regression來算出一個W初始值，再將這個W拿去PLA進行學習，可能可以增加PLA學習的效率。</p>
+<img src="/2017/09/12/Machine-Learning-Foundation-9/summary.JPG" class="" width="500">
+
+<p>總結來說，這一堂課介紹了linear regression，其在求解時而要求出pseudo-inverse，而且可以確保Eout和Ein平均的差距為2(d+1)/N，最後linear regression是可以用在分類問題上的。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/09_handout.pdf">Machine Learning Foundation 09</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1339,121 +1484,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/05/31/Hidden_Markov_Model_HMM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/05/31/Hidden_Markov_Model_HMM/" class="post-title-link" itemprop="url">隱馬可夫模型 - Hidden Markov Model(HMM)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-05-31 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-31T00:00:00+08:00">2017-05-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:53:02" itemprop="dateModified" datetime="2021-05-11T22:53:02+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Machine-Learning/" itemprop="url" rel="index"><span itemprop="name">Machine Learning</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/05/31/Hidden_Markov_Model_HMM/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/31/Hidden_Markov_Model_HMM/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>隱馬可夫模型(Hidden Markov Model, HMM)是一種具有隱含未知參數的馬可夫鏈(Markov Chain)，隱馬可夫模型常被使用在許多AI與Machine Learning的應用。既然隱馬可夫模型是一種馬可夫鏈，一開始先來簡單介紹一下什麼是馬可夫鏈</p>
-<p>馬可夫鏈是指從一個狀態轉移到另一個狀態的隨機過程，且下一個狀態只能由當前狀態決定，根據機率分布從一個狀態轉移到另一個狀態，或是保持目前狀態，不同狀態間改變的機率稱為轉移機率(Transition Probability)。</p>
-<img src="/2017/05/31/Hidden_Markov_Model_HMM/MarkovChain.jpg" class="" width="500">
-
-<p>以上面的例子來說明，這是一個具有兩個狀態的馬可夫鏈，S1是雨天(Rainy)，S2是晴天(Sunny)。其中S1可以轉移到S2也可以保持在S1，S2可以轉移到S1，也可以保持在S2。使用天氣變化這個例子來說明的話，可以表示成如果今天是雨天，明天可能是晴天也可能維持雨天。</p>
-<img src="/2017/05/31/Hidden_Markov_Model_HMM/MarkovChainExample.jpg" class="" width="500">
-
-<p>如果我們有一個地區的天氣變化歷史紀錄，就可以統計出此地區晴天和雨天的轉移機率，並算出未來是晴天或是雨天的機率。假設已經知道今天是雨天，我們就可以從上面的樹狀範例可以輕易的計算出後天是雨天的機率是0.61，也可以使用矩算運算來算出後天是雨天和晴天的機率。</p>
-<p>再來開始談談什麼是隱馬可夫模型，在隱馬可夫模型被隱藏起來不可見的就是狀態本身，雖然狀態被隱藏起來看不到了，但是卻可以透過「觀察序列」來間接的透露出狀態的訊息。</p>
-<p>以wiki上面的天氣例子來說明，假設我本來每天都可以直接看到我居住地區的天氣狀態，有一天我搬家了沒辦法直接觀察原本地區的天氣狀態。雖然我無法直接看到原本地區的天氣狀態，但是我知道住在原本那個地區的朋友，在雨天的時候會有10%機率出門散布、40%機率出門購物，和50%在家打掃；在雨天的時候會有60%機率出門散布、30%機率出門購物，和10%在家打掃。</p>
-<img src="/2017/05/31/Hidden_Markov_Model_HMM/HMM.jpg" class="" width="500">
-
-<p>隱馬可夫模型讓我們可以透過觀察「看得到的」現象去推測另一個「看不到的」現象。以上面舉的例子來說，雖然我無法得知該地區的天氣狀況，但是我就可以透過觀察朋友每天的連續行為，來推測該地區的天氣狀況，並且以上面的方式來呈現一個隱馬可夫模型。</p>
-<p>通常隱馬可夫模型有三大重要的問題:</p>
-<ol>
-<li>已知HMM模型，找出一個特定輸出序列的機率</li>
-<li>已知HMM模型，找出一個特定輸出序列的隱藏狀態序列</li>
-<li>未知HMM模型，找到最可能的狀態轉移和輸出機率</li>
-</ol>
-<p>不同的演算法都有相對應的演算法可以使用，後續有機會再陸續介紹</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hidden_Markov_model">Wiki - Hidden_Markov_model</a><br/><a target="_blank" rel="noopener" href="http://www.csie.ntnu.edu.tw/~u91029/HiddenMarkovModel.html">演算法筆記 - HiddenMarkovModel</a><br/><a target="_blank" rel="noopener" href="http://pansci.asia/archives/43586">隱馬可夫模型：探索看不到的世界的數學工具</a><br/><a target="_blank" rel="noopener" href="http://ccckmit.wikidot.com/st:markovchain">馬可夫鏈</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1525,7 +1555,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1538,7 +1568,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-count">40</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

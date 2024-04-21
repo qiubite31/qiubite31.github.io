@@ -196,6 +196,124 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2024/03/21/migrate-rdbms-to-cassandra-approach/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/03/21/migrate-rdbms-to-cassandra-approach/" class="post-title-link" itemprop="url">如何將現有的專案與RDBMS轉移到Cassandra</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2024-03-21 21:42:33" itemprop="dateCreated datePublished" datetime="2024-03-21T21:42:33+08:00">2024-03-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2024-04-21 17:43:44" itemprop="dateModified" datetime="2024-04-21T17:43:44+08:00">2024-04-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL-NoSQL/" itemprop="url" rel="index"><span itemprop="name">SQL&NoSQL</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2024/03/21/migrate-rdbms-to-cassandra-approach/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2024/03/21/migrate-rdbms-to-cassandra-approach/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>當專案已經準備要導入Cassandra時，可能是專案已經遇到某些困難與瓶頸，並已經考慮採用Cassandra是一個正確的使用情境。以下是使用<a target="_blank" rel="noopener" href="https://live-datastaxd8.pantheonsite.io/sites/default/files/content/ebook/2020-04/9781492079514%20%282%29.pdf">Cassandra: The Definitive Guide, Third Edition</a>其中第十五章的部份段落來說明如何將資料表轉移到Cassandra上。</p>
+<p>要將關聯式資料庫轉到Cassandra上，第一個遇到的問題就是如何將原本的資料表關係轉移到Cassandra上。一種方式是將既有的資料模型作直接轉譯(Direct Translation)，以下會舉旅館預約系統來說明如何對資料模型作直接轉譯。</p>
+<img src="/2024/03/21/migrate-rdbms-to-cassandra-approach/reservation_relational_model.png" class="" width="500">
+
+<p>在將關聯式資料庫的資料表直接轉譯到Cassandra上，會分成二個部份：</p>
+<ol>
+<li>轉譯實體(Translation Entities)</li>
+<li>轉譯關聯(Translation Relationships)</li>
+</ol>
+<h4 id="轉譯實體-Translation-Entities"><a href="#轉譯實體-Translation-Entities" class="headerlink" title="轉譯實體(Translation Entities)"></a>轉譯實體(Translation Entities)</h4><img src="/2024/03/21/migrate-rdbms-to-cassandra-approach/entity_translation.png" class="" width="500">
+
+<ol>
+<li> 根據主鍵設定建立相似鍵值的Cassandra資料表<br>首先找到原本關聯式資料模型中的實體。比如說Hotel這張資料表會被預約系統查詢使用，這時就可以在Cassandra也建立一個具有相似鍵值的資料表，即為上圖的hotels資料表，其中參照原本的設定將hotel_id設定成主鍵(在這裡亦為partition key)。</li>
+<li> 建立<a href="https://qiubite31.github.io/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/">反正規化資料表</a>滿足不同查詢組合<br>因為並不是所有的查詢都是透過hotel_id查詢，假設要滿足使用name來查詢hotel資料的行為，那就需要建立另一張以name欄位為partition key的資料表叫hotels_by_name。這裡的主鍵為name和hotel_id組合，其中hotel_id為clustering key。</li>
+<li>使用<a target="_blank" rel="noopener" href="https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/useCreateUDT.html">UDT(User-defined Type)</a>描述複雜的型別資料<br>在資料表中的address可以是一個單純的字串表示地址，也可以是一個自定義的型別。因為在Cassandra中可以透過自定義型別來描述複雜的型別資料，以自定義型別Address來說，其中可以包含street、city等多個欄位的屬性。自定義型別並不是必須的，可以依系統的設計需求來考慮是否採用。</li>
+</ol>
+<h4 id="轉譯關聯-Translation-Relationships"><a href="#轉譯關聯-Translation-Relationships" class="headerlink" title="轉譯關聯(Translation Relationships)"></a>轉譯關聯(Translation Relationships)</h4><img src="/2024/03/21/migrate-rdbms-to-cassandra-approach/relationship_translation.png" class="" width="500">
+
+<p>將實體的資料表轉譯到Cassandra的資料表後，接著就可以開始看這些實體資料表間的關聯性。以RoomToAmenity來說，這張為其實是描述Room和Amenity之間的關聯，而這類的關聯資料表常常沒有自己的屬性，可以看到RoomID和AmenityID這兩個欄位組成的主鍵，同時也分別是連接到Room和Amenity的外部鍵。</p>
+<ol>
+<li>將實體資料表間的關聯性建立Cassandra資料表<br>這些被用來表達實體間關聯的資料表，時常伴隨著實體資料表作使用。以amenities_by_room為例，這張資料表的主鍵會拿實體資料表中的鍵值作為查詢用的partition key(hotel_id, room_number)。因此在查詢時就可以從hotel_id查詢某一間room_number提供的amenities。 </li>
+<li>使用UDT描述從屬資料<br>以右下角rooms_by_hotel資料表為例，這張表是透過hotel_id查詢所有的room資料，這時可以設計一個amenity自定義型態，並設定amenities欄位是list of amenity型態。這種設計的好處在於可以透過一個查詢就一併查出room相關的amenities資料，不需要分多次查詢。當然UDT的使用也是依系統的設計需求來考慮是否採用。</li>
+</ol>
+<p>以上就是採用直接轉譯的方式將原本關聯式資料表轉成Cassandra資料表，這種方式好處在於可以直接對準在原本的資料模型作轉移，一步一步從實體資料表、資料表關聯還有結合應用層的查詢條件將專案作轉移。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1356,152 +1474,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/22/Machine-Learning-Techniques-6/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第六講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2020-02-22 00:00:00" itemprop="dateCreated datePublished" datetime="2020-02-22T00:00:00+08:00">2020-02-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:42:50" itemprop="dateModified" datetime="2021-05-11T23:42:50+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/02/22/Machine-Learning-Techniques-6/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/22/Machine-Learning-Techniques-6/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <img src="/2020/02/22/Machine-Learning-Techniques-6/RecallRepresenterTheorem.JPG" class="" width="500">
-
-<p>上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/KernelRidge.JPG" class="" width="500">
-
-<p>因為已經知道最佳的w會是βZ的線性組合，所以這裡一樣可以將w轉換為z的線性組合，當出現Z與Z乘積時就可以換成kernel，轉成透過kernel trick解β問題。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/SolvingKernelRidgeRegression.JPG" class="" width="500">
-
-<p>因為這是一個無條件的最佳化問題，所以可以求梯度為0，即對β微分等於0求出讓梯度為0的β最佳解。因為K一定大於0所以可以求出需要求解的反矩陣來解出最好的β。原本之前說的要作nonlinear的方法是先作transform轉換再作regression，而且現可以另一種方法即使用kernel來達成nonlinear regression。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/LinearVSKernelRidgeRegression.JPG" class="" width="500">
-
-<p>比較linear ridge regression和kernel ridge regression，kernel ridge rgression具有非線性性質所以有更彈性的應用來解決較複雜的問題，但其缺點就是要付出較大的計算時間複雜度。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/vsLSSVM.JPG" class="" width="500">
-
-<p>kernel ridge regression當然也可以拿來作classification，這個方法又稱為LSSVM(least-squares SVM)。在比較Soft-Margin SVM和LSSVM，兩者得到的邊界可能會差不多，但比起Soft-Margin裡面求出的α是稀疏的，前面在解kernel ridge時β沒有特別的限制，因此β會求出dense的解，因而得到比Soft-Margin更多的support vector。而support vector較多的情況下，會造成在預測時效率較差。所以再來的重點是如何讓β也可以和標準SVM一樣求出稀疏解。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/TubeRegression.JPG" class="" width="500">
-
-<p>這裡介紹到Tube Regression，比起原本的regression會計算每一點算與實際值的誤差，tube regression允許在一個範圍內，即落在tube內的點可以不計算error，而落在tube外的點除了計算與實際值的誤差外要再減掉tube的寬度，得到一種新的error計算方法。這種error被稱為ε-insensitive error，下一步會嘗試透過這個新的error來解出稀疏的β值。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/TubeVSSquaredRegression.JPG" class="" width="500">
-
-<p>在比較Tube Regression和Squared Regresion會發現，兩者在預測值和實際值接近時，error計算是比較接近的。但是在相差越來越大時，squared regression的error會成長的比較快，因此也比較容易受到雜訊的影響。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/L2REgularizedTubeRegression.JPG" class="" width="500">
-
-<p>L2-Regularized Ture Regression在求解時可以使用任何unconstrain的方式，和之前SVM求hinge error時一樣會遇到max無法微分，雖然也可以使用reprsenter的方式作kernel化，但卻無法保證最後求出的是稀疏解。而標準的SVM一樣無法微分，但是可以被寫成QP問題求解，再透過求對偶問題達成kernel化，而且因為滿足KKT condition可以保證其具有稀疏性。因此這裡可以把L2-Regularized Tube Regression模擬成像原本的SVM再求解(加入C並將w0拆出b值)。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/StandartSVR.JPG" class="" width="500">
-
-<p>再進一步加入ξn來紀錄犯錯的程度，其中為了將限制式的絕對值拆掉，會得到upper tube violation和lower tube violation兩個ξn。這個式子就是一個Support Vector Regression(SVR)的標準式，而且也會符合QP問題。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/QPforSVR.JPG" class="" width="500">
-
-<p>這個SVR的標準式會有兩個參數，一個是C和之前的SVM一樣用來控制regularization和violation之間的trade-off。第二個是ε用來紀錄tube的寬度決定允許的犯錯範圍。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/LagrangeMultiplier.JPG" class="" width="500">
-
-<p>有了SVR的primal後，就可以引入Langrange multiplier來轉成對偶問題，所以這裡會引入兩個α來對應兩個ξn，再來就是重複之前課程的推導。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/SVRdual.JPG" class="" width="500">
-
-<p>因為SVM和SVR的問題相似，所以可以發現兩者的對偶很相近，而且可以透過QP來解。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/SparsitySVRSolution.JPG" class="" width="500">
-
-<p>回到原本的問題，我們希望β可以是稀疏的，也就是β系數在某些情況要是0。可以發現如果資料是在tube內部ξ會為0，而ξ為0的情況下complementary slackness括號內部的值就不等於0，又因為α和括號內部其中要有一邊要為0，所以α必定要為0，也就是β會等於0。所以位在tube內部的β會為0，而tube外面或是邊界就是對w有貢獻的support vector，這就可以得到β要稀疏解。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/MapofLinearModel.JPG" class="" width="500">
-
-<p>到目前為止教過的linear model總共有5種，在分類問題上，除了最早教到的PLA/pocket方法，這幾講教的linear soft-margin SVM是透過找到具有soft-margin性質的超平面來解分類問題；在regression問題中除了前面講到的linear ridge regression，還引申出透過Tube與SVM概念所延伸出來的linear SVR。另外還有regularized logistic regression結合regularization作模型複雜度修正與maximum likelihood概念來處理分類問題。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/MapofKernelModel.JPG" class="" width="500">
-
-<p>當linear model具有regularized性質時都可以引入kernel的概念，而這6講的內容分別教了如何將SVM、ridge regression、SVR和logistic regression帶入kernel trick。其中第一排的PLA/pocket和linear SVR，因為其表現都沒有第二排linear soft-margin SVM和linear ridge regression來的好，所以實務上比較少用。第三排的kernel ridge regression和kernel logistic regression因為β解出來是不是稀疏解，所以實務上傾向使用第四排的SVR。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/KernelModela.JPG" class="" width="500">
-
-<p>kernel是一個power的方法強化linear model來解更複雜的問題，但要注意的是要小心處理參數的選擇以避免發生overfit。</p>
-<img src="/2020/02/22/Machine-Learning-Techniques-6/Summary.JPG" class="" width="500">
-
-<p>總結這一講的內容，教到將representer theorem應用在ridge regression上，並結合tube regression引申出SVR的primal形式，再透過求解對偶得到β的稀疏解。最後則比較到目前為止教到的線性模型，並且有嘗試使用kernel來解更複雜的問題時要小心使用，避免overfit。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/206_handout.pdf">Machine Learning Techniques 6</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1573,7 +1545,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1586,7 +1558,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-count">40</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

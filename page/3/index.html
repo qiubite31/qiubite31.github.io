@@ -196,6 +196,165 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/02/18/andrew-deep-learning-course5-week2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/02/18/andrew-deep-learning-course5-week2/" class="post-title-link" itemprop="url">Andrew深度學習課程五 - Sequence Model第2周筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2018-02-18 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-18T00:00:00+08:00">2018-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:31:20" itemprop="dateModified" datetime="2021-05-11T23:31:20+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/02/18/andrew-deep-learning-course5-week2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/02/18/andrew-deep-learning-course5-week2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在上一週的課程中，我們使用了one-hot結合詞庫來將句子作量化處理。但是使用one-hot的缺點是每個詞被視為獨立的，也就是無法衡量出兩個詞之間的相似或與重要性(兩個one-hot vector內積都會為0)。所以當你想知道apple和orange之間的關係比起apple和king還接近，就無法單純的使用one-hot來作文字的量化。其中一個方法是可以用不同的特性來作量化，比如說使用性別、是否為食物等等的特性，這個時候便可以辯識出具有相同性質的詞。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_feature.JPG" class="" width="500">
+
+<p>這種量化文字的方法又可以被稱為Word Embedding，像是每個詞會嵌在高維度的特徵向量中，即每個詞都可以在高維度的特徵找到一個能表示它的位置，而如果要將多個維度的特徵壓縮到兩維來表示，可以使用t-SNE演算法來找到相同的詞會彼此較相近。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_visualize.JPG" class="" width="500">
+
+<p>使用Word Embedding的好處除了可以判斷出兩個詞之間的相關係，也對Transfer learning有很大的幫助，即使用已經訓練好的word embeddig來用在新的任務。在使用word embedding於transfer learning有幾種方法。1. 從大量的詞庫(1-3B)中進行訓練(或是下載已被訓練過的) 2. 使用原本已建立的embedding並transfer到新的而且訓練資料集較小(1-3k)的任務 3. 持續的使用新的資料來對embeddings進行finetune。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/word_embeddings_transfer.JPG" class="" width="500">
+
+<p>Word Embeddings也可以作到比擬(analogy)，比如說Man之於Woman等同於King之於Queen，這可以透過向量相減來找到相似的結果。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/analogy.JPG" class="" width="500">
+
+<p>實際上要基於Man與Woman的關係來找到King和某個詞，可以透過向量相似度的計算來找到，只要找到King和哪一個詞的相似度與Man和Woman的相似度最接近即可。這裡的相似度計算是從原始的高維度(~300D)來的，雖然可以透過t-SNE來將高維度使用非線性的轉換到2維空間作視覺化，但如果使用了轉換的2維來計算反而會失真，所以在實際上的相似度計算會使用原始的高維度向量空間。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/analogy_vector.JPG" class="" width="500">
+
+<p>一個常用的相似度計算是Cosine similarity，即計算兩個向量的角度來判斷兩個相向之間的相似度。Cosine similarity也經常被用在文本分析中，透過計算代表兩筆資料的高維度向量，來評估兩筆資料的相似度。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/cosine_similarity.JPG" class="" width="500">
+
+<p>Word Embedding的學習最終會得到一個Embedding Matrix，凡是把這個矩陣乘上某一個詞的one-hot向量，所得到的即是代表這個詞的embedding。因為one-hot是高維度而且幾乎都是0的稀疏矩陣，所以在實務上並不會真的相乘，而且透過特別的方法來找到詞的embeddings。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/embedding_matrix.JPG" class="" width="500">
+
+<p>在word embeddings的學習演算法中，過去往往會使用很多很複雜的演算法來學習，但後來卻發現很多簡單的方法就可以達到很好的效果。在複雜的方法中，比如說要預測一句話的下一個詞，可以把每個詞的word embeddings輸入到一個類神經網路學習，最後訓練出我們要的embedding matrix(E)。如果有300維度，那麼要輸入到網路裡面的維度就會多達300乘6共1800維，也可以選擇只看前4個詞來學習，那麼維度就會降到300乘4共1200維。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/other_context_target.JPG" class="" width="500">
+
+<p>不過事實上用簡單一點的模型也可以訓練出好的效果，比如說只用預測詞的前一個字，或是最接近預測詞前一個詞的詞(又稱為skip gram)來訓練word embeddings matrix。</p>
+<p>這裡介紹Word2Vec的Skip-grams模型，Skip-grams在選擇Context與Target組合時，針對Target可透過隨機挑選的方式選出不同的組合，比如說Context詞的+-5~10個詞來選出Target詞。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/skip_grams.JPG" class="" width="500">
+
+<p>再來將這些對應的組合透過matrix E轉成word embeddings後丟入神經路網學習，接著經過softmax後計算loss function來訓練出matrix E。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/skip_grams_model.JPG" class="" width="500">
+
+<p>但這個方法的主要缺點在於需要大量的計算，因為在計算softmax時，分別需要加總所有詞，如果詞的數量越多，那麼速度就會越慢，因此很難擴充到大型的訓練詞集。一個解法是使用hierarchical softmax，先拆出詞位於哪個部份(前或是後五千詞)，接著再接續往下作二元拆解。在tree的結構可以把常出現的通用詞放在上半部，這樣就可以較快的被找到。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/softmax_problem.JPG" class="" width="500">
+
+<p>因為skip-grams在計算softmax需要花費大量運算，使用Negative Sampling則可以避免這個問題。Negative Sampling首先會先建立postive pair和negaive pair，比如說orange和juice會一起出現，就給予label 1，然後再隨機選出其他K個詞和orange組成negative pair給予label 0(即便某些時候negative pair組合真的有一起出現也沒關係)。最後將這些組合透過監督式學習訓練模型。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling.JPG" class="" width="500">
+
+<p>接著可以使用logistic regression來計算在給定label為1時，postive pair組合的機率，並使用K+1組資料進行訓練，然後再將這個分類器應用在10000個詞作二元分類。因此比起原本作skip-grams要一次訓練10000組資料，使用negatiev sampling的方法只需要用少量的資料訓練，再一次用在多組詞的分類。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling_model.JPG" class="" width="500">
+
+<p>但是該如何去選擇negative sampling呢？一個方法可以從詞出現的頻率選起，但是很容易選到停用詞(stop word)；或是假定他是均勻分配，使用1/|V|來選擇，而在這篇論文裡面是用了每個詞在訓練詞庫中出現的3/4次方來計算機率作選擇。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/negative_sampling_selection.JPG" class="" width="500">
+
+<p>另一個學習方法為GloVe，首先會計算context和target一起出現在訓練資料的次數，Xij會等於Xji如果是用target的正負距離來選擇context，但是如果只看target出現在context後面，就會不相等。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/GlovVe.JPG" class="" width="500">
+
+<p>GloVe的模型中為了避免Xij為0，因此會乘上一個權重f(Xij)，如果Xij為0則f(Xij)為0，當然這個函式也可以用來給予不同詞頻的詞有不同的權重處理。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/GlovVe_model.JPG" class="" width="500">
+
+<p>情感分析(Sentiment Analysis/Classification)是NLP其中一種應用，主要用在判斷文本中是表達喜歡或是不喜歡(正或負)。比如說，輸入的X為評論的內容，輸出Y為評論的情感等級，像是從網路評論中判斷對於餐廳或是旅館的正負評論。其最大的困難在於情感分析缺乏大量的標記資料來學習，如果使用word embedding可以幫助在少量訓練資料的情況下學習。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification.JPG" class="" width="500">
+
+<p>在建立情感分析模型時，一樣使將每個詞透過embedding matrix選出該詞的embeddings向量，接著透過加總或是取平均值後，再使用softmax函式得到輸出Yhat。不過因為這樣的方法是沒有前後順序的，所以如果遇到明明有否定詞在前面，但是後面出現很多的正向詞good，這可能就會造成誤判斷把明明是一星的評論判成五星，因為出現很多次的good會把結果導到正向，這個時候就需要使用RNN來建立模型。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification_model.JPG" class="" width="500">
+
+<p>使用RNN一開始也是將每個詞透過embeddings matrix找到該詞的embeddings向量，接著將每個詞輸入進RNN，最後再接softmax判斷結果，這個就一開始提到的Many to One的RNN類型。因為RNN是會有順序性的，所以對於出現否定詞的句子能夠處理的比較好。因為word embedding可以從較大的訓練資料訓練出來，所以即使在情感分析的訓練集裡面缺少了某些詞，但這些詞有被word embedding訓練過，這樣在作情感分析時也可以得到較好的結果。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/sentiment_classification_rnn.JPG" class="" width="500">
+
+<p>在word embeddings的訓練過程中，可能會造成帶有偏見的學習結果，比如說本來是希望學出Man之於Woman等於King之於Queen，但可能會學習出Man之於Programer對於Woman之於Home_keeper這種帶偏見，或是Father之於Doctor對於Mother之於Nurse這種錯誤的結果。因為機器學習現在已經越來越普及的被應用在許多不同的領域上，所以這種帶偏見的錯誤結果應該要被避免的。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/bias_problem.JPG" class="" width="500">
+
+<p>解決這種錯誤的學習有不同的方法，以解決性別偏見為例來說明，第一先將girl-boy和mother-father來找到屬於性別的分界向量，這時把任一個詞和這個分界向量作內積，就可以找到這個詞會偏向哪個性別，並找出bias direction，要讓不能帶有性別偏差的詞向量去除bias。透過Neutralize將一些對於性別來說屬於中性的詞，將其投影到non bias的方向軸，最後為確保像是doctor這種應該屬於中性的詞，與帶不同性別的詞(像Girl或是Boy)距離要是相同的，會使用Equalize pairs的手法將帶性別的詞移動到以軸為中性對稱的位置，這樣就會讓兩者與doctor的距離或是相似度是相同的。在選擇哪些詞需要進行Neutralize，可以透過練一個分類器來分辨；在選擇要equalize的部份因為較少量，所以可以簡單透過人工挑選的方式完成。</p>
+<img src="/2018/02/18/andrew-deep-learning-course5-week2/bias_problem_addressing.JPG" class="" width="500">
+
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/nlp-sequence-models">Deep Learning Course 5 - Sequece Models</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/02/05/andrew-deep-learning-course5-week1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1453,151 +1612,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/12/Machine-Learning-Foundation-9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/09/12/Machine-Learning-Foundation-9/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第九講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-09-12 00:00:00" itemprop="dateCreated datePublished" datetime="2017-09-12T00:00:00+08:00">2017-09-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:12:35" itemprop="dateModified" datetime="2021-05-11T23:12:35+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/09/12/Machine-Learning-Foundation-9/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/12/Machine-Learning-Foundation-9/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上堂課講到err的衡量方法有兩種，其中一種squared err就是這這堂課Regression就會用到的err衡量方法。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/CreditLimitProblem.JPG" class="" width="500">
-
-<p>regression會拿來解連續型資料的問題，以前面提過的信用卡案例來說，regression就不是拿來用在判斷要不要發給信用卡，而且會決定發卡的額度上限是多少，依然是一個機器學習問題。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/LinearRegressionHypothesis.JPG" class="" width="500">
-
-<p>前面的例子也有說到，不同的資料特徵值可能會有不同的重要性，所以會有一個權重w來表示每個x的重要性加權。這有點累似之前的perceptron，但差別是perceptron是用來作二元分類，所以會再取sign判斷正負號，而這裡的regression是不用的。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/IllustrationLinearRegression.JPG" class="" width="500">
-
-<p>linear regression的hypothesis主要會找到一條線(或超平面)來盡量滿足所有的資料點，而資料點和線或是平面的距離就稱為residuals(餘數)，或是可以稱為誤差，我們會希望這個餘數越小越好，因為越小就代表hypothesis越正確。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/ErrorMeasure.JPG" class="" width="500">
-
-<p>一開始有講到，linear regression最常使用的錯誤衡量方法就是sqiared err。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/MatrixEin.JPG" class="" width="500">
-
-<p>在regression求Ein時，可以把運算過程轉換成向量矩陣運算</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/MinEin.JPG" class="" width="500">
-
-<p>在求Ein最小值的過程只有W是未知的，而這個Ein(w)會是一個convex函式，在反覆修正W最終會得到一個最低點，也就可以找到Ein最小值，可以找透過找梯度為0來找到這個最低點。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/Gradient.JPG" class="" width="500">
-
-<p>中間會將梯度函式重新整理，在梯度等於0的情況下，最終會找到最好的W。在求W的過程中會帶出pseudo-inverse的概感，使用pseudo-inverse和y就可以求出最好的W。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/IsRegressionLearning.JPG" class="" width="500">
-
-<p>這樣看起來直接計算出W好像有一步登天的感覺不像機器學習，但事實上linear regression可以說是機器學習方法，因為確實可以找到Ein，當你認同VC維那麼好的Ein就會有好的Eout，而且在計算過程中，其實背後也有很多的步驟進行並非一步就達成。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/IsRegressionLearning2.JPG" class="" width="500">
-
-<p>要怎麼確定linear regression真的可以學的好呢？可以透過對多的Ein的平均來衡量，而這個Ein的平均大概會等於noise level(資料的雜訊)×(1-d+1/N)，所以如果資料量越多得到的結果就會越好。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/GeometricViewHatMatrix.JPG" class="" width="500">
-
-<p>以幾何上來說來說明，y是一個N維的向量，X是在N維上的一個小空間，而y(hat)會落在這個小空間裡。linear regression的目的就是讓y和y(hat)可以最小，最小的距離就是y到y(hat)的線性投影，所以linear regression的hypothesis的目的就是把任何一個向量投影到x空間中。因為H作了投影，而I-H等同就是在求餘數，即y-y(hat)。這之中會存在一個特性trace(I-H) = N-(d+1)。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/AnIllustrativeProof.JPG" class="" width="500">
-
-<p>y為f(x)加上noise，Ein其實就是把I-H用在noise向量上，最後推導出來Ein平均為noise level×(1-d+1/N)，Eout平均推導出來剛好相反，為noise level×(1-d+1/N)。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/TheLearningCurve.JPG" class="" width="500">
-
-<p>從Ein和Eout可以畫出leraning curve，當資料量N越大時可以看到Ein和Eout的變化，Eout會越加越少，Ein會越減越少，兩者都會收斂。VC求的是最壞的情形，而我們現在是求平均的情形，但兩者會得到類似的結果，所以可以說linear regression在N夠大時，並在noise不是太多的情況下，確實是可以學習的。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/LinearClassification.JPG" class="" width="500">
-
-<p>和之前的線性分類相比，分類的y是兩元類別，迴歸是一個連續型實數；分類會取sign轉成二元類別而迴歸不用；在錯誤衡量方法，分類是用0/1 error而迴歸是用squared error。因為迴歸的運算可以很有效的得到解答，那麼是不是可以把linear regression拿來解分類問題嗎？</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/RelationOfTwoError.JPG" class="" width="500">
-
-<p>其實兩者最大的不同就是在錯誤的衡量，可以發現迴歸的平方錯誤會比分類0/1的錯誤還大。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/RegressionForClassification.JPG" class="" width="500">
-
-<p>接著把VC放進來分類問題，因為regression的squared錯誤會比0/1錯誤還大，分類會被regression bound住。所以如果可以把regression作的很好，就可以把分類作的很好，甚至可能把Eout也作好。所以確實可以用regression來取代作分類問題，會比較好解，但是效果確不一定比較好，因為其錯誤為分類的上界。</p>
-<p>有個好的辦法是，先透過regression來算出一個W初始值，再將這個W拿去PLA進行學習，可能可以增加PLA學習的效率。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/summary.JPG" class="" width="500">
-
-<p>總結來說，這一堂課介紹了linear regression，其在求解時而要求出pseudo-inverse，而且可以確保Eout和Ein平均的差距為2(d+1)/N，最後linear regression是可以用在分類問題上的。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/09_handout.pdf">Machine Learning Foundation 09</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1669,7 +1683,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1682,7 +1696,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-count">40</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
