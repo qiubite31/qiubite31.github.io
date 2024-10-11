@@ -196,6 +196,137 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/05/13/from-flutter-to-flutter-web-for-beginner/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/13/from-flutter-to-flutter-web-for-beginner/" class="post-title-link" itemprop="url">從Flutter走到Flutter Web的app開發新手歷程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-05-13 01:34:42" itemprop="dateCreated datePublished" datetime="2021-05-13T01:34:42+08:00">2021-05-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-09-12 10:28:58" itemprop="dateModified" datetime="2021-09-12T10:28:58+08:00">2021-09-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flutter/" itemprop="url" rel="index"><span itemprop="name">Flutter</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/05/13/from-flutter-to-flutter-web-for-beginner/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/13/from-flutter-to-flutter-web-for-beginner/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近幾個月來工作的職務上有些轉換，加入到一個小規模的app開發團隊，並且嘗試導入Flutter開發一套codebase就能夠佈署到多個平台的跨平台app。其實網路上已經有非常多介紹Flutter的文章，而原生與跨平台的解決方案比較也很多人討論過，所以這篇會以一個初入Flutter的新手，到成功交付產品上線後，一直到採用Flutter Web的心路歷程分享。</p>
+<h4 id="老闆問：能不能弄個跨平台app"><a href="#老闆問：能不能弄個跨平台app" class="headerlink" title="老闆問：能不能弄個跨平台app"></a>老闆問：能不能弄個跨平台app</h4><p>其實跨平台一直都存在並且持續有新的技術出現，雖然Flutter還很年輕，但是在這幾年的熱度也快速的竄升。我認為採用跨平台技術對於單純開發給公司內部使用的系統來說，最大的優點就是在人力的節省。在一個開發了web就會被問能不能放在行動裝置上，作了手機app就會被問能不能web也有的環境下，為了提供多個平台管道給使用者，一支系統難道不能只開發一次就好了嗎(彷彿老闆的聲音飄出來了)。</p>
+<p>要開發多個平台可以使用的應用程式，除了能夠支援不同裝置尺寸的web應用程式外，如果需求面上又希望能保留行動裝置功能的支援，那Flutter自然是一個適合的選擇。</p>
+<p>Flutter官方網站直接的介紹是這樣寫的：</p>
+<blockquote>
+<p>Flutter is Google’s UI toolkit for building beautiful, natively compiled applications for mobile, web, and desktop from a single codebase.</p>
+</blockquote>
+<h4 id="Web-Hit-Stable-Millestone"><a href="#Web-Hit-Stable-Millestone" class="headerlink" title="Web Hit Stable Millestone"></a>Web Hit Stable Millestone</h4><p>Android和iOS是Flutter最先開始穩定支援的平台，但終究web平台還是一個觸及度最高的管道，也許平板電腦不是每個人都有，但user們還是都用電腦上班。在專案達成mobile first的任務，接著要開始擴大觸及程度時，剛好迎來Flutter Engage在3月3號發佈了Flutter 2的更新。</p>
+<blockquote>
+<p>Perhaps the single largest announcement in Flutter 2 is production-quality support for the web.</p>
+</blockquote>
+<p>Flutter 2正式將Web支援放進stable channel，原本要打開Web支援還得使用beta channel才行，甚至官方也建議在web正式穩定支援前，要發佈成產品都需要仔細的確認執行起來是否有bug。當下還在觀望是否該導入Flutter Web才過沒多久，隨著Flutter 2的發佈後，馬上就在隔天拿起現有的Flutter專案進行POC，直到最近成功的將原本的app正式發佈給使用者使用。</p>
+<h4 id="從Flutter到Flutter-Web"><a href="#從Flutter到Flutter-Web" class="headerlink" title="從Flutter到Flutter Web"></a>從Flutter到Flutter Web</h4><p>下面我分享三個如果今天從新手Flutter開發者，一路走到開發產品等級的Flutter Web可能會發生的心路歷程與重點學習資源：</p>
+<ul>
+<li>從零開始開始的Flutter菜鳥</li>
+</ul>
+<p>身為第一次接觸Flutter的開發者，自己覺得還不算難上手，基本上跟著官方的文件把開發環境裝起來後，接著讀完stateless和stateful widget還有column和row的layout概念後，就可以作出簡單的切版畫面。</p>
+<p>Flutter的widget其實很多，常常都是需要的時候邊查邊實作，通常第一步會先找是不是有Flutter已經提供的<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/ui/widgets">widget</a>(像是drawer、search、bottom navigation等)，如果沒有的話這裡推薦<a target="_blank" rel="noopener" href="https://pub.dev/">pub.dev</a>還有<a target="_blank" rel="noopener" href="https://fluttergems.dev/">Flutter Gems</a>，這兩個網站的資源可以幫你找到很多你需要的功能。最後再上<a target="_blank" rel="noopener" href="https://pub.dev/packages/http">http</a>加上<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/data-and-backend/json">json serialization</a>，或是直接跟著<a target="_blank" rel="noopener" href="https://flutter.dev/docs/cookbook/networking/fetch-data">cookbook</a>作大致上就能接完後端了。</p>
+<ul>
+<li>一個好的狀態管理很重要</li>
+</ul>
+<p>成功發佈完app的1.0.0版後，接著來的就是各種app的新功能需求，在追加越來越多的跳頁功能下，開始出現很多的渲染失敗或是改一改就出現畫面亂跳頁的bug。這時候才會發現真的需要一個好的狀態管理，領悟到沒有好好規畫狀態管理的app不止難以維護，更會造成app效能變差。如果這段是在趕鴨子上架的過程被忽略掉的，這時直接建議把<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/data-and-backend/state-mgmt/intro">Flutter狀態管理</a>這篇讀完，至少用<a target="_blank" rel="noopener" href="https://pub.dev/packages/provider">Provider</a>好好設計每個widget的狀態變化與重新渲染的時機。</p>
+<p>另外要注意在取後端資料時是否有使用<a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html">FutureBuilder</a>，FutureBuilder可以幫你確認取得async資料(通常是後端的一包資料)的各種狀態，例如在接到資料前可以先拋出一個自己準備有讀取效果的widget，並在取得資料後再使用這包資料渲染出要程現的widget(對Dashboard而言可能就是一些圖表)。</p>
+<ul>
+<li>打開web支援要怎麼作</li>
+</ul>
+<p>Flutter web在開發上其實也不困難，而且可以在VSCode用debug模式就可以直接進行開發，<a target="_blank" rel="noopener" href="https://flutter.dev/web">Web support for Flutter</a>官方有一個篇章在作介紹，如果是專案一開始就有打算作Web平台，那建議直接跟著文件說明就能夠<a target="_blank" rel="noopener" href="https://flutter.dev/docs/get-started/web">建立Flutter Web應用程式</a>。</p>
+<p>但如果今天是有一個已經開發好的app產品要打開Web平台的支援，通常就會遇到比較多的阻礙，當我以為一個彈指就能把web支援打開，但遇到的就是滿滿的error訊息。要將現有的app打開web支援，通常在開發上會遇到的問題我大致上分成三種。</p>
+<ol>
+<li><p>Responsive Design(響應式設計): 不管是從手機或是平板使用的app，如果沒有對螢幕尺寸作適當的處理，通常直接放到web都會直接跑版，官方文件也有一個篇章在介紹<a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/ui/layout/adaptive-responsive">響應式設計</a>。</p>
+</li>
+<li><p><a href="/2021/08/07/flutter-from-mobile-to-web-migration-tips-package-compatibility/">Cross-Platform Support Package</a>(跨平台支援套件): 在開發過程中會有一定程度的使用第三方的package，要注意是否有支援所需要的平台特別是web，通常可以在<a target="_blank" rel="noopener" href="https://pub.dev/">pub.get</a>查到。</p>
+</li>
+<li><p><a href="/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/">Platform Dependency Feature</a>(平台相依性功能): 因為不同平台還是會有差異存在，有些dart自帶的library本身就不支援，比如說web就不能使用dart:io相關的函式，因此在開發的時候需要特別注意。如果需要針對不同的平台用該平台才有支援的widget，通常會先用邏輯判斷目前使用者是使用哪個平台，再渲染該平台特有的widget。</p>
+</li>
+</ol>
+<p>以上是自己在投入開發Flutter到打開web支援的一些心得整理，開發過程也許遇到許多不同的問題，特別是在web支援的部份遇到了許多挑戰。雖然花了許多時間解決各種遇到的轉換問題，但確實可以達到透過single codebase在web和app渲染出一樣的畫面！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1367,162 +1498,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/02/27/andrew-deep-learning-course5-week3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/02/27/andrew-deep-learning-course5-week3/" class="post-title-link" itemprop="url">Andrew深度學習課程五 - Sequence Model第3周筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2018-02-27 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-27T00:00:00+08:00">2018-02-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:34:12" itemprop="dateModified" datetime="2021-05-11T23:34:12+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/02/27/andrew-deep-learning-course5-week3/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/02/27/andrew-deep-learning-course5-week3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在RNN的應用中，有一種是sequence to sequence模型，像是在語言翻譯問題上，要把長度為5的法文翻譯成長度為6的英文。首先先透過一個encoder將每個法文字詞輸入進RNN模型，再透過decoder逐一輸出英文字詞直到結尾，這樣的模型被證實只要使用足夠大量的法文和英文句子就可以完成。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/sequence_to_sequence.JPG" class="" width="500">
-
-<p>另一個類似的應用是給一張照片，然後自動給予這張照片適當的標題，這時可以透過CNN來建立一個encoder，接著再透過RNN建立一個decoder來產生適當的標題。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/image_caption.JPG" class="" width="500">
-
-<p>第一週有學到language model，會計算產生句子的機率。而在翻譯問題中的encoder部分和language model非常相似，只是在輸入不是向量0，而是一個encoder的網絡。翻譯問題其實很像是一個conditional language model，即給定輸入翻譯前的句子X之下，輸出不同翻譯結果的機率。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/conditional_language_model.JPG" class="" width="500">
-
-<p>我們並不希望直接對這個分布輸出作隨機的取樣，因為取樣的結果容易很不穩定，有時取到好的翻譯結果，有時取到不好的翻譯結果。所以在使用這個模型的時候，需要使用一個演算法來計算出給定X輸出譯翻結果Y的最大條件機率。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/most_likely_translate.JPG" class="" width="500">
-
-<p>一個方法是使用貪婪搜尋法(Greedy Search)，即先根據conditional language model來產生第一個詞，接著在後面的翻譯部份每一次再依據前個詞選取最大機率來產生下個詞。但我們實際上希望的是找到輸出翻譯結果中每個詞Yi最大的聯合機率(Joint Probability)，而不是每次都產生一個機率最大的詞，比如說法文翻譯到英文的問題中，如果前兩個字的翻譯結果開頭都是Jane is…，但是going這個字在英文上比起visiting還常見，所以用這個方法會造成第3個詞比較容易接going，但是這並不是一個最佳化的翻譯結果。但在英文可選的詞非常多，所以會使用approximate搜尋法來嘗試找到最大的條件機率。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/greedy_search.JPG" class="" width="500">
-
-<p>Beam Search演算法的特性在於不會像之前一樣只找一個最大的機率，而是會存下前B個最大的機率值在記憶體裡面。比如說第1個詞已經找出是in, jane和september，再來會繼續再找出第1個詞是in的情況下，第2個是哪個詞。這時會計算出在給定輸入X且第一個詞是in之下，哪個詞的機率最大，即P(Y2|X,Y1)。再將機率乘上P(Y1|X)就可以得到給定X之下，前兩個詞的機率P(Y1,Y2|X)。然後存下前三個最大的可能性，這時可能會存下in september, jane is和jane visiting，再繼續往下找第3個詞。這時也就代表演算法認為september不會是第一個詞。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/beam_search_step2.JPG" class="" width="500">
-
-<p>接著beam search再從前兩個詞的三組詞往下展開來，並找出前三個詞最大機率的三組保留，透過這個方法持續到接到結尾EOS並停止。要注意的是如果把B設定成1的話，就等同於前面介紹的Greedy Search。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/beam_search2.JPG" class="" width="500">
-
-<p>有些不同的方法可以讓beam search可以得到更好的結果，其中一個是length normalization。beam search會持續連乘使得機率值變很小，這可以透過取log相加取代，因為logP(y|x)和P(y|x)兩者取最大值將會有一樣的結果。當句子很長時，可以透過改變目標函式的方法來解決這個問題。因為取log後為&lt;=1，所以當詞越多值也就會越小，一個方法是除上詞的數量來作正規化，這可以大幅的降低因為句子太長所造成的懲罰(Penalty)效果。另外為了要讓這個正規化效果更加的平滑，可以將Ty取α次方，比如說設定成0.7(1為完整的正規化，0為不作正規化)</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/length_normalization.JPG" class="" width="500">
-
-<p>但B值到底該如何選擇呢？B值越大會可以留下更多的組合來找到更好的結果，但卻訓練的時間會更久，而且也會使用更多的記憶體。Andrew這邊建立在production系統B為10就可以了，但是在研究的系統上，可以取更大的B來計算不同的組合，多次作嘗試。</p>
-<p>因為翻譯問題不是像是圖像辨識一樣有正確的答案可以用accuracy來衡量，翻譯結果可能可以有多個一樣好的結果，這個時候可以使用Bleu(Biligual Evaluation Understudy) score來作訓練結果的衡量。<br/>Precision會比對機器翻譯出來的結果和人翻譯的結果，看機器翻譯的每個詞，是否都有出現在不同的答案reference中。比如果機器翻譯出來有7個詞，其中the這個詞都出現在reference中，所以precision為7/7。但這樣的計算顯然不夠精確。Modified Precision則會給予每個詞不同權重，像是the在reference 1出現2次，在reference 2出現1次，因此會給它權重為2，那邊Modified Precision將會修正2/7。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/evaluation_machine_translation.JPG" class="" width="500">
-
-<p>但是衡量並不會只看單一詞的結果，比如說使用兩個詞為一組(Bigram)來作計算的話，會先透過bigram來取出所有組合，並計算每個組合在機器翻譯結果出現次數，再來計算每個組合在所有的reference中有沒有出現(1或0)，再來則將reference的數量除上機器翻譯bigram出現次數來計算 bigram的precision。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/bleu_score_bigram.JPG" class="" width="500">
-
-<p>所以在使用N-gram取組合時，即可以歸納出一個公式，如果機器翻譯出來的結果和其中一組reference相同時，modified precision就會等於1。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/bleu_score_unigram.JPG" class="" width="500">
-
-<p>把多個n-grams分數綜合起來，可以計算出一個綜合的分數再乘上BP。因為當機器的翻譯結果過短時，會造成大多的字存在reference中，使得modified precision會偏高，此時會引入BP(Brevity Penalty)的概念，當機器翻譯的長度比起reference還長時，BP為1即不給予懲罰分數；反之給予一個懲罰分數。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/bleu_detail.JPG" class="" width="500">
-
-<p>實際上人在進行翻譯時，並不會把整段都看完再翻譯，而是先看一小段翻完再往後看另一小段。而且當句子越長時，Bleu score會逐漸降低，這時如果使用Attention Model來幫助每一小段作翻譯的話，則可以解決這個問題。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/long_sequence_problem.JPG" class="" width="500">
-
-<p>雖然attention model是用在比較長的句子，但這邊使用短句來作說明。這裡encoder使用bidirectional RNN，在decoder時透過另一個RNN來完成翻譯。在產生第1個詞時會透過α來表示要產生這個詞應該要注意的資訊量有多少。接著再產生第2個詞時，會產生一組新的attention weight來表示產生第兩個詞時該注意的資訊量，並加上前一個產生的詞。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/attention_model_intuition.JPG" class="" width="500">
-
-<p>在建立attention model時，encoder使用的bidirectional RNN會貢獻兩個activation值，此值即為α權重。接著在decoder產生每個Y值時會輸入C，這個C即為α值的加總，用來表示要產生的Y值需要注意多少的資料量，而這個α會取softmax確保其加總為1。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/attention_model.JPG" class="" width="500">
-
-<p>所以在產生Y時主要有兩個輸入，一個是上個hidden狀態S&lt; t-1 &gt;，一個是要注意的資訊量a &lt; t’ &gt;，透過建立這個小的神經網路來使用梯度下降作訓練。但attention model的缺點就是他的計算成本較高，複雜度為Tx * Ty。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/computing_attention.JPG" class="" width="500">
-
-<p>seqence to sequence可以被使用在文字的正規化，把不同型態的文字表達轉成一個相同的表示方法。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/attention_example.JPG" class="" width="500">
-
-<p>語音辨識(Speech Recognition)也是一種sequence to sequence的問題，輸入一段語音後期望可以輸出一段正確的辨識結果。傳統的語音辨識方法會使用音位(Phoneme)當作基本的單位來表示語音結果，但在end to end的深度學習方法，已經不再需要使用這種方法。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/speech_recognition_problem.JPG" class="" width="500">
-
-<p>一個有效的方法是使用CTC cost，語音辨識因為每秒可能有多次的取樣，所以輸入的資料會很大，光是10秒的語音就可以變成上1000的輸入，但是輸出的辨識結果並不會有上千的輸出。CTC可以協助幫輸出的結果作適當的collapse，其會對重複的字作collapse像是重複的t, e和q來產生較短的結果。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/CTC_cost.JPG" class="" width="500">
-
-<p>這裡以trigger word偵測系為例來說明語音辨識問題，trigger word常被使用在一些智慧管家的產品當中，像是Google Home或是Amazon Echo。在訓練過程中會輸入語音，並在出現trigger word時的目標label設定為1，其它部份為0。</p>
-<img src="/2018/02/27/andrew-deep-learning-course5-week3/trigger_word.JPG" class="" width="500">
-
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/nlp-sequence-models">Deep Learning Course 5 - Sequece Models</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1594,7 +1569,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1607,7 +1582,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-count">44</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

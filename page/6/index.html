@@ -196,6 +196,110 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/09/13/%E5%B0%87%E6%98%9F%E7%AC%A6%E7%95%B6%E4%BD%9C%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8%E4%BE%86%E5%BC%B7%E5%88%B6%E4%BD%BF%E7%94%A8%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/09/13/%E5%B0%87%E6%98%9F%E7%AC%A6%E7%95%B6%E4%BD%9C%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8%E4%BE%86%E5%BC%B7%E5%88%B6%E4%BD%BF%E7%94%A8%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8/" class="post-title-link" itemprop="url">將*當作函式參數來強制使用關鍵字引數</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2016-09-13 00:00:00" itemprop="dateCreated datePublished" datetime="2016-09-13T00:00:00+08:00">2016-09-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/09/13/%E5%B0%87%E6%98%9F%E7%AC%A6%E7%95%B6%E4%BD%9C%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8%E4%BE%86%E5%BC%B7%E5%88%B6%E4%BD%BF%E7%94%A8%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/13/將星符當作函式參數來強制使用關鍵字引數/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>很特別的可以直接當作一個函式的參數來使用。如果當作函式的參數，可以用來限定*之後不可以使用位置引數，但可以使用關鍵字引數，這樣的使用方法被稱為Keyword-Only Arguments</p>
+<p>以下以<a href="/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/">位置引數(Positional Argument)與關鍵字引數(Keyword Argument)</a>中的計算小考平均成績為例說明:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, math_score, eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_scoremath_weight</span><br></pre></td></tr></table></figure>
+<p>在這個範例中，可以使用以下4種方式來呼叫函式都是沒問題的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>)  <span class="comment"># 省略且不指定有預設值的參數</span></span><br><span class="line"><span class="number">85</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(eng_score=<span class="number">80</span>, eng_weight=<span class="number">0.2</span>, math_score=<span class="number">90</span>, math_weight=<span class="number">0.8</span>)  <span class="comment"># 使用關鍵字引數，可隨意安排順序</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, math_weight=<span class="number">0.8</span>, eng_weight=<span class="number">0.2</span>)  <span class="comment"># 混用位置和關鍵字引數</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line"><span class="number">88</span></span><br></pre></td></tr></table></figure>
+<p>但如果今天在原本的函式中，把*加入到第三個參數，這樣在第四種單純使用位置引數來作函式呼叫就會引發TypeError，因為在之後不能使用位置引數</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, math_score, * , eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_score*math_weight</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">2</span> positional arguments but <span class="number">4</span> were given</span><br></pre></td></tr></table></figure>
+<p>今天如果要設計成防止呼叫者使用任何位置引數，就可以將*做為第一個參數，這樣就可以強迫叫者全部使用關鍵字引數，若使用任何的位置引數，都會引發TypeError</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">*, eng_score, math_score, eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_score*math_weight</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>)  <span class="comment"># 省略且不指定有預設值的參數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">0</span> positional arguments but <span class="number">2</span> were given</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, math_weight=<span class="number">0.8</span>, eng_weight=<span class="number">0.2</span>)  <span class="comment"># 混用位置和關鍵字引數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">0</span> positional arguments but <span class="number">2</span> positional arguments (<span class="keyword">and</span> <span class="number">2</span> keyword-only arguments) were given</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line">TypeError: total_score() takes <span class="number">0</span> positional arguments but <span class="number">4</span> were given</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-3102/">PEP 3102 – Keyword-Only Arguments</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/08/31/%E4%BD%BF%E7%94%A8args%E5%92%8Ckwargs%E4%BE%86%E6%8B%86%E9%96%8B%E5%87%BD%E5%BC%8F%E5%8F%83%E6%95%B8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -685,7 +789,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -698,7 +802,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-count">44</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
