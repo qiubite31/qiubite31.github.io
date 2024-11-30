@@ -196,6 +196,117 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/05/26/%E8%AE%93%E6%88%91%E5%80%91%E7%94%A8Counter%E4%BE%86%E8%A8%88%E7%AE%97%E6%95%B8%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/05/26/%E8%AE%93%E6%88%91%E5%80%91%E7%94%A8Counter%E4%BE%86%E8%A8%88%E7%AE%97%E6%95%B8%E9%87%8F/" class="post-title-link" itemprop="url">讓我們用collections中的Counter來計算數量</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2018-05-26 00:00:00" itemprop="dateCreated datePublished" datetime="2018-05-26T00:00:00+08:00">2018-05-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:38:31" itemprop="dateModified" datetime="2021-05-11T23:38:31+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/05/26/%E8%AE%93%E6%88%91%E5%80%91%E7%94%A8Counter%E4%BE%86%E8%A8%88%E7%AE%97%E6%95%B8%E9%87%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/05/26/讓我們用Counter來計算數量/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Python的collection模組裡面其實包含了許多非常實用的資料結構，比如之前介紹過的<br/><a href="/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/">namedtuple</a>。今天要談的是Counter，Counter是一個dict的子類別，用來對hashable的物件作計算。</p>
+<p>比如說我們今天要來幫公司裡面每個不同的team訂飲料好了，以下簡易一點不接受客製化調味，在建立Counter可以有以下幾種方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用mapping建立Counter，輸入一個dict</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team1 = Counter(&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">1</span>&#125;)</span><br><span class="line"><span class="comment"># 使用iterable建立Counter，輸入一個list</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 = Counter([<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>])</span><br><span class="line"><span class="comment"># 使用keyword參數建立Counter，輸入key-value組合</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team3 = Counter(GreenTea=<span class="number">3</span>, MilkTea=<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team1[<span class="string">&#x27;BlackTea&#x27;</span>]  <span class="comment"># 可以直接當作dict存取</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2[<span class="string">&#x27;GreanTea&#x27;</span>]  <span class="comment"># 取出不存在的item即為0</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>可以看到透過Couter能透過三種不同的方法來建立，就看使用的情境比較適合哪一種。而Counter也可以直接就當作dict取出值，特別是如果取出不存有的item，其計數會為0，並不會出現dict的KeyError。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>team1 + team2  <span class="comment"># 使用加法運算符</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">6</span>, <span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">4</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">2</span>&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 - team3  <span class="comment"># 使用減法運算符</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">3</span>&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 &amp;amp; team3  <span class="comment"># 運算兩者的交集</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">3</span>&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 - team3  <span class="comment"># 運算兩者的聯集</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">3</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>Counter也可以支援不同的運算符來對Counter物件進行操作，來達成對不同集合元件的運算。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order = team1 + team2 + team3</span><br><span class="line">Counter(&#123;<span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">7</span>, <span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">6</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">5</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">list</span>(drink_order)  <span class="comment"># 將Counter的items轉成list</span></span><br><span class="line">[<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">set</span>(drink_order)  <span class="comment"># 將Counter的items轉成set</span></span><br><span class="line">[<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">dict</span>(drink_order)  <span class="comment"># 將Counter的items轉成一般dict</span></span><br><span class="line">&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">6</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">5</span>, <span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">7</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.items()  <span class="comment"># 取出item pairs</span></span><br><span class="line">dict_items([(<span class="string">&#x27;MilkTea&#x27;</span>, <span class="number">7</span>), (<span class="string">&#x27;BlackTea&#x27;</span>, <span class="number">6</span>), (<span class="string">&#x27;GreenTea&#x27;</span>, <span class="number">5</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.keys()  <span class="comment"># 取出key值</span></span><br><span class="line">dict_keys([<span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.values()  <span class="comment"># 取出value值</span></span><br><span class="line">dict_values([<span class="number">7</span>, <span class="number">6</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">sum</span>(drink_order.values())  <span class="comment"># 取出value值並加總得到全部數量</span></span><br><span class="line"><span class="number">18</span></span><br></pre></td></tr></table></figure>
+<p>因為Counter是dict的一個字類別，所以基本上他可以辦到原本dict可以作到的資料轉型，包含透過items()來逐一取出每個pair，或是直接可以使用values()並加總來計算出Counter裡面總計有多少數量的東西。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">list</span>(drink_order.elements())</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.most_common(<span class="number">3</span>)</span><br><span class="line">[(<span class="string">&#x27;MilkTea&#x27;</span>, <span class="number">7</span>), (<span class="string">&#x27;BlackTea&#x27;</span>, <span class="number">6</span>), (<span class="string">&#x27;GreenTea&#x27;</span>, <span class="number">5</span>)]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.most_common(<span class="number">2</span>)</span><br><span class="line">[(<span class="string">&#x27;MilkTea&#x27;</span>, <span class="number">7</span>), (<span class="string">&#x27;BlackTea&#x27;</span>, <span class="number">6</span>)]</span><br></pre></td></tr></table></figure>
+<p>Counter還支援兩個函式，elements可以幫你展開所有的items。而most_common則會使用數量作排序，並且可以指定要排出前幾名。</p>
+<p>Counter其實使用上非常方便，讓我們看一下Counter在實戰上可以拿來解什麼樣的問題，以下選兩個LeetCode的題目來看看Counter可以怎麼樣被使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;389. Find the Difference</span></span><br><span class="line"><span class="string">Given two strings s and t which consist of only lowercase letters.</span></span><br><span class="line"><span class="string">String t is generated by random shuffling string s and then add one more letter </span></span><br><span class="line"><span class="string">at a random position. Find the letter that was added in t.</span></span><br><span class="line"><span class="string">Input:</span></span><br><span class="line"><span class="string">s = &quot;abcd&quot;</span></span><br><span class="line"><span class="string">t = &quot;abcde&quot;</span></span><br><span class="line"><span class="string">Output: e (&#x27;e&#x27; is the letter that was added.)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">findTheDifference</span>(<span class="params">self, s, t</span>):</span></span><br><span class="line">    <span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line">    s_counter = Counter(s)</span><br><span class="line">    t_counter = Counter(t)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>(t_counter - s_counter)[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<p>LeetCode-389是給定兩個字串s和t，其中要判斷t比s多了哪個字元。這時候就可以直接將s和t分別以iterable的方式建立兩個Counter，而我們知道t會比s多一個字元，於是再透過減法來找到t和s的差集後，輸出是哪個item即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;819. Most Common Word</span></span><br><span class="line"><span class="string">Given a paragraph and a list of banned words, return the most frequent word </span></span><br><span class="line"><span class="string">that is not in the list of banned words. It is guaranteed there is at least </span></span><br><span class="line"><span class="string">one word that isn&#x27;t banned, and that the answer is unique.</span></span><br><span class="line"><span class="string">Words in the list of banned words are given in lowercase, and free of punctuation.</span></span><br><span class="line"><span class="string">Words in the paragraph are not case sensitive.  The answer is in lowercase.</span></span><br><span class="line"><span class="string">Example:</span></span><br><span class="line"><span class="string">Input: </span></span><br><span class="line"><span class="string">paragraph = &quot;Bob hit a ball, the hit BALL flew far after it was hit.&quot;</span></span><br><span class="line"><span class="string">banned = [&quot;hit&quot;]</span></span><br><span class="line"><span class="string">Output: &quot;ball&quot;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mostCommonWord</span>(<span class="params">self, paragraph, banned</span>):</span></span><br><span class="line">    <span class="keyword">import</span> re</span><br><span class="line">    <span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line">    words = re.sub(<span class="string">&quot;[!|?|&#x27;|,|;|.]&quot;</span>, <span class="string">&#x27;&#x27;</span>, paragraph).lower().split(<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> (Counter(word <span class="keyword">for</span> word <span class="keyword">in</span> words <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> banned).most_common(<span class="number">1</span>)[<span class="number">0</span>][<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<p>LeetCode-819是給定一個段落，還有被禁掉的詞清單，接著輸出出現字詞次數最多次，而且沒有被禁掉的詞。這邊先將所有詞轉成小寫，接著再透過空白切分後，將特殊符號取代掉只留下字詞。再來就可以將不存在於禁用清單的詞拿來建立Counter，然後使用most_common取出次數最高的第一名，接著再輸出是哪個詞即可。</p>
+<p>Counter其實在計算次數的時候非常實用，特別是在項目很多的情況下，而且還需要作加減運算時，可以嘗試使用Counter來解問題，絕對可以幫助你省下很多的時間的！</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://docs.python.org/2/library/collections.html#collections.Counter">Python docs - Counter dict subclass for counting hashable objects</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/02/27/andrew-deep-learning-course5-week3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1465,157 +1576,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/28/Machine-Learning-Foundation-11/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/09/28/Machine-Learning-Foundation-11/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十一講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-09-28 00:00:00" itemprop="dateCreated datePublished" datetime="2017-09-28T00:00:00+08:00">2017-09-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/09/28/Machine-Learning-Foundation-11/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/28/Machine-Learning-Foundation-11/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上一講談到logistic regression，這一講會講到到底該如何使用線性的模型來作二元或是多元分類。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/LinearModelsRevisited.JPG" class="" width="500">
-
-<p>複習一下三種線性模型，共同點就是三種都會透過計算分數來作分類，差別在於PLA的線性分類會將分數取正負號來達到0/1分類，線性迴歸則是直接輸出分數，並使用squared error評估找到最佳解；logistic regression則是會透過logistic function將分數轉換成0到1的機率值。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/ErrorFunctionsRevisited.JPG" class="" width="500">
-
-<p>為了將線性模型作二元分類(y=-1/+1)，可以把error function稍微整理算出yx項，這個yx項的實際意義為分類的正確性，也就是yx項得到的分數要是正的(即兩者同號)，而且越大越好。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/VisualizingErrorFunctions.JPG" class="" width="500">
-
-<p>再來將三種模型的error畫出來，可以發現三種error的特性都不同，唯一相同地方在於如果squared和scaled cross-entropy很低時，通常0/1也會很低。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/TheoreticalImplicationUpperBound.JPG" class="" width="500">
-
-<p>究竟linear regression和logistic regression是否是好的分類方法呢？先從VC的角度來看scaled cross-entropy他會是0/1 error的upper bound，所以如果把logistic regression的cross-entropy error作到最小的話，也就可以說我們能把0/1 error也作的好。當然sqr err也是一樣，所以linear regression和logistic regression確實是可以作到二元分類的。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/RegressionClassification.JPG" class="" width="500">
-
-<p>在logistic/linear regression分類問題上，linear regression的好處是他最容易作到最佳化，但是其error衡量比較寬鬆；logistic regression因為他也是convex所以最佳化也是容易的，而error衡量在ys負向很小時會很寬鬆，但也比linear regression還好；PLA則是如果在線性可分的問題上可以作到很好，不過缺點就是如果在非性線可分的問題上，雖然可以使用pocket演算法，但是效果就沒那麼好。</p>
-<p>以前有有學過，雖然linear regression太過寬鬆，但是卻可以很快的先拿在找到一個初始的權重值，後續再交給PLA或是logistic regression作後續的最佳化。在實務上大部份的人會較常使用logistic regression來作二元分類，因為可以兼顧效果還有最佳化的容易程度。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/IterativeOptimization.JPG" class="" width="500">
-
-<p>雖然PLA和logistic regression都是iterative optimization方法，但是PLA是每看一點就作調整，而logistic regression卻要看完所有的資料點才會一次調整權重，他的速度和pocket一樣，每作一輪都要花比較長的時間，到底能不能讓logistic regression和PLA一樣快呢？</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/StochasticGradientDescent.JPG" class="" width="500">
-
-<p>那不就學PLA每看一個點就調整一次權重就好了啊，這種每看一點作偏微分求梯度來調整權重的方法就稱為Stochastic Gradient Desent(SGD)，即用隨機的梯度作梯度下降來接近真實梯度的期望值。好處就是每次算一個點比較簡單而且容易計算，由其是在大量資料的情況下原本的批次梯度下降法速度會很慢，但是壞就就是一次看一個點所以每次調整的結果可能很不穩定，但是最終應該都會很接近要求的目標值。這種隨機梯度下降也適合online learning，即每次接到一筆新資料後即作學習調整權重。其實還有另外折衷的方法稱為mini-batch gradient desent，當我們沒辦法看完所有資料再調整權重時，那就一次看N筆資料作調整就好囉！</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/PLARevisited.JPG" class="" width="500">
-
-<p>那PLA和logistic regression到底相差在哪裡呢？PLA是一次調整到位，而logistic是看差多少就調多少，所以SGD的logistic可以說他像soft的PLA，而PLA又很像η設成1的logistic。在執行logistic時有兩個可以調整討論的地方，第一個是停止條件，通常我們會執行夠多的次數，因為我們相信執行夠多次就會逐步接近目標執；另外是η的設定上，老師個人習慣會使用0.1126，也許之後需要調整學習速度時可以參考一下。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/MulticlassClassification.JPG" class="" width="500">
-
-<p>再來談到多類別分類的問題，實務上常會有很多多類別的問題，像是要辨識圖像上不同的東西就是多類別的問題，再來會介紹該怎麼使用二元分類來達成多類別分類。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/MulticlassPrediction.JPG" class="" width="500">
-
-<p>當我們想分類其中一種類別時，可以把其他三種當成同一種類別，這樣就可以建立四種二元分類器，把多類別問題轉成二元分類問題。但是這樣的方法會有某些地方有分類重疊的問題，像是四個角落都有兩種分類器範圍重疊，甚至也會有某些地方所有分類器都分不出來，像是中間區塊所有分類器都會認為不是自己要分類出來的區域。那該怎麼辦呢？</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OneClassSoftly.JPG" class="" width="500">
-
-<p>我們可以應用logistic regression來達成softly classfication，用顏色深淺來代表機率的大小，顏色越藍分到O機率越大，反之顏色越紅分到X的機率大。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/SoftClassifiers.JPG" class="" width="500">
-
-<p>再來組合出四個分類器，就可以知道在給定一組資料X，他究竟有分到不同類別的的機率有多少，所以可以透過選出機率最大的類別來判斷要分成哪個類別。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OVA.JPG" class="" width="500">
-
-<p>當我們有K種類別要作分類時，透過logistic regression建立K個分類器，接著選出機率最高的類別，這種方法來作多類別分類稱為One-Versus-All(OVA)。好處是方法很有效率，而且只要和logistic regression能算出機率值的方法，都可以應用OVA作多類別分類，壞處是如果成兩元分類的資料不平衡的話，可能造成每個分類器都叫你猜大宗類別，造成最終分類效果不好。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/Unbalance.JPG" class="" width="500">
-
-<p>前面有講到OVA會遇到Unbalance問題，可能造成分類表現不好，那該怎麼解決這個問題呢？</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OneVersusOne.JPG" class="" width="500">
-
-<p>前面是一對其他所有類別作兩元分類，我們其實可以直接使用其中兩種類別的資料作二元分類就好了，如果兩種類別的資料接近的話，那麼資料量就會比較平均避免Unbalance問題。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/PairwiseClassifiers.JPG" class="" width="500">
-
-<p>那有這麼多的分類器，到底該如何判斷是哪個類別呢？以方塊類別為例，其中可以發現共6個分類器，其中前三個都說分出來的結果是方塊，後面三個則分類分到一個菱形和兩個星型，透過投票可以知道最可能的類別應該會是方塊，因為分出方塊佔大多數。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OVO.JPG" class="" width="500">
-
-<p>這樣的方法稱為One-versus-one(OVO)，因為他是一對一類別的分類，而非一對其他所有類別的分類方法，透過一對一類別的分類別，再找出最有可能的的類別。這個方法的優點是在訓練資料時很有效果，因為只使用比較少的資料量來作訓練，而且可以應用在所有的二元分類問題；壞處則是要訓練更多的分類器，所以在預測的時間、訓練的次數還有儲存的空間都會花比較多。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/Summary.JPG" class="" width="500">
-
-<p>這一講首先學到了前面講的三種線種模型方法其實都是可以用來作二元分類的，而且針對logistic regression可以使用SGD來作隨機梯度下降找最佳解，這樣的方法很像最早學到的PLA。再來針對多類別的問題教了兩種方法，都是應用二元分類來達成多類別分類，第一種OVA是把所有資料分成兩個類別，一個是要分出來的類別，另一個是把其他資料視為同一類別；第二種OAO是單純就看兩種不同類別來作兩兩比較，而這兩種多類別方法都是簡單而且常被拿來使用的分類手法！</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/11_handout.pdf">Machine Learning Foundation 11</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1687,7 +1647,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1700,7 +1660,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">44</span>
+        <span class="site-state-item-count">45</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

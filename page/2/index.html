@@ -196,6 +196,154 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/" class="post-title-link" itemprop="url">從零開始開發Flutter Web App</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-06-21 16:38:15" itemprop="dateCreated datePublished" datetime="2021-06-21T16:38:15+08:00">2021-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-07-17 15:18:57" itemprop="dateModified" datetime="2021-07-17T15:18:57+08:00">2021-07-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flutter/" itemprop="url" rel="index"><span itemprop="name">Flutter</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/06/21/implement-flutter-web-app-from-scratch-and-tips/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在Flutter正式將web支援放進stable channel後，現在只要從官網下載最新的stable版sdk，就可以直接開發與佈建web應用程式。這篇會紀錄Flutter web開發從前置準備到發佈前的環節，提供給有Flutter經驗而且要嘗試打開web支援的開發者。如果需要從頭開始建立Flutter的開發環境，可以依不同開發平台參考<a target="_blank" rel="noopener" href="https://flutter.dev/docs/get-started/install">flutter.dev</a>的說明。</p>
+<h4 id="前置準備"><a href="#前置準備" class="headerlink" title="前置準備"></a>前置準備</h4><p>以<a target="_blank" rel="noopener" href="https://flutter.dev/docs/get-started/install/windows">Windows開發</a>為例，在完成Flutter開發環境與IDE設定後，就可以執行flutter doctor來協助診斷是否設定完全。其中可以看到開發web需要使用chrome所以會有一項檢查chrome是否有安裝。</p>
+<blockquote>
+<p>flutter doctor</p>
+</blockquote>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Running &quot;flutter pub get&quot; in flutter_tools...                       8.4s</span><br><span class="line">Doctor summary (to see all details, run flutter doctor -v):</span><br><span class="line">[√] Flutter (Channel stable, 2.2.2, on Microsoft Windows [Version 10.0.19041.1052], locale zh-TW)</span><br><span class="line">[√] Android toolchain - develop for Android devices (Android SDK version 30.0.2)</span><br><span class="line">[√] Chrome - develop for the web</span><br><span class="line">[√] Android Studio (version 4.0)</span><br><span class="line">[√] VS Code (version 1.57.1)</span><br><span class="line">[√] Connected device (2 available)</span><br><span class="line">• No issues found!</span><br></pre></td></tr></table></figure>
+<p>其實Flutter也可以使用Edge，所以使用flutter devices來確定有連接到的device，如果有安裝Edge也會被偵測到。</p>
+<blockquote>
+<p>flutter devices</p>
+</blockquote>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2 connected devices:</span><br><span class="line"></span><br><span class="line">Chrome (web) • chrome • web-javascript • Google Chrome 91.0.4472.106</span><br><span class="line">Edge (web)   • edge   • web-javascript • Microsoft Edge 91.0.864.54</span><br></pre></td></tr></table></figure>
+
+<h4 id="建立Flutter專案與打開web支援"><a href="#建立Flutter專案與打開web支援" class="headerlink" title="建立Flutter專案與打開web支援"></a>建立Flutter專案與打開web支援</h4><p>如果是要從頭建立一個專案，可以直接使用flutter create [project name]，建立的新專案就會帶有web資料夾，裡面會包含所有web需要的檔案像是index、manifest與icons。如果是已經存在的專案但要打開web支援，則可以使用flutter create [project path]就會自動產生web目錄。</p>
+<blockquote>
+<p>flutter create [project name]</p>
+</blockquote>
+<img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/ProjectFolder2.jpg" class="" width="300"> 
+
+<h4 id="設定IDE-VSCode"><a href="#設定IDE-VSCode" class="headerlink" title="設定IDE(VSCode)"></a>設定IDE(VSCode)</h4><p>打開VSCode點擊右下角設定，就能夠選擇現在可使用的emulator，為了開發web所以這裡選擇chrome。如果不先選擇emulator在執行run debug時也會跳出來請你選擇。</p>
+<img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/Emulator.jpg" class="" width="500"> 
+
+<p>如果需要在debug的時候帶進參數，可以在launch.json檔裡面寫入args。例如Flutter web預設使用的渲染器是Auto模式，即在桌上裝置使用CanvasKit，在行動裝置使用html。如果要指定渲染器都使用html的話，就可以寫進args。</p>
+<img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/LaunchJson.jpg" class="" width="500"> 
+
+<!-- <p float="moddle">
+  <img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/Emulator.jpg" width="250" />
+  <img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/LaunchJson.jpg" width="250" /> 
+</p> -->
+
+<h4 id="運行debug模式"><a href="#運行debug模式" class="headerlink" title="運行debug模式"></a>運行debug模式</h4><p>再來可以在IDE啟動偵錯就會開始debug模式，除了使用IDE啟動偵錯外也可以透過指令flutter run來運行debug模式。因為Flutter會運行dartdevc並對app進行compile將dart轉成javascript，所以第一次啟動debug模式的時間會比較長。web開發可以使用hot restart，Flutter只會對有更動到的部份recompile成javascript，而不需要從頭compile整個app。在IDE可以透過restart debug功能觸發hot restart，如果是使用command line可以按R觸發。</p>
+<blockquote>
+<p>flutter run -d chrome</p>
+</blockquote>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Launching lib\main.dart on Chrome in debug mode...</span><br><span class="line">Waiting for connection from debug service on Chrome...             22.7s</span><br><span class="line">This app is linked to the debug service: ws://127.0.0.1:50526/2kZvThD-K8w=/ws</span><br><span class="line">Debug service listening on ws://127.0.0.1:50526/2kZvThD-K8w=/ws</span><br><span class="line"></span><br><span class="line"> Running with sound null safety</span><br><span class="line"></span><br><span class="line">  To hot restart changes while running, press &quot;r&quot; or &quot;R&quot;.</span><br><span class="line">For a more detailed help message, press &quot;h&quot;. To quit, press &quot;q&quot;.</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/FlutterDemo.jpg" class="" width="500"> 
+
+<h4 id="建構web發佈版本"><a href="#建構web發佈版本" class="headerlink" title="建構web發佈版本"></a>建構web發佈版本</h4><p>在開發完準備要發佈後，可以使用flutter build web指令來建構發佈版本。預設發佈時使用的渲染器是auto模式(即在桌上裝置使用canvaskit，在行動裝置使用html)，如果要指定使用特定的渲染器，可以使用--web-renderer。</p>
+<blockquote>
+<p>flutter build web --web-renderer [auto/html/canvaskit]</p>
+</blockquote>
+<p>執行指令後Flutter會使用dart2js將app compile成一個單一的javascript檔案main.dart.js，發佈完後會在build目錄內產生web目錄，這整包資料會包含所有必要的檔案並且需要同時佈署。</p>
+<img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/BuildWeb.jpg" class="" width="300"> 
+
+<h4 id="使用dhttpd於本地端運行"><a href="#使用dhttpd於本地端運行" class="headerlink" title="使用dhttpd於本地端運行"></a>使用dhttpd於本地端運行</h4><p>最後在實際將整包web佈署到server上之前，可以使用dhttpd嘗試在本地端先運行app，檢視要發佈的app的功能與asset是否都正常。dhttpd安裝方法可以參考<a target="_blank" rel="noopener" href="https://pub.dev/packages/dhttpd">dhttpd</a>在pub.dev的安裝方法，並在運行時指定build/web/目錄就可以在本地端運行要發佈的app，在本地端運行app檢查沒問題後就可以準備將web佈署到正式的server了。</p>
+<blockquote>
+<p>dart pub global run dhttpd –path build/web/</p>
+</blockquote>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Server started on port 8080</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/dhttpd.jpg" class="" width="500"> 
+
+<p>Flutter的web支援目前可以很容易的將自己開發好的app轉成web上線，而且設定到發佈其實也不困難，可以達成快速的支援跨平台的需求。但實際在使用時還是會遇到像是將app轉成web app所會遇到的migration問題，或是渲染器選擇使用跟canvaskit預設不支援offline模式問題，而且發佈完成的app本身會是一個PWA(Progressive Web Apps)需要設定manifest。這些問題會在實際實作的過程會遇到，有些自己踩過的坑也會再持續紀錄下來。</p>
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://flutter.dev/web">Fluter docs - Web</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/05/13/from-flutter-to-flutter-web-for-beginner/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1387,117 +1535,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2018/05/26/%E8%AE%93%E6%88%91%E5%80%91%E7%94%A8Counter%E4%BE%86%E8%A8%88%E7%AE%97%E6%95%B8%E9%87%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/05/26/%E8%AE%93%E6%88%91%E5%80%91%E7%94%A8Counter%E4%BE%86%E8%A8%88%E7%AE%97%E6%95%B8%E9%87%8F/" class="post-title-link" itemprop="url">讓我們用collections中的Counter來計算數量</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2018-05-26 00:00:00" itemprop="dateCreated datePublished" datetime="2018-05-26T00:00:00+08:00">2018-05-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:38:31" itemprop="dateModified" datetime="2021-05-11T23:38:31+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/05/26/%E8%AE%93%E6%88%91%E5%80%91%E7%94%A8Counter%E4%BE%86%E8%A8%88%E7%AE%97%E6%95%B8%E9%87%8F/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/05/26/讓我們用Counter來計算數量/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Python的collection模組裡面其實包含了許多非常實用的資料結構，比如之前介紹過的<br/><a href="/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/">namedtuple</a>。今天要談的是Counter，Counter是一個dict的子類別，用來對hashable的物件作計算。</p>
-<p>比如說我們今天要來幫公司裡面每個不同的team訂飲料好了，以下簡易一點不接受客製化調味，在建立Counter可以有以下幾種方法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用mapping建立Counter，輸入一個dict</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team1 = Counter(&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">2</span>, <span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">1</span>&#125;)</span><br><span class="line"><span class="comment"># 使用iterable建立Counter，輸入一個list</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 = Counter([<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>])</span><br><span class="line"><span class="comment"># 使用keyword參數建立Counter，輸入key-value組合</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team3 = Counter(GreenTea=<span class="number">3</span>, MilkTea=<span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team1[<span class="string">&#x27;BlackTea&#x27;</span>]  <span class="comment"># 可以直接當作dict存取</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2[<span class="string">&#x27;GreanTea&#x27;</span>]  <span class="comment"># 取出不存在的item即為0</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
-<p>可以看到透過Couter能透過三種不同的方法來建立，就看使用的情境比較適合哪一種。而Counter也可以直接就當作dict取出值，特別是如果取出不存有的item，其計數會為0，並不會出現dict的KeyError。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>team1 + team2  <span class="comment"># 使用加法運算符</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">6</span>, <span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">4</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">2</span>&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 - team3  <span class="comment"># 使用減法運算符</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">3</span>&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 &amp;amp; team3  <span class="comment"># 運算兩者的交集</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">3</span>&#125;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>team2 - team3  <span class="comment"># 運算兩者的聯集</span></span><br><span class="line">Counter(&#123;<span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">3</span>, <span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">3</span>&#125;)</span><br></pre></td></tr></table></figure>
-<p>Counter也可以支援不同的運算符來對Counter物件進行操作，來達成對不同集合元件的運算。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order = team1 + team2 + team3</span><br><span class="line">Counter(&#123;<span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">7</span>, <span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">6</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">5</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">list</span>(drink_order)  <span class="comment"># 將Counter的items轉成list</span></span><br><span class="line">[<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">set</span>(drink_order)  <span class="comment"># 將Counter的items轉成set</span></span><br><span class="line">[<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">dict</span>(drink_order)  <span class="comment"># 將Counter的items轉成一般dict</span></span><br><span class="line">&#123;<span class="string">&#x27;BlackTea&#x27;</span>: <span class="number">6</span>, <span class="string">&#x27;GreenTea&#x27;</span>: <span class="number">5</span>, <span class="string">&#x27;MilkTea&#x27;</span>: <span class="number">7</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.items()  <span class="comment"># 取出item pairs</span></span><br><span class="line">dict_items([(<span class="string">&#x27;MilkTea&#x27;</span>, <span class="number">7</span>), (<span class="string">&#x27;BlackTea&#x27;</span>, <span class="number">6</span>), (<span class="string">&#x27;GreenTea&#x27;</span>, <span class="number">5</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.keys()  <span class="comment"># 取出key值</span></span><br><span class="line">dict_keys([<span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.values()  <span class="comment"># 取出value值</span></span><br><span class="line">dict_values([<span class="number">7</span>, <span class="number">6</span>, <span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">sum</span>(drink_order.values())  <span class="comment"># 取出value值並加總得到全部數量</span></span><br><span class="line"><span class="number">18</span></span><br></pre></td></tr></table></figure>
-<p>因為Counter是dict的一個字類別，所以基本上他可以辦到原本dict可以作到的資料轉型，包含透過items()來逐一取出每個pair，或是直接可以使用values()並加總來計算出Counter裡面總計有多少數量的東西。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">list</span>(drink_order.elements())</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[<span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;BlackTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;GreenTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>, <span class="string">&#x27;MilkTea&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.most_common(<span class="number">3</span>)</span><br><span class="line">[(<span class="string">&#x27;MilkTea&#x27;</span>, <span class="number">7</span>), (<span class="string">&#x27;BlackTea&#x27;</span>, <span class="number">6</span>), (<span class="string">&#x27;GreenTea&#x27;</span>, <span class="number">5</span>)]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order.most_common(<span class="number">2</span>)</span><br><span class="line">[(<span class="string">&#x27;MilkTea&#x27;</span>, <span class="number">7</span>), (<span class="string">&#x27;BlackTea&#x27;</span>, <span class="number">6</span>)]</span><br></pre></td></tr></table></figure>
-<p>Counter還支援兩個函式，elements可以幫你展開所有的items。而most_common則會使用數量作排序，並且可以指定要排出前幾名。</p>
-<p>Counter其實使用上非常方便，讓我們看一下Counter在實戰上可以拿來解什麼樣的問題，以下選兩個LeetCode的題目來看看Counter可以怎麼樣被使用。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;389. Find the Difference</span></span><br><span class="line"><span class="string">Given two strings s and t which consist of only lowercase letters.</span></span><br><span class="line"><span class="string">String t is generated by random shuffling string s and then add one more letter </span></span><br><span class="line"><span class="string">at a random position. Find the letter that was added in t.</span></span><br><span class="line"><span class="string">Input:</span></span><br><span class="line"><span class="string">s = &quot;abcd&quot;</span></span><br><span class="line"><span class="string">t = &quot;abcde&quot;</span></span><br><span class="line"><span class="string">Output: e (&#x27;e&#x27; is the letter that was added.)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">findTheDifference</span>(<span class="params">self, s, t</span>):</span></span><br><span class="line">    <span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line">    s_counter = Counter(s)</span><br><span class="line">    t_counter = Counter(t)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>(t_counter - s_counter)[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
-<p>LeetCode-389是給定兩個字串s和t，其中要判斷t比s多了哪個字元。這時候就可以直接將s和t分別以iterable的方式建立兩個Counter，而我們知道t會比s多一個字元，於是再透過減法來找到t和s的差集後，輸出是哪個item即可。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;819. Most Common Word</span></span><br><span class="line"><span class="string">Given a paragraph and a list of banned words, return the most frequent word </span></span><br><span class="line"><span class="string">that is not in the list of banned words. It is guaranteed there is at least </span></span><br><span class="line"><span class="string">one word that isn&#x27;t banned, and that the answer is unique.</span></span><br><span class="line"><span class="string">Words in the list of banned words are given in lowercase, and free of punctuation.</span></span><br><span class="line"><span class="string">Words in the paragraph are not case sensitive.  The answer is in lowercase.</span></span><br><span class="line"><span class="string">Example:</span></span><br><span class="line"><span class="string">Input: </span></span><br><span class="line"><span class="string">paragraph = &quot;Bob hit a ball, the hit BALL flew far after it was hit.&quot;</span></span><br><span class="line"><span class="string">banned = [&quot;hit&quot;]</span></span><br><span class="line"><span class="string">Output: &quot;ball&quot;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mostCommonWord</span>(<span class="params">self, paragraph, banned</span>):</span></span><br><span class="line">    <span class="keyword">import</span> re</span><br><span class="line">    <span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line">    words = re.sub(<span class="string">&quot;[!|?|&#x27;|,|;|.]&quot;</span>, <span class="string">&#x27;&#x27;</span>, paragraph).lower().split(<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> (Counter(word <span class="keyword">for</span> word <span class="keyword">in</span> words <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> banned).most_common(<span class="number">1</span>)[<span class="number">0</span>][<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
-<p>LeetCode-819是給定一個段落，還有被禁掉的詞清單，接著輸出出現字詞次數最多次，而且沒有被禁掉的詞。這邊先將所有詞轉成小寫，接著再透過空白切分後，將特殊符號取代掉只留下字詞。再來就可以將不存在於禁用清單的詞拿來建立Counter，然後使用most_common取出次數最高的第一名，接著再輸出是哪個詞即可。</p>
-<p>Counter其實在計算次數的時候非常實用，特別是在項目很多的情況下，而且還需要作加減運算時，可以嘗試使用Counter來解問題，絕對可以幫助你省下很多的時間的！</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://docs.python.org/2/library/collections.html#collections.Counter">Python docs - Counter dict subclass for counting hashable objects</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1569,7 +1606,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1582,7 +1619,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">44</span>
+        <span class="site-state-item-count">45</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
