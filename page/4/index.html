@@ -196,6 +196,150 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/02/Machine-Learning-Foundation-12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/10/02/Machine-Learning-Foundation-12/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十二講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-10-02 00:00:00" itemprop="dateCreated datePublished" datetime="2017-10-02T00:00:00+08:00">2017-10-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/02/Machine-Learning-Foundation-12/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/02/Machine-Learning-Foundation-12/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一堂講到三種不同的線性模型都可以用在二元分類，並且還可以透過二元分類來達成多類別分類，這一堂課會教到該如何將線性模型延伸轉換成非線性模型。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/LinearHypotheses.JPG" class="" width="500">
+
+<p>前面都講到線性模型，線性模型可以很容易的計算出線性分數，再結合不同的轉換作輸出，線性模型好處在於VC維度是可以很容易的受到控制的，所以確保作好Ein，Eout就可以表現的好。但是如果遇到像右邊比較複雜的資料，可能就沒辦法使用線性模型達成，勢必需要結合其它手法來突破限制。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/CircularSeparable.JPG" class="" width="500">
+
+<p>再重新看一次這組比較複雜的資料，可以發現他雖然沒辦法線性分割，但似乎是「圓圈」可分的問題，也就是在圓圈內和圓圈外是不同的類別。那該如何把本來線性可分的問題轉成圓圈可分，再透過前面教到的演算法來解決呢？</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/CircularSeparable2.JPG" class="" width="500">
+
+<p>接著我們先把原本的圓圈作符號的替換，可以整理成像之前一樣的向量內積式。他的意義在於，如果本來可以這個問題在X維度上用圓圈分出兩種類別，那麼在Z維度上將可以用直接用直線來分出兩種類別，即線性可分問題，這樣的轉換又稱為特徵轉換。所以我們知道問題在X維是圓圈可分，轉成在Z維是線性可分，但是相反來說的是不是在Z維是線性可分，在X維就是圓圈可分呢？</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/LinearHypothesesZSpace.JPG" class="" width="500">
+
+<p>在Z維是線性可分，但是在X維其實不一定會是圓圈。因為在二次曲線可能性不止是圓圈，還有可能是橢圓或是雙曲線，甚至就算是圓圈還可能分成圓內和圓外，那該如何找到所有二次曲線的可能性呢？</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/GeneralQuadraticHypothesisSet.JPG" class="" width="500">
+
+<p>我們可以列出所有能表式二次曲線的項都列出來(包含常數、一次項和二次項)，所以在Z維的perceptron就會對應到在X維的某個二次曲線可能的分類方式，當然也有可能會退化成一次方程式。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/GoodQuadraticHypothesis.JPG" class="" width="500">
+
+<p>所以到現在可以發現，如果能夠在Z維找到一個好的perceptron，就可以在X維找到一個可分割類別的二次曲線。之前學習的內容都是在X維裡面使用x和y來找到好的perceptron，現在要在Z維找到好的perceptron，自然就需要使用在Z維上的資料，再使用學習到的二元分類方法來處理。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/NonlinearModel.JPG" class="" width="500">
+
+<p>首先可以透過一個函式Φ來將X維資料轉成Z維，再使用演算法來找出一個線性分割的perceptron。於是我們就可以把X維的資料，把它丟到Z維看看轉換到Z維的這筆資料究竟是什麼類別，就可以知道這筆資料該分成什麼類別。所以當我們把原本學到的方法透過特徵轉換到二次式甚至是多項式，可大大延伸演算法的應用範圍！</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/FeatureTransform.JPG" class="" width="500">
+
+<p>比如說本來維度很高的手寫辨識資料，可以應用特徵轉換建立intensity和symmetry組成的兩維問題。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/ComputationStoragePrice.JPG" class="" width="500">
+
+<p>這樣的特徵轉換好看起很多好處，但是究竟會有什麼壞處呢？前面只講到兩次項而已，如果今天要把特徵轉成Q次項的話，他的複雜度將會是O(Q^d)，其中d是除常數項以外的項次，Q是要作的Q次項轉換。所以可以發現，透過這個轉換會讓計算還有儲存都多花費額外的力氣，可能是很困難的。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/ModelComplexityPrice.JPG" class="" width="500">
+
+<p>除了計算和儲存的困難，在VC維也會因為Q變大而變大，造成模型的複雜度變高。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/GeneralizationIssue.JPG" class="" width="500">
+
+<p>上面給出了一組資料且有兩種分類結果，雖然右邊的Ein為0(即所有資料都可以分對)，但是相比起左邊的分類結果反而讓人比較喜歡。雖然左邊的分類結果有些點是分錯的Ein不是0，但是線性的模型的泛化能力會比較好，雖然特徵轉換的維度比較低，Ein比較大，但是確有可能得到一個比較好的Eout；右邊的模型其特徵轉換的維度比較高，雖然讓Ein可以作的很好，但有可能得到較差的Eout，這就是機器學習上特徵還有模型選擇的trade-off！</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/VisualChoices.JPG" class="" width="500">
+
+<p>那到底該選擇哪個維度的轉換才是最好的呢？也許就先把資料作視覺化看看資料長什麼樣子就能決定了，像是正圓圈只要作二次曲線轉換就可以了。看似好像一下子就可以找到特徵轉換的維度來達到好的學習效果，但是這樣的過程其實包含了過多的人為介入，而這樣的介入也許可以得到不錯的學習結果與好的Ein，但是背後隱含了機器會受到你的主觀想法和偏見影響，也容易讓你對學習的結果有過度的樂觀。所以在機器學習中要非常的小心，也許我們可以先偷看資料，然後用腦袋解析一次來找到最好的維度轉換與好的Ein，但是這個學習的結果在拿來應用時卻可能會得到不好的效果。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/PolynomialTransformRevisited.JPG" class="" width="500">
+
+<p>在多維度的轉換過程中，當轉換成Q維時，其中也包含了Q-1維的項次，Q-1維能作到的事Q維也能作到，Q-1維就等同於在Q維中某些項次為0，這其實是一個巢狀的涵蓋蓋念。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/StructuredHypothesisSets.JPG" class="" width="500">
+
+<p>維度越高，可調整的自由變數就越多，所以VC維也就越多；又因為可調整的自由變數越多，所以也就越有可能找到更好的結果來產生更好的Ein。再來就可以畫出之前也看過的圖，Ein會隨著VC維而下降，而模型複雜度則會隨著VC維而上升，其中我們最在乎的Eout會先下降再上升。所以如果一開始就使用很高維度的特徵轉換是會得到好的Ein，但也會付出模型複雜度的代價，造成Eout效果不好。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/LinearModelFirs.JPG" class="" width="500">
+
+<p>安全的作法是先從低維轉換開始，再持續往右邊移動，直接找到好的Ein與好的Eout。雖然線性分類也許可以作到的是有限的，但是線性的泛化能力比較好，反而最後可以作到的事情是比較多的。</p>
+<img src="/2017/10/02/Machine-Learning-Foundation-12/Summary.JPG" class="" width="500">
+
+<p>這一堂課教的是把原本線性的模型作特徵轉換變成非線性，並說明其中轉換的流程該如何作，但要特別注意的是維度的轉換是會付出計算、儲存和模型複雜度代價的，在選擇維度轉換記得要從簡單的開始，慢慢的往高維度找到最好的模型。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/12_handout.pdf">Machine Learning Foundation 12</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/09/28/Machine-Learning-Foundation-11/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1432,119 +1576,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/18/Machine-Learning-Foundation-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/07/18/Machine-Learning-Foundation-3/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第三講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-07-18 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-18T00:00:00+08:00">2017-07-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:54:59" itemprop="dateModified" datetime="2021-05-11T22:54:59+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/07/18/Machine-Learning-Foundation-3/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/18/Machine-Learning-Foundation-3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>第三講主要在說明機器學習有哪些種類，以及在訓練過程中會用到哪些不同的特徵(Feature)種類。在針對輸出空間y的不同可以有以下幾種不同的學習種類：</p>
-<img src="/2017/07/18/Machine-Learning-Foundation-3/Multiclass.JPG" class="" width="500">
-
-<p>在上一講有看到在平面上透過直線切割出兩種類別，這種二元分類(Binary Classification)是機器學習裡面最常見的問題。但現實上的應用有時並不會侷限在二元分類，常常會遇到多種類別的問題，即多元分類(Multiclass Classification)問題。比如說，可以透過硬幣的大小和重量來區分出美元硬幣，這時候的輸出就是4種類別，如果把類別數量用K來代稱，那麼二元分類可以被視為多元分類的一種特例。這種多元分類問題常用在許多不同的應用，比如說手寫字跡的辨識、圖片中的物件辨識或是email的種類或是重要性辨識。</p>
-<img src="/2017/07/18/Machine-Learning-Foundation-3/regression.JPG" class="" width="500">
-
-<p>如果今天要預測的不是兩元類別或是多元類別，而是一個數字型態的資料，例如透過公司的資料或是新聞的風向來預測股價，或是透過氣候的資料來預測未來的氣溫，這樣的學習也是在統計中常被使用到的迴歸分析。通常透過迴歸分析來預測數值結果也是一種具有label的監督式(Supervised)的學習，因為在學習過程中，會告訴演算法資料x的特徵，和其對應的y數值結果。</p>
-<img src="/2017/07/18/Machine-Learning-Foundation-3/structure.JPG" class="" width="500">
-
-<p>再進一步更複雜的應用中，像是自然語言辨識的領域中，如何對每個字作詞性標注(Part-of-Speech Tag)，他看起似乎像是種多類別的問題(一個詞被分到其中一種詞性)，但是這種詞性標注的問題往往不是把每個詞拆開來輸入，而是會把整個句子輸入來學習分析，因為詞性可能會根據語句而有變化，這個問題尤其是在中文詞性標注更加的明顯。傳統上處理詞性標注可以逶過<a href="2017/05/31/Hidden_Markov_Model_HMM/">隱馬可夫模型(Hidden Markov Model, HMM)</a>)將詞當作觀察現象，詞性當作隱藏狀態，並結合維特比(Viterbi)演算法來作詞性標注。</p>
-<p>在學習的過程中有沒有給予y(輸出標籤)，可以區分成監督式和非監督式學習。</p>
-<p>之前討論到的學習方法是，我們把每個硬幣x的大小和重量，以及這個硬幣的種類y，來學習判斷硬幣的哪個種類，這種有給予y的稱為監督式學習。如果今天不告訴機器每個硬幣的種類y，在只知道硬幣的大小和重量的情況下，把硬幣區分成不同群，稱為非監督式學習。非監督式學習困難的問題常常在於分群的結果不容易被衡量，監督式學習效果的衡量可以簡單的比對機器判斷的g(x)和y是否一致，因此非監督式常習會再透過一些方法像是Elbow Method或是silhouette analysis來判斷分群的品質。非監督式學習除了群聚分析外，像是密度分析(Density Estimation)和臨群偵測(Outlier Detection)也都是非監督式學習的範疇。</p>
-<img src="/2017/07/18/Machine-Learning-Foundation-3/semisupervised.JPG" class="" width="500">
-
-<p>介於監督式和非監督式學習中間稱為半監督式(Semi-supervised)，半監督式會先使用一部份已經有標注好標籤的資料作監督式學習，再使用沒有標注的資料來讓機器可以學的更好。其中常用在大量的資料無法將所有的資料都給予標籤，因為標注資料的成本是很高的，所以像是影像辯識就會透過半監督式方法來完成學習。</p>
-<img src="/2017/07/18/Machine-Learning-Foundation-3/reinforcement.JPG" class="" width="500">
-
-<p>增強學習(Reinforcement Learning)會透過獎勵的方式告訴機器什麼樣的情況是好或是不好，例如在廣告的投放上當使用者點擊某種類的廣告會影響廣告系統推薦給使用者的廣告內容。 </p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/03_handout.pdf">Machine Learning Foundation 03</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1616,7 +1647,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>

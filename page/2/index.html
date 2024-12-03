@@ -196,6 +196,132 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/" class="post-title-link" itemprop="url">Flutter Web在連網限制環境下使用CanvasKit渲染器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-07-03 17:56:58" itemprop="dateCreated datePublished" datetime="2021-07-03T17:56:58+08:00">2021-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2022-07-09 16:36:25" itemprop="dateModified" datetime="2022-07-09T16:36:25+08:00">2022-07-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flutter/" itemprop="url" rel="index"><span itemprop="name">Flutter</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在使用CanvasKit渲染器開發Flutter web app時，會在app啟動時從CDN服務下載CanvasKit，因此在採用CanvasKit渲染器的情況下預設是需要有連網的環境，否則app在啟動時會因為無法下載CanvasKit出現Failed to load resource: net::ERR_INTERNET_DISCONNECTED的錯誤訊息。</p>
+<img src="/2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/unpkg.jpg" class="" width="300"> 
+
+<p>但如果是在有連網限制的開發環境下，雖然可以在開發環境使用html渲染器進行開發，並在佈署環境使用CanvasKit渲染器來達到最佳的操作效果，但因為兩種渲染器方法不同，所以渲染出來的效果還是有所差異，這會造成開發和佈署的版面不一致。</p>
+<p>雖然預設需要連網才能使用CanvasKit，但目前版本(2.2.2)可以透過指定CanvasKit URL的方式置換掉預設的URL，而且也支援將CanvasKit與web檔案bundle在一起佈署，達到在離線或是有連網限制的環境下執行。但這個方法目前只支援profile與release模式，<a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/issues/80482">不支援debug模式</a>。</p>
+<h4 id="下載CanvasKit放入web資料夾"><a href="#下載CanvasKit放入web資料夾" class="headerlink" title="下載CanvasKit放入web資料夾"></a>下載CanvasKit放入web資料夾</h4><p>下載canvaskit.js與canvaskit.wasm並放進web資料夾，舉例來說目前版本使用的CanvasKit為0.25.1，可以先從CDN下載<a target="_blank" rel="noopener" href="https://unpkg.com/canvaskit-wasm@0.25.1/bin/canvaskit.js">canvaskit.js</a>和<a target="_blank" rel="noopener" href="https://unpkg.com/canvaskit-wasm@0.25.1/bin/canvaskit.wasm">canvaskit.wasm</a>。如果要使用profile模式就將兩個檔案在進/web/profiling/目錄內，要使用release模式的話直接放在/web/目錄。</p>
+<img src="/2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/LocalCanvaskit.jpg" class="" width="300"> 
+<h4 id="修改url指到CanvasKit位置"><a href="#修改url指到CanvasKit位置" class="headerlink" title="修改url指到CanvasKit位置"></a>修改url指到CanvasKit位置</h4><p>透過--dart-define覆寫FLUTTER_WEB_CANVASKIT_URL<a target="_blank" rel="noopener" href="https://github.com/flutter/engine/blob/7b2db6dbe1c49a8004ff865607988eec36868ccc/lib/web_ui/lib/src/engine/canvaskit/initialization.dart#L51">環境變數</a>，並指到下載的CanvasKit檔案位置。因為這裡的預設根目錄會是web/，所以如果用上述的檔案放法的話只要給/就行了。這樣在profile模式下會自動在/web/profiling/讀取CanvasKit，在release模式會自動在根目錄(預設輸出的local位置為/web/，實際佈署會存在於根目錄)讀取CanvasKit。</p>
+<p>使用profile模式：</p>
+<blockquote>
+<p>flutter run -d chrome --profile  --dart-define=FLUTTER_WEB_CANVASKIT_URL=/</p>
+</blockquote>
+<p>使用release模式：</p>
+<blockquote>
+<p>flutter build web  --dart-define=FLUTTER_WEB_CANVASKIT_URL=/</p>
+</blockquote>
+<p>使用profile模式也可以透過在VS Code<a target="_blank" rel="noopener" href="https://flutter.dev/docs/perf/rendering/ui-performance#run-in-profile-mode">設定launch.json檔</a>中的flutterMode與args參數，接著直接在VS Code執行啟動偵錯就可以進入profile模式。如果是使用release模式也可以透過<a target="_blank" rel="noopener" href="https://pub.dev/packages/dhttpd">dhttpd</a>在本地端啟動web server測試。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// launch.json</span></span><br><span class="line"><span class="string">&quot;configurations&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Flutter&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;dart&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;program&quot;</span>: <span class="string">&quot;lib/main.dart&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;flutterMode&quot;</span>: <span class="string">&quot;profile&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;args&quot;</span>: [<span class="string">&quot;--dart-define=FLUTTER_WEB_CANVASKIT_URL=/&quot;</span>]</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h4 id="在專案中引用Roboto預設字型"><a href="#在專案中引用Roboto預設字型" class="headerlink" title="在專案中引用Roboto預設字型"></a>在專案中引用Roboto預設字型</h4><p>如果app內Text相關widget沒有指定字型(fontFamily)，或是雖然有指定字型但沒有將字型檔(.ttf/.otf)放進專案並在pubspec宣告，使用CanvasKit渲染器時會預設從fonts.google.com下載<a target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Roboto">Roboto-Regular</a>使用。</p>
+<p>因此要先將Roboto放在專案並宣告在pubspec，在web啟動時就會自動使用專案內的字型檔而不會連到google下載字型。如果有使用到其它字型，可以參考官方的<a target="_blank" rel="noopener" href="https://flutter.dev/docs/cookbook/design/fonts">字型引用</a>方法。</p>
+<p>從google下載下來會有Rotobo全部的ttf檔，只要把Roboto-Regular放進來即可</p>
+<img src="/2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/roboto.jpg" class="" width="400"> 
+
+<p>接著在pubspec宣告引用</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">flutter:</span></span><br><span class="line">  <span class="attr">uses-material-design:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">fonts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">family:</span> <span class="string">Roboto</span></span><br><span class="line">      <span class="attr">fonts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">asset:</span> <span class="string">assets/fonts/Roboto-Regular.ttf</span></span><br></pre></td></tr></table></figure>
+
+<p>預設app啟動就會自動使用Roboto而不會連到google下載字型。</p>
+<img src="/2021/07/03/flutter-web-canvaskit-renderer-in-restricted-internet-access-environment/DefaultFont.jpg" class="" width="500"> 
+
+<p>在Flutter官方提供更簡易的支援前，可以使用上述的三個步驟來達成在連網限制的環境上使用CanvasKit渲染器，在部署時只要將CanvasKit檔案一起部署即可。</p>
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/issues/78235">Flutter issues - Can’t build web apps with CanvasKit without internet</a><br><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/issues/70101">Flutter issues - support bundling CanvasKit instead of CDN</a><br><a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/issues/80482">Flutter issues - support specifying CanvasKit URL in debug builds</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/06/21/implement-flutter-web-app-from-scratch-and-tips/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1427,114 +1553,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2019/03/05/machine-learning-on-gcp-feature-engineering/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/03/05/machine-learning-on-gcp-feature-engineering/" class="post-title-link" itemprop="url">Machine Learning on GCP - Feature Engineering(上)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2019-03-05 00:00:00" itemprop="dateCreated datePublished" datetime="2019-03-05T00:00:00+08:00">2019-03-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:40:22" itemprop="dateModified" datetime="2021-05-11T23:40:22+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/03/05/machine-learning-on-gcp-feature-engineering/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/05/machine-learning-on-gcp-feature-engineering/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>前陣子在上Coursera的Data Engineering on Google Cloud Platform這個系列課程，其中在Serverless Machine Learning with Tensorflow on Google Cloud Platform這週內有一個Feature Engineering單元，裡面展示了如何透過Feature Engineering來提升模型的表現。上完後覺得裡面提到一些關於Feature Engineering的技巧，決定還是找時間把筆記寫下來。</p>
-<img src="/2019/03/05/machine-learning-on-gcp-feature-engineering/GoodFeature.JPG" class="" width="500">
-
-<p>好的特徵必須要和預測目標值是有相關的，對於特徵和預測值之間，需要有合理的假設，而不是隨意丟任意的資料進來，就希望特徵和預測值間具有關聯性，否則會落入Data Dredge的問題。Data Dredge意指可能會從大量資料中找到另人意外的相關性，這並不是我們想要的結果。(例如荷蘭的研究中指出一個地方送子鳥被看到的數量，和9個月後嬰兒出生的數量相關)</p>
-<h2 id="Causality"><a href="#Causality" class="headerlink" title="Causality"></a>Causality</h2><img src="/2019/03/05/machine-learning-on-gcp-feature-engineering/Causality.JPG" class="" width="500">
-
-<p>好的特徵特性是要使用預測當下能夠掌握的資料當作特徵，例如當你要使用每日的銷售資料當作特徵值，但是這些資料可能需要一個月的資料才會產生，而不是及時會被收集到資料倉儲。像這種可能因為資料延遲造成在預測時無法取得完整的資料將可能造成模型失效。所以在訓練模型時，請確保這些特徵在預測時是可以完整取得的，否則不要使用在模型中。</p>
-<h2 id="Numeric-amp-Magnitude"><a href="#Numeric-amp-Magnitude" class="headerlink" title="Numeric &amp; Magnitude"></a>Numeric &amp; Magnitude</h2><img src="/2019/03/05/machine-learning-on-gcp-feature-engineering/Numeric.JPG" class="" width="500">
-
-<p>因為在機器學習的過程中，會對輸入的資料作許多的運算，因此使用的特徵必須要為數值形態，且其數值是有大小意義的(例如coupon提供的打折數20%和10%存在折數大小關係)。</p>
-<h2 id="Enough-examples"><a href="#Enough-examples" class="headerlink" title="Enough examples"></a>Enough examples</h2><img src="/2019/03/05/machine-learning-on-gcp-feature-engineering/EnoughData.JPG" class="" width="500">
-
-<p>好的特徵需要有足夠的資料，以講者的個人經驗來說，如果一個特徵中每個值出現至少5筆，才會將這個特徵用來訓練模型。舉例來說，有一個類別為自動交易，需要有足夠的詐欺/非詐欺資料才有辦法訓練出有效的機器學習模型。如果今天只有3筆自動交易資料，且3筆都是非詐欺，這樣數量的資料可能就無法訓練出可用的機器學習模型。我想這裡的用意是指一個特徵如果相似度太高，可能造成沒有鑑別度；例如在分類問題中，特徵在每個類別的值都一樣或相似，那麼這樣的特徵可能對分類問題沒辦法貢獻太多資訊，使用決策樹來切分也會找不到好的切點。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/serverless-data-analysis-bigquery-cloud-dataflow-gcp/home/welcome">Data Engineering on Google Cloud Platform 4 - Serverless Data Analysis with Google BigQuery and Cloud Dataflow</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1606,7 +1624,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>

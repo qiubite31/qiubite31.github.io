@@ -196,6 +196,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/11/02/namespace%E8%88%87LEGB-scope%E8%A6%8F%E5%89%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/11/02/namespace%E8%88%87LEGB-scope%E8%A6%8F%E5%89%87/" class="post-title-link" itemprop="url">namespace與LEGB scope規則</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2016-11-02 00:00:00" itemprop="dateCreated datePublished" datetime="2016-11-02T00:00:00+08:00">2016-11-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/11/02/namespace%E8%88%87LEGB-scope%E8%A6%8F%E5%89%87/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/02/namespace與LEGB-scope規則/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>python的namespace是一種”name-to-object”的對應關係，而在不同的namespace之間都有各自的作用域，就像是不同的module中雖然都定義了相同的名稱的函式，但卻不會互相影響。為了找到特定的”name-to-object”的namespace，python會採用scope的概念來找到特定object的所屬變數或是函式，而搜尋順序即是LEBG規則。</p>
+<p>python的scope規則LEGB查找順序分別為 Local -&gt; Enclosed -&gt; Global -&gt; Built-in</p>
+<p>Local: 宣告於於function或是class內的name<br/>Enclosed: 封閉的function，function被另一個function包起來，常見為<a href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">Closure</a><br/>Global: 最上層位於module的global name<br/>Build-in: 內建module的name，例如print, input等等</p>
+<p>以下舉幾個範例說明:</p>
+<h5 id="1-L-local-scope"><a href="#1-L-local-scope" class="headerlink" title="1. L - local scope"></a>1. L - local scope</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var = <span class="string">&#x27;global&#x27;</span>    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">L</span>():</span>    </span><br><span class="line">    var = <span class="string">&#x27;local&#x27;</span>        </span><br><span class="line">    <span class="built_in">print</span>(var)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;&gt; L()  <span class="comment"># local 當function有定義local scope時，會優先使用local scope</span></span><br><span class="line">local</span><br></pre></td></tr></table></figure>
+<h5 id="2-LE-local-and-Enclosed-scope"><a href="#2-LE-local-and-Enclosed-scope" class="headerlink" title="2. LE - local and Enclosed scope"></a>2. LE - local and Enclosed scope</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var = <span class="string">&#x27;global&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LE</span>():</span>    </span><br><span class="line">    var = <span class="string">&#x27;enclosed&#x27;</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span>        </span><br><span class="line">        <span class="built_in">print</span>(var)    </span><br><span class="line">    inner()</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;&gt; LE()  <span class="comment"># 當function沒有local scope時，會往外找enclosed scope</span></span><br><span class="line">enclosed</span><br></pre></td></tr></table></figure>
+<h5 id="3-LEG-local-Enclosed-and-Global-scope"><a href="#3-LEG-local-Enclosed-and-Global-scope" class="headerlink" title="3. LEG - local, Enclosed and Global scope"></a>3. LEG - local, Enclosed and Global scope</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var = <span class="string">&#x27;global&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LEG</span>():</span>    </span><br><span class="line">    <span class="built_in">print</span>(var)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>LEG()  <span class="comment"># 當local和enclosed都沒有時，會往外找global</span></span><br><span class="line"><span class="keyword">global</span></span><br></pre></td></tr></table></figure>
+<h5 id="4-LEGB-local-Enclosed-Global-and-Build-in-scope"><a href="#4-LEGB-local-Enclosed-Global-and-Build-in-scope" class="headerlink" title="4. LEGB - local, Enclosed, Global and Build-in scope"></a>4. LEGB - local, Enclosed, Global and Build-in scope</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">id</span>(<span class="params">var</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;global id()&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LEGB</span>(<span class="params">var</span>):</span>    </span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">id</span>(var))    </span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">str</span>(var))</span><br><span class="line">        </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>LEGB(<span class="string">&#x27;Build-in str()&#x27;</span>)  <span class="comment"># 當有定義global function，會呼叫global function，否則會呼叫Build-in function</span></span><br><span class="line"><span class="keyword">global</span> <span class="built_in">id</span>()</span><br><span class="line">Build-<span class="keyword">in</span> <span class="built_in">str</span>()</span><br></pre></td></tr></table></figure>
+<h5 id="5-NameError-name-is-not-defined"><a href="#5-NameError-name-is-not-defined" class="headerlink" title="5. NameError - name is not defined"></a>5. NameError - name is not defined</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>var = <span class="string">&#x27;global&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(var2) <span class="comment"># 當LEGB scope都找不到，會發生NameError</span></span><br><span class="line">Traceback (most recent call last):    </span><br><span class="line">    File “LEGB.py”, line <span class="number">39</span>, <span class="keyword">in</span> &amp;lt;module&gt;        </span><br><span class="line">        <span class="built_in">print</span>(var2)    </span><br><span class="line">    NameError: name <span class="string">&#x27;var2&#x27;</span> <span class="keyword">is</span> <span class="keyword">not</span> defined</span><br></pre></td></tr></table></figure>
+<p>以上幾個是python LEGB scope順序的範例，了解LEGB的觀念也有助於幫助自己在開發的時候，避免誤用scope產生許多bug</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://sebastianraschka.com/Articles/2014_python_scope_and_namespaces.html">A Beginner’s Guide to Python’s Namespaces, Scope Resolution, and the LEGB Rule</a><br/><a target="_blank" rel="noopener" href="https://docs.python.org/2/tutorial/classes.html#python-scopes-and-namespaces">Python docs - Scopes and Namespace</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/09/27/%E4%BD%BF%E7%94%A8bind-variable%E5%9F%B7%E8%A1%8CSQL/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -897,7 +1002,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
