@@ -196,6 +196,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/13/Machine-Learning-Foundation-13/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/10/13/Machine-Learning-Foundation-13/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第十三講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-10-13 00:00:00" itemprop="dateCreated datePublished" datetime="2017-10-13T00:00:00+08:00">2017-10-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 23:16:38" itemprop="dateModified" datetime="2021-05-11T23:16:38+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/13/Machine-Learning-Foundation-13/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/13/Machine-Learning-Foundation-13/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一講提到可以使用非線性轉換的方法，將線性的模型轉換成非線性，雖然可以解決更複雜的問題，但也伴隨著模型複雜度提高的代價。這一講將提到過度適合(Overfitting)現象所造成的泛化能力缺陷。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/BadGeneralization.JPG" class="" width="500">
+
+<p>假設今天有一個目標的函式是二次函式，但我們使用的四次函式來找到通過所有點的答案使得Ein為0，但這個四次函式卻和目標的二次函式差距很大造成Eout很大。這樣就會讓這個四次函式只認得樣本資料，而這種VC維度很高所付出的代價就是模型會失去舉一反三的能力，也就是泛化能力很差。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/Overfitting.JPG" class="" width="500">
+
+<p>這裡帶出學習會出現的兩個問題，一個是過度適合(Overfitting)，即Ein的fitting作的很好，但是作過度了造成Eout效果不好；一個是低度適合(Underfitting)，即Ein的fitting作的不夠好。Underfitting可以透過增加樣本資料或是使用較複雜的模型就可以解決，但是Overfitting反而是一個比較難解決的問題。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/CauseofOverfitting.JPG" class="" width="500">
+
+<p>發生Overfitting會有幾種原因，第一種是使用了過多的VC維，也就是使用了過於複雜的機器學習模型，像是對二次函式問題使用了四次函式來解；第二種可能性是雜訊太多，造成錯誤的學習；第三種是資料量不足，如果資料量不足可能沒有辦法學習出接近目標函式的結果。尤其當資料量不夠且雜訊又多，就很容易造成Overfitting讓模型最終失去泛化能力</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/CaseStudy.JPG" class="" width="500">
+
+<p>假設現在有兩個目標函式，一個是十次多項式加上雜訊，一個是五十次多項式但是沒有雜訊。今天分別使用二次多項式和十次多項式來比較兩個問題的學習結果，會發現十次多項式都發生Overfitting，在Ein都作的比較好，但是Eout都作不好。甚至是當我們已經知道目標函式是十次多項式的情況，使用十次多項式的結果也不一定會贏過二次多項式。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/LearningCurve.JPG" class="" width="500">
+
+<p>用學習曲線來看會發現，當樣本數量不夠的時候，十次多項式Ein和Eout差距會非常大，所以如果資料量不足就不應該免強使用較複雜的方法，反而使用二次多項式還能夠學習出比較好的結果。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/NoNoise.JPG" class="" width="500">
+
+<p>那如果都沒有雜訊的情況下也會是二次多項式的效果比較好，因為當目標函式很複雜時，也會造成類似雜訊的效果，如果二次多項式和十次多項式都作不好，使用二次多項式的泛化效果可能會比較好。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/DetailExperiment.JPG" class="" width="500">
+
+<p>什麼時候要注意overfitting會發生呢？可以分成模型複雜程度Qf和雜訊程度σ^2來探討，再來會討論兩者和資料量N之間的關係。<img src="/2017/10/13/Machine-Learning-Foundation-13/TheOverfitMeasure.JPG" class="" width="500">延續之前的二次和十次多項式的例子，再來會使用Eout(g10) - Eout(g2)來衡量overfit的程度，即使用十次和二次多項式的Eout差來衡量。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/Result.JPG" class="" width="500">
+
+<p>在固定模型複雜度之下，只要資料量不夠而且雜訊程度越高，就越容易造成overfit；但在固定雜訊程度看模型複雜度的影響，大部份也是發生在資料量少且目標複雜度高會造成overfit。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/NoiseAndSize.JPG" class="" width="500">
+
+<p>兩者最主要的差異在於，雜訊是stochastic noise，即隨機產生的，但是目標函式的複雜度是deterministic noice，是固定可以計算出來的。總結來說在四種情況下會發生overfit，第一個是資料的量過小，第二個是stochastic noise太高的時候，第三個是deterministic noise太高的時候，第四個則是VC維度太高的時候。所以overfit是很容易發生的。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/DeterministicNoise.JPG" class="" width="500">
+
+<p>所以到底為什麼今天的目標函式太過複雜的情況下和隨機雜訊是類似的呢？假設今天目標函式太過複雜，以至於無法使用任何的hypothesis描述，這中間的差距就是我們說的deterministic noise，這並不是一個隨機發生的雜訊。所以deterministic noise會取決於hypothesis，而且在給定相同x之下會有相同的deterministic noise。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/HandleOverfit.JPG" class="" width="500">
+
+<p>如果有這麼多的原因會造成overfit，那該怎麼解決呢？在模型部份，可以先使用比較簡單的模型開始，避免一開始就用過複雜的模型；在資料部份，可以將雜訊資料作data cleaning/pruning處理，或是收集更多的資料與使用data hinting產生虛擬資料來提供更多額外的資料；另外還可以透過regularization對模型產生懲罰效果，或是透過validation來隨時看學習的狀況。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/DataClean.JPG" class="" width="500">
+
+<p>在Data Cleaning/Pruning的部份，Data Clean是指把已經確定是錯誤標記的資料，標記到正確的類別。Data Pruning則是直接將錯誤的雜訊資料直接從資料集去除掉。兩個資料的處理方法都不難，難度反而會在於該如何判斷資料是有問題的雜訊資料。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/DataHinting.JPG" class="" width="500">
+
+<p>在Data Hinging部份，以圖像的數字辨識來說，就是把每個字作簡單的旋轉來當作新的虛擬資料並加進來學習。這個方法很常用在現今在作圖象辨識時，對圖像作扭曲或是轉換來增加學習樣本數量。</p>
+<img src="/2017/10/13/Machine-Learning-Foundation-13/Summary.JPG" class="" width="500">
+
+<p>總結來說，這堂課教到了把Ein作好但是Eout作不好是overfitting現象，而且overfitting是非常容易發生的。不只是雜訊會造成overfitting，當目標函式過於複雜時，也是另一種雜訊。在處理overfitting的部份，這堂課簡單提到了data cleaning/pruning和data hinting，下一堂會再進一步教到如何使用regularization來避免overfitting現象。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/13_handout.pdf">Machine Learning Foundation 13</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/10/02/Machine-Learning-Foundation-12/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1444,138 +1582,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/07/27/Machine-Learning-Foundation-4/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第四講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-07-27 00:00:00" itemprop="dateCreated datePublished" datetime="2017-07-27T00:00:00+08:00">2017-07-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:55:00" itemprop="dateModified" datetime="2021-05-11T22:55:00+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/07/27/Machine-Learning-Foundation-4/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/27/Machine-Learning-Foundation-4/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>這一講的學習重點主要是在如何討論學習到底是不是可行的，並進一步推導證明機器是真的可以「學習」的。</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/ControversialAnswer.JPG" class="" width="500">
-
-<p>機器會不會其實是沒辦法學習的？我們可以先看講義上的圖形，上半部的圖形屬於-1，下半部的圖形屬於+1，那麼給了f上方右邊的圖，他究竟是屬於+1還是-1呢？如果我們用黑色區域是不是對稱來判斷，那麼這張圖會是+1；但如果我們用左上角的格子是否為黑色，那邊這張圖會是-1。這裡會發現如果我們用不同的規則就可能得到不同的答案，看起來好像真的沒辦法讓機器真的「學習」一個正確的答案。</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/NoFreeLunch.JPG" class="" width="500">
-
-<p>用一個比較數學的例子來看，假設今天有一個函式f，輸入是3個bit，輸出是o或是x。再來我們透過機器學習演算法學到g函式，並確保這個g函式在5筆資料D都能和f得到一樣的答案(即f和g結果相同)。所以我們確保了g和f(甚至是講義上的8個f)在D得到相同答案，但是除了D之外剩下的3種答案，g只會有一種結果。這會有什麼的影響呢？比如說當g在剩下3筆得到XOX，那麼他會和f6相同，可是我們今天是要告訴你正確的f其實是除了f6以外的函式，那麼似乎g和f答案又錯了，看起來機器好像真的沒辦法「學習」到一個正確答案。這又稱為no free lunch，如果沒有對機器學習問題加上一些限制，即我們只是單純給機器資料學習，事實上是沒辦法讓機器學出一個正確的答案的。</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/InferrProbability.JPG" class="" width="500">
-
-<p>這裡舉一個推論未知的方法，比如說在一個瓶子中有綠色彈珠和橘色彈珠，如果今天沒有辦法完全數完瓶內所有的彈珠，那麼該如何去推論橘色彈珠的比例呢？我們可以透過統計手法利用取樣(樣本)的比例來推論瓶內橘色彈珠(母體)的比例。假設瓶內橘色彈珠的比例是μ，綠色是1-μ，取樣出橘色彈珠的比例是ν，綠色是1-ν，是否可以用這個ν來推論μ呢？照理說ν可能沒辦法完全的推論μ(明明有橘色彈珠，但是每一次運氣不好都抽到綠色)，但是在一定的機率下，ν應該是有辦法推論μ的，在數學上可用Hoeffding’s Inequality來解釋</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/HoeffdingInequality.JPG" class="" width="500">
-
-<p>透過Hoeffding’s Inequality可以解釋，如果今天抽出彈珠(N)的數量越大的話，ν和μ之間差很遠的機率(ε)就會很小，也就是說如果可以取出數量夠大的樣本的話，就可以讓「壞事」(ν和μ差很多)發生的機率變小，我們可以說ν和μ大概差不多會是對的(即probably approximately correct, PAC)</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/ConnectLearning.JPG" class="" width="500">
-
-<p>那用這個抽彈珠的例子到底和學習會有什麼關係？當把抽彈珠轉成學習的問題，未知橘色彈珠的機率μ可視為未知的f，所有抽出來的彈珠就是每筆的資料，其中橘色彈珠可視為h(x)≠f(x)，即hypothesis h是錯的，綠色彈珠可視為h(x)=f(x)，即hypothesis h是對的。所以如果我們在獨立的抽出彈珠時，就可知道來誰論h和f不一樣的機率到底是多少。</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/AddComponent.JPG" class="" width="500">
-
-<p>所以把前面錯誤推估的部份加入進去機器學習的流程中。首先我有一個機率在瓶子中取樣產生了資料D，在判斷h和f是不是一樣時，其中這個h就是Hypothesis集合中的其中一個</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/FormalGuarantee.JPG" class="" width="500">
-
-<p>再來就可以透過手上確實知道的資料D來說h和f是否相同，也就是透過Ein(取樣的資料Error)來推論Eout(實際的瓶子的資料Error)，使用Hoeffding’s Inequality就可以證明當N夠大時，Ein和Eout就會差不多是相同的。</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/Verification.JPG" class="" width="500">
-
-<p>但這樣的證明充其量其能說是驗證而已，就是這個h目前還沒有辦法像是PLA一樣丟不同資料產生不同的h，但是我們可以證明這個h是不是使用資料D能夠有有用的推論f，即驗證選出h的表現是好的還是不好的。</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/CoinGame.JPG" class="" width="500">
-
-<p>目前已經可以驗證相同h之下的表現好還是不好，但是今天當我們有了選擇時(即在多個h裡面作選擇)，我們可能就會有偏見的選出一個瓶子都是綠色彈珠的結果，但事實上可能只是剛好這個瓶子都「碰巧」的抽出了綠色彈珠，就像擲銅板一樣，不論這枚銅板多麼公正，都會有可能出現每次都正面的情況。前面講到Hoeffding告訴我們的是ν和μ之間差異很大的這種「不好」的事情機率應該是很小的，但是當我們有選擇的時候，這種「不好」的取樣卻會造成Ein和Eout差距變大。</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/BadData.JPG" class="" width="500">
-
-<p>如果演算法遇到不好的資料(Ein和Eout差很遠)，就會得到不好的結果。Hoeffding告訴我們的是每一個h不好的情況是很小的，但是在演算法有自由選擇h的情況下，那麼不好資料發生的機率是多少呢？</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/BADDataBound.JPG" class="" width="500">
-
-<p>假設有M總不同的h，那麼不好資料發生的機率，就會等於每一個h發生不好機率的總合(Union Bound)。所以如果演算法有辦法選出一個最小的Ein(壞事發生的機率是最小的)，就可以表示選出來的Eout會是最小的</p>
-<img src="/2017/07/27/Machine-Learning-Foundation-4/StatisticaLearningFlow.JPG" class="" width="500">
-
-<p>總結來說機器該如何能夠學習呢？只要滿足Hypothesis集合是有限的集合M，且樣本資料N是夠大的，對於任何被演算法選出來的g(其中一個假設h)，就可以推論Eout和Ein是差不多相同的。就是剛提到的，演算法只要選出一個Ein是最小的，就可以保證Eout也是最小的。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/04_handout.pdf">Machine Learning Foundation 04</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1647,7 +1653,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1660,7 +1666,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">45</span>
+        <span class="site-state-item-count">46</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
