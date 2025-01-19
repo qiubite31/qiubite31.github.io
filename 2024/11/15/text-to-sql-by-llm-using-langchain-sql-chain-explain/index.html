@@ -29,7 +29,7 @@
 <meta property="og:description" content="上一篇透過Langchain SQL Chain建立資料問答系統中使用Langchain的sql query chain能夠快速開發資料問答功能。雖然Langchain提供了方便的開發模組，但卻封裝了許多與大型語言互動的細節。我們可以嘗試的從原始碼來看幾個Langchain封裝起來的細節。 和LLM互動的prompt在這篇使用大型語言模型(LLM)完成Text-to-SQL任務可以看到要把輸入的問">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2024-11-15T05:26:12.000Z">
-<meta property="article:modified_time" content="2024-12-03T17:56:49.819Z">
+<meta property="article:modified_time" content="2025-01-18T09:15:43.886Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="SQL">
@@ -236,7 +236,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-12-04 01:56:49" itemprop="dateModified" datetime="2024-12-04T01:56:49+08:00">2024-12-04</time>
+                <time title="修改時間：2025-01-18 17:15:43" itemprop="dateModified" datetime="2025-01-18T17:15:43+08:00">2025-01-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -285,7 +285,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chains.sql_database.prompt <span class="keyword">import</span> SQL_PROMPTS</span><br><span class="line">SQL_PROMPTS[db.dialect].pretty_print() <span class="comment"># sqlite</span></span><br></pre></td></tr></table></figure>
 
 <p>在呼叫<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/query.py#L33">create_sql_query_chain</a>且沒有提供prompt的情況下，會從SQLDatabase取得<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/query.py#L116">dialect</a>，再從Langchain的sql_database取出對應資料庫的<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/prompt.py">prompt</a>。目前Langchain提供11種<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/prompt.py#L272">database prompt</a>，每一種資料庫的prompt都有所不同，特別是在current date的寫法會不同。</p>
-<p>以下是以SQLite為例，這prompt中會有三個在過程中會被帶入的參數，分別為top_k、table_info和input。</p>
+<p>以下是以SQLite為例，這prompt中會有三個在過程中會被帶入的參數，分別為top_k(#2)、table_info(#15)和input(#17)。</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">You are a SQLite expert. Given an input question, first create a syntactically correct SQLite query to run, then look at the results of the query and return the answer to the input question.</span><br><span class="line">Unless the user specifies in the question a specific number of examples to obtain, query for at most &#123;top_k&#125; results using the LIMIT clause as per SQLite. You can order the results to return the most informative data in the database.</span><br><span class="line">Never query for all columns from a table. You must query only the columns that are needed to answer the question. Wrap each column name in double quotes (&quot;) to denote them as delimited identifiers.</span><br><span class="line">Pay attention to use only the column names you can see in the tables below. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table.</span><br><span class="line">Pay attention to use date(&#x27;now&#x27;) function to get the current date, if the question involves &quot;today&quot;.</span><br><span class="line"></span><br><span class="line">Use the following format:</span><br><span class="line"></span><br><span class="line">Question: Question here</span><br><span class="line">SQLQuery: SQL Query to run</span><br><span class="line">SQLResult: Result of the SQLQuery</span><br><span class="line">Answer: Final answer here</span><br><span class="line"></span><br><span class="line">Only use the following tables:</span><br><span class="line">&#123;table_info&#125;</span><br><span class="line"></span><br><span class="line">Question: &#123;input&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="prompt內置換的變數"><a href="#prompt內置換的變數" class="headerlink" title="prompt內置換的變數"></a>prompt內置換的變數</h4><h5 id="top-k"><a href="#top-k" class="headerlink" title="top_k"></a>top_k</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># langchain/langchain/chains/sql_database/query.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_sql_query_chain</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">    llm: BaseLanguageModel,</span></span></span><br><span class="line"><span class="params"><span class="function">    db: SQLDatabase,</span></span></span><br><span class="line"><span class="params"><span class="function">    prompt: <span class="type">Optional</span>[BasePromptTemplate] = <span class="literal">None</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    k: <span class="built_in">int</span> = <span class="number">5</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment"># top_k = 5</span></span></span></span><br></pre></td></tr></table></figure>
@@ -431,7 +431,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">59</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -444,7 +444,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-count">47</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -479,7 +479,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

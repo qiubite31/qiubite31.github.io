@@ -196,6 +196,130 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/" class="post-title-link" itemprop="url">使用大型語言模型(LLM)完成Text-to-SQL任務 - Langchain SQL Agent背後的ReAct Prompting</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2025-01-02 22:26:12" itemprop="dateCreated datePublished" datetime="2025-01-02T22:26:12+08:00">2025-01-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2025-01-19 14:00:23" itemprop="dateModified" datetime="2025-01-19T14:00:23+08:00">2025-01-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LLM/" itemprop="url" rel="index"><span itemprop="name">LLM</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一篇<a href="/2024/12/05/text-to-sql-by-llm-using-langchain-sql-agent/">透過Langchain SQL Agent建立資料問答系統</a>中使用了Langchain的create_sql_agent來建立SQL Agent。Langchain在實作這個SQL Agent背後的使用了<a target="_blank" rel="noopener" href="https://python.langchain.com/api_reference/langchain/agents/langchain.agents.react.agent.create_react_agent.html">create_react_agent</a>，這是基於2022年的paper “ReAct: Synergizing Reasoning and Acting in Language Models”的實作，雖然這個版本是比較早期的實作現在並不適合拿來使用在production環境，但仍可以透過瞭解SQL Agent是怎麼基於ReAct prompting技巧運作的。</p>
+<h4 id="ReAct-Prompting"><a href="#ReAct-Prompting" class="headerlink" title="ReAct Prompting"></a>ReAct Prompting</h4><p>ReAct Prompting包含了兩個部份，分別是Reasoning和Acting。主要是讓LLM能夠透過交錯的方式產生推理的過程(Reasoning traces)和執行特定任務的動作(task-specific actions)。在產生推理時可以讓LLM針對推理的結果，更新並產生新的執行任務的動作，同時允許LLM在執行任務時可以和外部的工具互動，以取得更具信賴且真實的資訊。</p>
+<h5 id="Hotspot-QA"><a href="#Hotspot-QA" class="headerlink" title="Hotspot QA"></a>Hotspot QA</h5><img src="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case1.png" class="" width="500">
+
+<p>上面是論文中使用的問題「Aside from the Apple Remote, what other devices can control the program Apple Remote was originally designed to interact with?」讓LLM透過ReAct解決問題的推論與執行動作過程。可以看到在找到答案前，每次都會進行思考(Though)、行動(Action)和觀察(Observation)。所以模型會在每一次作完動作得到的觀察結果(例如搜尋結果)後，思考下一步該作什麼動作(例如搜尋某個資訊)。</p>
+<h5 id="AlfWorld"><a href="#AlfWorld" class="headerlink" title="AlfWorld"></a>AlfWorld</h5><img src="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case2.png" class="" width="500">
+
+<p>第二個例子是應用在決策任務中，在決策任務中會包含了更複雜的互動環境，因此更需要透過有效的推論過程和執行動作，讓模型最後能完成正確的任務。在解決AlfWorld的問題「You are in the middle of a room. Looking quickly around you, you see a cabinet 6, a cabinet 1, a coffee machine 1, a countertop 3, a stove burner 1, and a toaster 1. Your task is to: Put some pepper shaker on a drawer.」可以看到在中間加入思考推論後，能讓模型正確的把最後的目標拆解更小的目標來完成最終的任務。</p>
+<h4 id="ReAct-Prompting-in-SQL-Agent"><a href="#ReAct-Prompting-in-SQL-Agent" class="headerlink" title="ReAct Prompting in SQL Agent"></a>ReAct Prompting in SQL Agent</h4><p>接著我們來看一下在Langchain裡面<a target="_blank" rel="noopener" href="https://api.python.langchain.com/en/latest/_modules/langchain_community/agent_toolkits/sql/base.html#create_sql_agent">SQL Agent</a>用到的ReAct prompting預設是怎麼設計的。在prompt的template組成總共會有四個部份，分別為database prompt，tools，ReAct instructions和Begin and Scratchpad。</p>
+<h5 id="Database-Prompt"><a href="#Database-Prompt" class="headerlink" title="Database Prompt"></a>Database Prompt</h5><p>第一個部份是整個prompt的prefix，和<a href="/2024/11/15/text-to-sql-by-llm-using-langchain-sql-chain-explain#%E5%92%8CLLM%E4%BA%92%E5%8B%95%E7%9A%84prompt">SQL Chain</a>一樣由Database Prompt組成，會需要置換的參數為dialect、top_k，這裡和SQL Chain一樣。</p>
+<figure class="highlight plaintext"><figcaption><span>Database Prompt</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">You are an agent designed to interact with a SQL database.</span><br><span class="line">Given an input question, create a syntactically correct &#123;dialect&#125; query to run, then look at the results of the query and return the answer.</span><br><span class="line">Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most &#123;top_k&#125; results.</span><br><span class="line">You can order the results by a relevant column to return the most interesting examples in the database.</span><br><span class="line">Never query for all the columns from a specific table, only ask for the relevant columns given the question.</span><br><span class="line">You have access to tools for interacting with the database.</span><br><span class="line">Only use the below tools. Only use the information returned by the below tools to construct your final answer.</span><br><span class="line">You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.</span><br><span class="line"></span><br><span class="line">DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.</span><br><span class="line"></span><br><span class="line">If the question does not seem related to the database, just return &quot;I don&#x27;t know&quot; as the answer.</span><br></pre></td></tr></table></figure>
+
+<h5 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h5><p>第二個部份為所有提供給模型使用的tool與描述，這裡總共提供四種tool，分別為執行SQL(sql_db_query)、查詢Schema(sql_db_schema)、查詢資料表(sql_db_list_tables)和驗證SQL查詢(sql_db_query_checker)。模型會在推論中決定下一個要使用哪一個tool來執行動作。</p>
+<figure class="highlight plaintext"><figcaption><span>Toolkit</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sql_db_query - Input to this tool is a detailed and correct SQL query, output is a result from the database. If the query is not correct, an error message will be returned. If an error is returned, rewrite the query, check the query, and try again. If you encounter an issue with Unknown column &#x27;xxxx&#x27; in &#x27;field list&#x27;, use sql_db_schema to query the correct table fields.</span><br><span class="line">sql_db_schema - Input to this tool is a comma-separated list of tables, output is the schema and sample rows for those tables. Be sure that the tables actually exist by calling sql_db_list_tables first! Example Input: table1, table2, table3</span><br><span class="line">sql_db_list_tables - Input is an empty string, output is a comma-separated list of tables in the database.</span><br><span class="line">sql_db_query_checker - Use this tool to double check if your query is correct before executing it. Always use this tool before executing a query with sql_db_query!</span><br></pre></td></tr></table></figure>
+
+<h5 id="ReAct-Instruction"><a href="#ReAct-Instruction" class="headerlink" title="ReAct Instruction"></a>ReAct Instruction</h5><p>第三個部份為ReAct prompting主要的格式，會告訴模型須要進行Thought-Action-Action Input-Observation的循環，直到找到最終的答案。這裡的tool_names參數即為第二部份所有的tool名稱集合。</p>
+<p>模型會根據推論(Though)決定執行的行動(Action)，並產生行動輸入(Action Input)。在這裡執行的行動即為使用其中一個tool，而行動輸入就是tool的輸入參數。在執行完行動後的結果就是會產生觀察(Observation)，而模型根據觀察再進行下一步思考推論(Though)，並反覆直到完成任務。</p>
+<figure class="highlight plaintext"><figcaption><span>ReAct Format and Instructions</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Use the following format:</span><br><span class="line"></span><br><span class="line">Question: the input question you must answer</span><br><span class="line">Thought: you should always think about what to do</span><br><span class="line">Action: the action to take, should be one of [&#123;tool_names&#125;]</span><br><span class="line">Action Input: the input to the action</span><br><span class="line">Observation: the result of the action</span><br><span class="line">... (this Thought/Action/Action Input/Observation can repeat N times)</span><br><span class="line">Thought: I now know the final answer</span><br><span class="line">Final Answer: the final answer to the original input question</span><br></pre></td></tr></table></figure>
+
+<h5 id="Begin-and-Scratchpad"><a href="#Begin-and-Scratchpad" class="headerlink" title="Begin and Scratchpad"></a>Begin and Scratchpad</h5><p>第四個部份為Begin與Scratchpad，在這裡會有任務起始的資訊，包含了要回答的問題、最一開始的起始推論，還有儲存推論和行動的暫存器用來紀錄縱跡歷程。這裡的參數共有兩個，第一個input為輸入的問題，第二個agent_scratchpad會紀錄每次的Question-Thought-Action-Action Input-Observation紀錄。</p>
+<figure class="highlight plaintext"><figcaption><span>Begin/Input/Scratchpad</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Begin!</span><br><span class="line"></span><br><span class="line">Question: &#123;input&#125;</span><br><span class="line">Thought: I should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span><br><span class="line">&#123;agent_scratchpad&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="完整的SQL-Agent-Prompting"><a href="#完整的SQL-Agent-Prompting" class="headerlink" title="完整的SQL Agent Prompting"></a>完整的SQL Agent Prompting</h5><p>以下是使用sqlite範例的完整prompt，其中input會在invoke的時候帶入，而scratchpad會在模型每一次的推論與動作執行紀錄下來。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">You are an agent designed to interact with a SQL database.</span><br><span class="line">Given an input question, create a syntactically correct sqlite query to run, then look at the results of the query and return the answer.</span><br><span class="line">Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most 10 results.</span><br><span class="line">You can order the results by a relevant column to return the most interesting examples in the database.</span><br><span class="line">Never query for all the columns from a specific table, only ask for the relevant columns given the question.</span><br><span class="line">You have access to tools for interacting with the database.</span><br><span class="line">Only use the below tools. Only use the information returned by the below tools to construct your final answer.</span><br><span class="line">You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.</span><br><span class="line"></span><br><span class="line">DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.</span><br><span class="line"></span><br><span class="line">If the question does not seem related to the database, just return &quot;I don&#x27;t know&quot; as the answer.</span><br><span class="line"></span><br><span class="line">You have access to the following tools:</span><br><span class="line"></span><br><span class="line">sql_db_query - Input to this tool is a detailed and correct SQL query, output is a result from the database. If the query is not correct, an error message will be returned. If an error is returned, rewrite the query, check the query, and try again. If you encounter an issue with Unknown column &#x27;xxxx&#x27; in &#x27;field list&#x27;, use sql_db_schema to query the correct table fields.</span><br><span class="line">sql_db_schema - Input to this tool is a comma-separated list of tables, output is the schema and sample rows for those tables. Be sure that the tables actually exist by calling sql_db_list_tables first! Example Input: table1, table2, table3</span><br><span class="line">sql_db_list_tables - Input is an empty string, output is a comma-separated list of tables in the database.</span><br><span class="line">sql_db_query_checker - Use this tool to double check if your query is correct before executing it. Always use this tool before executing a query with sql_db_query!</span><br><span class="line"></span><br><span class="line">Use the following format:</span><br><span class="line"></span><br><span class="line">Question: the input question you must answer</span><br><span class="line">Thought: you should always think about what to do</span><br><span class="line">Action: the action to take, should be one of [sql_db_query, sql_db_schema, sql_db_list_tables, sql_db_query_checker]</span><br><span class="line">Action Input: the input to the action</span><br><span class="line">Observation: the result of the action</span><br><span class="line">... (this Thought/Action/Action Input/Observation can repeat N times)</span><br><span class="line">Thought: I now know the final answer</span><br><span class="line">Final Answer: the final answer to the original input question</span><br><span class="line"></span><br><span class="line">Begin!</span><br><span class="line"></span><br><span class="line">Question: &#123;input&#125;</span><br><span class="line">Thought: I should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span><br><span class="line">&#123;agent_scratchpad&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Scratchpad的過程說明可以參考<a href="/2024/12/05/text-to-sql-by-llm-using-langchain-sql-agent#SQLAgent%E5%9F%B7%E8%A1%8C%E9%81%8E%E7%A8%8B">SQL Agent執行過程</a>，完整的Scratchpad如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">Thought: I should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span><br><span class="line">Action: sql_db_list_tables</span><br><span class="line">Action Input: </span><br><span class="line">Observation: Album, Artist, Customer, Employee, Genre, Invoice, InvoiceLine, MediaType, Playlist, PlaylistTrack, Track</span><br><span class="line">Thought: Thought: The `Employee` table likely contains information about employees. I&#x27;ll check its schema.</span><br><span class="line">Action: sql_db_schema</span><br><span class="line">Action Input: Employee</span><br><span class="line">Observation: </span><br><span class="line">CREATE TABLE &quot;Employee&quot; (</span><br><span class="line">	&quot;EmployeeId&quot; INTEGER NOT NULL, </span><br><span class="line">	&quot;LastName&quot; NVARCHAR(20) NOT NULL, </span><br><span class="line">	&quot;FirstName&quot; NVARCHAR(20) NOT NULL, </span><br><span class="line">	&quot;Title&quot; NVARCHAR(30), </span><br><span class="line">	&quot;ReportsTo&quot; INTEGER, </span><br><span class="line">	&quot;BirthDate&quot; DATETIME, </span><br><span class="line">	&quot;HireDate&quot; DATETIME, </span><br><span class="line">	&quot;Address&quot; NVARCHAR(70), </span><br><span class="line">	&quot;City&quot; NVARCHAR(40), </span><br><span class="line">	&quot;State&quot; NVARCHAR(40), </span><br><span class="line">	&quot;Country&quot; NVARCHAR(40), </span><br><span class="line">	&quot;PostalCode&quot; NVARCHAR(10), </span><br><span class="line">	&quot;Phone&quot; NVARCHAR(24), </span><br><span class="line">	&quot;Fax&quot; NVARCHAR(24), </span><br><span class="line">	&quot;Email&quot; NVARCHAR(60), </span><br><span class="line">	PRIMARY KEY (&quot;EmployeeId&quot;), </span><br><span class="line">	FOREIGN KEY(&quot;ReportsTo&quot;) REFERENCES &quot;Employee&quot; (&quot;EmployeeId&quot;)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">3 rows from Employee table:</span><br><span class="line">EmployeeId	LastName	FirstName	Title	ReportsTo	BirthDate	HireDate	Address	City	State	Country	PostalCode	Phone	Fax	Email</span><br><span class="line">1	Adams	Andrew	General Manager	None	1962-02-18 00:00:00	2002-08-14 00:00:00	11120 Jasper Ave NW	Edmonton	AB	Canada	T5K 2N1	+1 (780) 428-9482	+1 (780) 428-3457	andrew@chinookcorp.com</span><br><span class="line">2	Edwards	Nancy	Sales Manager	1	1958-12-08 00:00:00	2002-05-01 00:00:00	825 8 Ave SW	Calgary	AB	Canada	T2P 2T3	+1 (403) 262-3443	+1 (403) 262-3322	nancy@chinookcorp.com</span><br><span class="line">3	Peacock	Jane	Sales Support Agent	2	1973-08-29 00:00:00	2002-04-01 00:00:00	1111 6 Ave SW	Calgary	AB	Canada	T2P 5M5	+1 (403) 262-3443	+1 (403) 262-6712	jane@chinookcorp.com</span><br><span class="line">*/</span><br><span class="line">Thought: Thought: I can count the number of rows in the Employee table to find the number of employees.</span><br><span class="line">Action: sql_db_query</span><br><span class="line">Action Input: SELECT COUNT(*) FROM Employee;</span><br><span class="line">Observation: [(8,)]</span><br><span class="line">Thought: I now know the final answer\nFinal Answer: There are 8 employees. </span><br></pre></td></tr></table></figure>
+
+
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2210.03629">ReAct: Synergizing Reasoning and Acting in Language Models</a><br><a target="_blank" rel="noopener" href="https://www.promptingguide.ai/techniques/react">ReAct Prompting</a><br><a target="_blank" rel="noopener" href="https://python.langchain.com/api_reference/langchain/agents/langchain.agents.react.agent.create_react_agent.html">create_react_agent</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2024/12/05/text-to-sql-by-llm-using-langchain-sql-agent/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -227,7 +351,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-12-07 17:58:55" itemprop="dateModified" datetime="2024-12-07T17:58:55+08:00">2024-12-07</time>
+                <time title="修改時間：2025-01-19 13:57:53" itemprop="dateModified" datetime="2025-01-19T13:57:53+08:00">2025-01-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -296,7 +420,7 @@
 <p>建立SQL Agent並輸入問題後，就會得到和<a href="/2024/10/29/text-to-sql-by-llm-using-langchain-sql-chain/">SQL Chain</a>一樣的回答結果。</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There are 8 employees.</span><br></pre></td></tr></table></figure>
 
-<h4 id="SQL-Agent執行過程"><a href="#SQL-Agent執行過程" class="headerlink" title="SQL Agent執行過程"></a>SQL Agent執行過程</h4><p>使用SQL Chain和SQL Agent的差別在於，SQL Chain會把整個問答過程的步驟先定義好後依序執行。</p>
+<h4 id="SQLAgent執行過程"><a href="#SQLAgent執行過程" class="headerlink" title="SQLAgent執行過程"></a>SQLAgent執行過程</h4><p>使用SQL Chain和SQL Agent的差別在於，SQL Chain會把整個問答過程的步驟先定義好後依序執行。</p>
 <p>Agent是先定義出不同的工具（Tool），並由大語言模型（LLM）這個大腦動態地根據執行當下的情況來思考（Thought）應該執行什麼動作（Action）。此時，LLM會挑選出其中一種工具，決定工具的輸入（Action Input）並執行。接著，LLM會觀察（Observation）執行完的結果，然後進行下一輪的思考/動作/動作輸入/觀察，直到得到最終答案。</p>
 <p>下面可以透過把verbose打開看到LLM的思考/動作/動作輸入/觀察的執行過程。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_community.agent_toolkits <span class="keyword">import</span> create_sql_agent</span><br><span class="line">agent_executor = create_sql_agent(llm, db=db, verbose=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">agent_executor.run(<span class="string">&quot;How many employees are there?&quot;</span>)</span><br></pre></td></tr></table></figure>
@@ -399,7 +523,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-12-04 01:56:49" itemprop="dateModified" datetime="2024-12-04T01:56:49+08:00">2024-12-04</time>
+                <time title="修改時間：2025-01-18 17:15:43" itemprop="dateModified" datetime="2025-01-18T17:15:43+08:00">2025-01-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -448,7 +572,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chains.sql_database.prompt <span class="keyword">import</span> SQL_PROMPTS</span><br><span class="line">SQL_PROMPTS[db.dialect].pretty_print() <span class="comment"># sqlite</span></span><br></pre></td></tr></table></figure>
 
 <p>在呼叫<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/query.py#L33">create_sql_query_chain</a>且沒有提供prompt的情況下，會從SQLDatabase取得<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/query.py#L116">dialect</a>，再從Langchain的sql_database取出對應資料庫的<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/prompt.py">prompt</a>。目前Langchain提供11種<a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/sql_database/prompt.py#L272">database prompt</a>，每一種資料庫的prompt都有所不同，特別是在current date的寫法會不同。</p>
-<p>以下是以SQLite為例，這prompt中會有三個在過程中會被帶入的參數，分別為top_k、table_info和input。</p>
+<p>以下是以SQLite為例，這prompt中會有三個在過程中會被帶入的參數，分別為top_k(#2)、table_info(#15)和input(#17)。</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">You are a SQLite expert. Given an input question, first create a syntactically correct SQLite query to run, then look at the results of the query and return the answer to the input question.</span><br><span class="line">Unless the user specifies in the question a specific number of examples to obtain, query for at most &#123;top_k&#125; results using the LIMIT clause as per SQLite. You can order the results to return the most informative data in the database.</span><br><span class="line">Never query for all columns from a table. You must query only the columns that are needed to answer the question. Wrap each column name in double quotes (&quot;) to denote them as delimited identifiers.</span><br><span class="line">Pay attention to use only the column names you can see in the tables below. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table.</span><br><span class="line">Pay attention to use date(&#x27;now&#x27;) function to get the current date, if the question involves &quot;today&quot;.</span><br><span class="line"></span><br><span class="line">Use the following format:</span><br><span class="line"></span><br><span class="line">Question: Question here</span><br><span class="line">SQLQuery: SQL Query to run</span><br><span class="line">SQLResult: Result of the SQLQuery</span><br><span class="line">Answer: Final answer here</span><br><span class="line"></span><br><span class="line">Only use the following tables:</span><br><span class="line">&#123;table_info&#125;</span><br><span class="line"></span><br><span class="line">Question: &#123;input&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="prompt內置換的變數"><a href="#prompt內置換的變數" class="headerlink" title="prompt內置換的變數"></a>prompt內置換的變數</h4><h5 id="top-k"><a href="#top-k" class="headerlink" title="top_k"></a>top_k</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># langchain/langchain/chains/sql_database/query.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_sql_query_chain</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">    llm: BaseLanguageModel,</span></span></span><br><span class="line"><span class="params"><span class="function">    db: SQLDatabase,</span></span></span><br><span class="line"><span class="params"><span class="function">    prompt: <span class="type">Optional</span>[BasePromptTemplate] = <span class="literal">None</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    k: <span class="built_in">int</span> = <span class="number">5</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment"># top_k = 5</span></span></span></span><br></pre></td></tr></table></figure>
@@ -519,7 +643,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-12-01 02:01:55" itemprop="dateModified" datetime="2024-12-01T02:01:55+08:00">2024-12-01</time>
+                <time title="修改時間：2025-01-18 16:46:52" itemprop="dateModified" datetime="2025-01-18T16:46:52+08:00">2025-01-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -591,7 +715,7 @@
 
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[(8,)]</span><br></pre></td></tr></table></figure>
 
-<h5 id="把查詢結果轉換成人話"><a href="#把查詢結果轉換成人話" class="headerlink" title="把查詢結果轉換成人話"></a>把查詢結果轉換成人話</h5><p>到這麼已經可以自動化的從輸入問題到生成結果並查詢資料庫，這時如果不想讓Agent只有回覆查詢數字，就可以把資料庫的查詢結果再丟給LLM生成出像人一樣的回答。</p>
+<h5 id="把查詢結果轉換成人話"><a href="#把查詢結果轉換成人話" class="headerlink" title="把查詢結果轉換成人話"></a>把查詢結果轉換成人話</h5><p>到這裡已經可以自動化的從輸入問題到生成結果並查詢資料庫，這時如果不想讓Agent只有回覆查詢數字，就可以把資料庫的查詢結果再丟給LLM生成出像人一樣的回答。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> operator <span class="keyword">import</span> itemgetter</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> langchain_core.output_parsers <span class="keyword">import</span> StrOutputParser</span><br><span class="line"><span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> PromptTemplate</span><br><span class="line"><span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> RunnablePassthrough</span><br><span class="line"></span><br><span class="line">answer_prompt = PromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Given the following user question, corresponding SQL query, and SQL result, answer the user question.</span></span><br><span class="line"><span class="string">Question: &#123;question&#125;</span></span><br><span class="line"><span class="string">SQL Query: &#123;query&#125;</span></span><br><span class="line"><span class="string">SQL Result: &#123;result&#125;</span></span><br><span class="line"><span class="string">Answer: &quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">answer = answer_prompt | llm | StrOutputParser()</span><br><span class="line">chain = (</span><br><span class="line">    RunnablePassthrough</span><br><span class="line">        .assign(query=write_query) <span class="comment"># answer_prompt中的query參數 = SQLQuery: SELECT COUNT(*) FROM Employee</span></span><br><span class="line">        .assign(result=itemgetter(<span class="string">&quot;query&quot;</span>) | RunnableLambda(<span class="keyword">lambda</span> x: parse_sql(x)) | execute_query <span class="comment"># answer_prompt中的result參數 = [(8,)]</span></span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># 到這裡會把放進answer_prompt裡面的dict準備好</span></span><br><span class="line">    <span class="comment"># &#123;&#x27;question&#x27;: &#x27;How many employees are there&#x27;,</span></span><br><span class="line">    <span class="comment"># &#x27;query&#x27;: &#x27;SQLQuery: SELECT COUNT(*) FROM &quot;Employee&quot;&#x27;,</span></span><br><span class="line">    <span class="comment"># &#x27;result&#x27;: &#x27;[(8,)]&#x27;&#125;</span></span><br><span class="line">    | answer </span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">chain.invoke(&#123;<span class="string">&quot;question&quot;</span>: <span class="string">&quot;How many employees are there&quot;</span>&#125;) <span class="comment"># answer_prompt中的question = How many employees are there</span></span><br></pre></td></tr></table></figure>
 
 <p>從answer_prompt可以看到把question、query、result組成prompt後，就可以請LLM生成一個答案。所以完整的步驟會有四個 (1) 將輸入問題透過LLM生成出SQL查詢 (2) 從生成結果解析出SQL (3) 對資料庫下SQL查詢 (4) 將查詢結果透過LLM生成自然語言回答</p>
@@ -649,7 +773,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-10-12 03:03:45" itemprop="dateModified" datetime="2024-10-12T03:03:45+08:00">2024-10-12</time>
+                <time title="修改時間：2025-01-18 16:59:41" itemprop="dateModified" datetime="2025-01-18T16:59:41+08:00">2025-01-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -708,12 +832,12 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> getpass</span><br><span class="line"><span class="keyword">import</span> google.generativeai <span class="keyword">as</span> genai</span><br><span class="line"></span><br><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Please convert question into SQL query by following table and column information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">table: Employee</span></span><br><span class="line"><span class="string">column: EmployeeId, LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Question: How many employees come from Canada?</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configure Gemini</span></span><br><span class="line">GEMINI_API_KEY = getpass.getpass() <span class="comment"># input your gemini api key</span></span><br><span class="line">genai.configure(api_key=GEMINI_API_KEY)</span><br><span class="line"></span><br><span class="line">model = genai.GenerativeModel(<span class="string">&#x27;gemini-1.5-flash&#x27;</span>)</span><br><span class="line">response = model.generate_content(prompt)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure>
 
 <p>可以看到Gemini依據prompt生成了一段SQL，直接讀這段SQL也有符合前面給的問題。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">&gt;&gt;</span><span class="operator">&gt;</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> &quot;Number of Canadian Employees&quot;</span><br><span class="line"><span class="keyword">FROM</span> Employee</span><br><span class="line"><span class="keyword">WHERE</span> Country <span class="operator">=</span> <span class="string">&#x27;Canada&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight console"><figcaption><span>Gnerated SQL Query</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT COUNT(*) AS &quot;Number of Canadian Employees&quot;</span><br><span class="line">FROM Employee</span><br><span class="line">WHERE Country = &#x27;Canada&#x27;;</span><br></pre></td></tr></table></figure>
 
 <p>直接把這段SQL拿去查詢資料庫也能得到正確答案，所以在提供資料表和欄位清單的情況下，LLM確實可以生成出能執行的SQL。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cursorObj.execute(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">SELECT COUNT(*) AS &quot;Number of Canadian Employees&quot;</span></span><br><span class="line"><span class="string">FROM Employee</span></span><br><span class="line"><span class="string">WHERE Country = &#x27;Canada&#x27;;&quot;&quot;&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(cursorObj.fetchall())</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; [(8,)]</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight console"><figcaption><span>Query Result</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[(8,)]</span><br></pre></td></tr></table></figure>
 
 <p>到這裡可以發現，如果要作出一個簡單的Text-to-SQL服務，只要依據使用者的問題找到正確的資料表，接著將提示詞、資料表資訊與問題提供給LLM就可以詠唱出一段「可能」可以執行的SQL語法。</p>
 
@@ -1379,118 +1503,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/" class="post-title-link" itemprop="url">Flutter Web Migration - 使用conditional import處理跨平台功能</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2021-09-11 19:05:29" itemprop="dateCreated datePublished" datetime="2021-09-11T19:05:29+08:00">2021-09-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-09-12 10:33:14" itemprop="dateModified" datetime="2021-09-12T10:33:14+08:00">2021-09-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flutter/" itemprop="url" rel="index"><span itemprop="name">Flutter</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上一篇有提到真的有重要的功能不支援web的情況下，可以採用conditional import的方式，在不同平台運行不同的程式片段，避免使用過多的平台判斷邏輯造成程式碼過長，或是在compile階段出現error。</p>
-<p>假設今天要實作一個platform判斷邏輯，因為我們已經知道web平台不支援dart:io，且其他的平台(ios, android等)都可以用dart:io.Platform。所以設計的邏輯為，當dart:io能被使用時採用dart:io.Platform判斷運行平台，否則即判定為web。</p>
-<p>首先可以先作一個簡單的列舉項目PlatformType，用來比較platform判斷結果。接著設計一個PlatformCheck類別，並實作類似dart:io的isPlatform檢查。而checkPlatform函式會實作在拆出去的platform_web或platform_io兩個dart裡面。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// platform_type.dart</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;platform_web.dart&#x27;</span> <span class="keyword">if</span> (dart.<span class="keyword">library</span>.io) <span class="string">&#x27;platform_io.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> PlatformType &#123;</span><br><span class="line">  WEB,</span><br><span class="line">  ANDROID,</span><br><span class="line">  IOS</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PlatformCheck</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isWeb() =&gt; checkPlatform() == PlatformType.WEB;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isAndroid() =&gt; checkPlatform() == PlatformType.ANDROID;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isIos() =&gt; checkPlatform() == PlatformType.IOS;</span><br><span class="line">  <span class="comment">// ...other platform</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>回頭看開頭的conditional import，我們想到達成的效果為，如果可以使用dart.library.io的話就import platform_io.dart，不行的話則import platform_web.dart。</p>
-<p>所以只要分別在platform_io.dart實作非web平台的checkPlatform函式，接著在platform_web.dart實作web平台的checkPlatform函式即可。<br>如果今天app是運行在可以使用dart:io的非web平台上，platform_io.dart就會被import進來，接著就可以在checkPlatform裡面實作使用dart:io.Platform的平台判斷邏輯。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// platform_io.dart</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span> <span class="keyword">show</span> Platform;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:webapp/platform_type.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line">PlatformType checkPlatform() &#123;</span><br><span class="line">  <span class="keyword">if</span> (Platform.isIOS) <span class="keyword">return</span> PlatformType.IOS;</span><br><span class="line">  <span class="keyword">if</span> (Platform.isAndroid) <span class="keyword">return</span> PlatformType.ANDROID;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> PlatformType.IOS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果app是運行在不能使用dart:io的web平台上，會變成import platform_web.dart，因為目前只有web平台無法使用dart:io，所以如果是web情況下checkPlatform就不作其他的邏輯判斷，直接回傳是web。</p>
-<p>到這裡可以再往回看一次，如果是運行在web平台上，在程式compile時就完全不會import到platform_io.dart，可以避免在web平台上import dart:io造成的compile錯誤。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// platform_web.dart</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:webapp/platform_type.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line">PlatformType checkPlatform() &#123;</span><br><span class="line">  <span class="keyword">return</span> PlatformType.WEB;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最後只要import自己寫的platform_type.dart，就可以用以下的語法達成跨平台的platform檢查。如果今天app是運行在web之下，就會回傳web。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> currPlatform = <span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (PlatformCheck.isWeb()) currPlatform = <span class="string">&#x27;Web&#x27;</span>;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (PlatformCheck.isAndroid()) currPlatform = <span class="string">&#x27;Android&#x27;</span>;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (PlatformCheck.isIos()) currPlatform = <span class="string">&#x27;iOS&#x27;</span>;</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; WEB</span><br></pre></td></tr></table></figure>
-
-<p>如果專案在考量到web平台下，勢必會遇一個功能在不同的平台上要運行不同的package或是程式片段的跨平台問題。比起使用多個if-else的platform判斷邏輯，再把所有程式碼都寫進每個if-else中，使用conditaional import的方式可以有效的規劃程式碼，也可以避免import到平台不支援的package造成的compile錯誤。</p>
-<p>參考資料:<br><a target="_blank" rel="noopener" href="https://medium.com/flutter-community/conditional-imports-across-flutter-and-web-4b88885a886e">Conditional imports across Flutter and Web</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1562,7 +1574,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">59</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1575,7 +1587,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-count">47</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1610,7 +1622,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

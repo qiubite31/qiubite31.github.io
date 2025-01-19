@@ -196,6 +196,141 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/01/Machine-Learning-Foundation-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/08/01/Machine-Learning-Foundation-5/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第五講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-08-01 00:00:00" itemprop="dateCreated datePublished" datetime="2017-08-01T00:00:00+08:00">2017-08-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:55:00" itemprop="dateModified" datetime="2021-05-11T22:55:00+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/08/01/Machine-Learning-Foundation-5/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/01/Machine-Learning-Foundation-5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>這一講主要在延續前一講的推導，說明無限多個hypothesis到底發生什麼事情。</p>
+
+
+<p>前面有是到如果要讓訓練是可行的，則必需要加上一些假設，首先原本訓練的資料和測試hypothesis的資料都是來自於相同的分配(Distribution)，那麼當hypothesis集合是有限的，且資料數量N夠大的情況下，不論演算法A挑出哪一個函式g，Ein和Eout都會是接近的。在這個情況下，只要挑出趨近於0的Ein，就可以保證Eout也趨近於0，即代表學習是可能的。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/TwoCentralQuestions.JPG" class="" width="500">
+
+<p>再複習一下到目前的學習內容。證明機器學習的過程中，首先會希望得到一個函式g而且和f會很接近，也就是希望Eout(g)會接近於0。但是我們不知道該怎麼去證明Eout會接近於0，於是我們從取樣下手來證明Ein如果趨近於0的話，且Ein和Eout會很接近，那麼Eout也會趨近於0。那麼要讓機器學習可能，其中一個很大的重點是有限的hypothesis集合M，究竟這個M扮演了什麼角色？</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/TradeOffonM.JPG" class="" width="500">
+
+<p>這時我們會談到M的trade-off，所謂選擇M的trade-off就是當我們選了比較小的M才能符合Hoeffiding不等式讓壞事發生的機率降低，但這代表可以選擇的hypothesis比較少，也許這樣可能就無法選到一個好的hypothesis來讓Ein可以趨近於0。相反的，如果M越大，雖然選擇的hypothesis變多，但是壞事發生的機率也會上升。所以選擇一個正確而且適當的M對於學習問題是很重要的。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/UnionBoundFail.JPG" class="" width="500">
+
+<p>前面提到如果M是有限的集合，那麼學習才有可能發生，如果是M是無限大的話，壞事發生的機率也就是無限大，機器就沒辦法學到一個好的結果，因為其中的壞事發生的機率，就是M種發生壞事的機率相加。雖然看起來M會無限大，但事實上發生不同壞事資料D可能是一樣的。以PLA為例說明，假設選了兩條非常接近的線(即兩個hypothesis)，其實這兩條線可能對於同一組資料D分出來的結果是一樣的，所以不同的壞事發生可能會有重疊的情況，所以看起來M應該是有限的。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/OneInput.JPG" class="" width="500">
+
+<p>假設平面上只有一個點，每條線都是一個hypothesis，看起來你確實可以在平面上切出無限多條線，可是事實上不管怎麼切都只會有兩種情況，即這個點不是O就是X，所以只要任何長的像H1的切線都是O，任何長的像H2的切線都是X</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/TwoInput.JPG" class="" width="500">
+
+<p>如果是兩個輸入的話，總共會有4種切線，</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/ThreeInput.JPG" class="" width="500">
+
+<p>如果是3個輸入呢？看起來總共會有8種總合，但是事實上其中會有2種組合沒辦法使用直線切出來(OXO和XOX)，所以實際上只會有6種切線。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/EffectNumberofLine.JPG" class="" width="500">
+
+<p>這又稱為Effect Number of Lines，從表格可以發現每個輸入最多只會有2^N種組合，但是能夠有效的切出兩種分類會從3個輸入開始變少，所以我們可以把M取代成effect(N)。也就是說無論今天的M再多大，都可以找到一個有限的切線數量effect(N)，而且這個effect(N)可以比2^N小很多，這樣就能夠保證學習能夠發生。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/Dichtomies.JPG" class="" width="500">
+
+<p>這裡講到Dichotomy的概念，所謂Dichotomy就是兩分的意思(分成O和X為一例)，Dichotomy和原本的hypothesis的差別在於Dichotomy是有限的組合，而Hypothesis是平面上無限條線的任一條，接下來會把原本的M取代成有限的Dichotomy數量。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/GrothFunction.JPG" class="" width="500">
+
+<p>接著會透過計算成長函式(Growth Function)來找到有限的Dichotomy上限數量，取代M讓學習可以發生。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/PositiveRays.JPG" class="" width="500">
+
+<p>以一個最簡單的Postive Ray來說明，資料點N分佈在一維線上，當我們取一個threshold可以找到不同的Postive Ray，那麼所有可能的Dichotomy組合總共會是N+1個(就是能在點之間切線的數量)，在這個問題下Dichotomy的組合大大的小於2^N種。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/FourGrowthFunction.JPG" class="" width="500">
+
+<p>課程舉了四種不同的成長函數，其中PLA的Dichotomy數量mH(N)會小於2^N，但是對於Hoeffding不等式中，如果mH(N)是指數型成長，則無法確保不等式成立，所以我們需要證明mH(N)是一個多項式的成長。</p>
+<img src="/2017/08/01/Machine-Learning-Foundation-5/BreakPoint.JPG" class="" width="500">
+
+<p>這個部份提到了Break Point的概念，所謂的Break Point就是當某一個輸入開始，Dichotomy數量不再是指數成長(即2^N)，像是positive ray在2個輸入時發生，postive interval在3個輸入時發生，2D perceptrons在4個輸入時發生。在這裡看到神奇的地方在於本來的沒有break point的情況下mH(N)會是指數成長，但是當有了break point後，mH(N)會是一個多項式，下一講就會開始證明是如何轉變成多項式的。</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/05_handout.pdf">Machine Learning Foundation 05</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/07/27/Machine-Learning-Foundation-4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1224,108 +1359,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2016/11/14/nonlocal%E8%88%87global%E9%97%9C%E9%8D%B5%E5%AD%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/11/14/nonlocal%E8%88%87global%E9%97%9C%E9%8D%B5%E5%AD%97/" class="post-title-link" itemprop="url">nonlocal與global關鍵字</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2016-11-14 00:00:00" itemprop="dateCreated datePublished" datetime="2016-11-14T00:00:00+08:00">2016-11-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/11/14/nonlocal%E8%88%87global%E9%97%9C%E9%8D%B5%E5%AD%97/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/14/nonlocal與global關鍵字/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>之前曾介紹過Python透過<a href="/2016/11/02/namespace%E8%88%87LEGB-scope%E8%A6%8F%E5%89%87/">LEGB規則</a>來參照變數，今天要介紹有兩個python的關鍵字可以打破這樣的規則</p>
-<h5 id="1-global"><a href="#1-global" class="headerlink" title="1. global"></a>1. global</h5><p>如果我們需要在函式內部修改global變數，可以使用global來宣告函式內的變數，再進一步作修改</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">var = <span class="number">5</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">access_local</span>():</span>    </span><br><span class="line">    var = <span class="number">10</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">access_global</span>():</span>    </span><br><span class="line">    <span class="keyword">global</span> var    </span><br><span class="line">    var = <span class="number">15</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(<span class="string">&#x27;global is &#x27;</span> + <span class="built_in">str</span>(var))</span><br><span class="line"><span class="keyword">global</span> <span class="keyword">is</span> <span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>access_local()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(<span class="string">&#x27;global is &#x27;</span> + <span class="built_in">str</span>(var))</span><br><span class="line"><span class="keyword">global</span> <span class="keyword">is</span> <span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>access_global()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span>(<span class="string">&#x27;global is &#x27;</span> + <span class="built_in">str</span>(var))</span><br><span class="line"><span class="keyword">global</span> <span class="keyword">is</span> <span class="number">15</span></span><br></pre></td></tr></table></figure>
-<p>呼叫access_local的函數後，此時依照LEGB的規則，access_local內的var為local變數，因此對var作任何操作都不會影響到global變數。但在呼叫access_global函數後，此時函式內的var經過global宣告後即為global變數，此時對var作的操作就會影響到原本的global變數。</p>
-<h5 id="2-nonlocal"><a href="#2-nonlocal" class="headerlink" title="2. nonlocal"></a>2. nonlocal</h5><p>nonlocal和global類似，nonlocal用來讓宣告在內層巢狀函式中的變數，不再是local變數，而是轉為外層的enclosed函式的變數。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">target_value</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compare</span>(<span class="params">y</span>):</span></span><br><span class="line">        <span class="keyword">nonlocal</span> x</span><br><span class="line">        x = <span class="number">3</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;&gt; target&#x27;</span> <span class="keyword">if</span> y &gt; x <span class="keyword">else</span> <span class="string">&#x27;&lt; target&#x27;</span></span><br><span class="line">    <span class="keyword">return</span> compare</span><br><span class="line">    </span><br><span class="line">func = target_value(<span class="number">10</span>)</span><br><span class="line"><span class="built_in">print</span>(func(<span class="number">5</span>))</span><br><span class="line">&gt; target</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(func.__closure__[<span class="number">0</span>].cell_contents)</span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
-<p>以之前介紹過的的<a href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">Closure</a>例子來說明，本來設定10當作x target，當內層函式去捕捉到enclosed的自由變數來比較時，會得到”&lt; target”。本來捕捉到的自由變數只能讀取而無法修改，但是現在在內層函式透過nonlocal來宣告x變數，即可以將local變數轉為外層的enclosed變數，當自由變數x被修改成3之後，最後的比較結果會變數”&gt; target”</p>
-<p>參考資料：<br/><a target="_blank" rel="noopener" href="http://www.programiz.com/python-programming/keyword-list">python keyword list</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1397,7 +1430,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">59</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1410,7 +1443,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-count">47</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1445,7 +1478,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

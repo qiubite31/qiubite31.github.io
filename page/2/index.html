@@ -196,6 +196,118 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/" class="post-title-link" itemprop="url">Flutter Web Migration - 使用conditional import處理跨平台功能</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2021-09-11 19:05:29" itemprop="dateCreated datePublished" datetime="2021-09-11T19:05:29+08:00">2021-09-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-09-12 10:33:14" itemprop="dateModified" datetime="2021-09-12T10:33:14+08:00">2021-09-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flutter/" itemprop="url" rel="index"><span itemprop="name">Flutter</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/09/11/flutter-from-mobile-to-web-migration-tips-conditional-import/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一篇有提到真的有重要的功能不支援web的情況下，可以採用conditional import的方式，在不同平台運行不同的程式片段，避免使用過多的平台判斷邏輯造成程式碼過長，或是在compile階段出現error。</p>
+<p>假設今天要實作一個platform判斷邏輯，因為我們已經知道web平台不支援dart:io，且其他的平台(ios, android等)都可以用dart:io.Platform。所以設計的邏輯為，當dart:io能被使用時採用dart:io.Platform判斷運行平台，否則即判定為web。</p>
+<p>首先可以先作一個簡單的列舉項目PlatformType，用來比較platform判斷結果。接著設計一個PlatformCheck類別，並實作類似dart:io的isPlatform檢查。而checkPlatform函式會實作在拆出去的platform_web或platform_io兩個dart裡面。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// platform_type.dart</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;platform_web.dart&#x27;</span> <span class="keyword">if</span> (dart.<span class="keyword">library</span>.io) <span class="string">&#x27;platform_io.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> PlatformType &#123;</span><br><span class="line">  WEB,</span><br><span class="line">  ANDROID,</span><br><span class="line">  IOS</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PlatformCheck</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isWeb() =&gt; checkPlatform() == PlatformType.WEB;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isAndroid() =&gt; checkPlatform() == PlatformType.ANDROID;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isIos() =&gt; checkPlatform() == PlatformType.IOS;</span><br><span class="line">  <span class="comment">// ...other platform</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>回頭看開頭的conditional import，我們想到達成的效果為，如果可以使用dart.library.io的話就import platform_io.dart，不行的話則import platform_web.dart。</p>
+<p>所以只要分別在platform_io.dart實作非web平台的checkPlatform函式，接著在platform_web.dart實作web平台的checkPlatform函式即可。<br>如果今天app是運行在可以使用dart:io的非web平台上，platform_io.dart就會被import進來，接著就可以在checkPlatform裡面實作使用dart:io.Platform的平台判斷邏輯。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// platform_io.dart</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span> <span class="keyword">show</span> Platform;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:webapp/platform_type.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line">PlatformType checkPlatform() &#123;</span><br><span class="line">  <span class="keyword">if</span> (Platform.isIOS) <span class="keyword">return</span> PlatformType.IOS;</span><br><span class="line">  <span class="keyword">if</span> (Platform.isAndroid) <span class="keyword">return</span> PlatformType.ANDROID;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> PlatformType.IOS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果app是運行在不能使用dart:io的web平台上，會變成import platform_web.dart，因為目前只有web平台無法使用dart:io，所以如果是web情況下checkPlatform就不作其他的邏輯判斷，直接回傳是web。</p>
+<p>到這裡可以再往回看一次，如果是運行在web平台上，在程式compile時就完全不會import到platform_io.dart，可以避免在web平台上import dart:io造成的compile錯誤。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// platform_web.dart</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:webapp/platform_type.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line">PlatformType checkPlatform() &#123;</span><br><span class="line">  <span class="keyword">return</span> PlatformType.WEB;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最後只要import自己寫的platform_type.dart，就可以用以下的語法達成跨平台的platform檢查。如果今天app是運行在web之下，就會回傳web。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> currPlatform = <span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (PlatformCheck.isWeb()) currPlatform = <span class="string">&#x27;Web&#x27;</span>;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (PlatformCheck.isAndroid()) currPlatform = <span class="string">&#x27;Android&#x27;</span>;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (PlatformCheck.isIos()) currPlatform = <span class="string">&#x27;iOS&#x27;</span>;</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; WEB</span><br></pre></td></tr></table></figure>
+
+<p>如果專案在考量到web平台下，勢必會遇一個功能在不同的平台上要運行不同的package或是程式片段的跨平台問題。比起使用多個if-else的platform判斷邏輯，再把所有程式碼都寫進每個if-else中，使用conditaional import的方式可以有效的規劃程式碼，也可以避免import到平台不支援的package造成的compile錯誤。</p>
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://medium.com/flutter-community/conditional-imports-across-flutter-and-web-4b88885a886e">Conditional imports across Flutter and Web</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2021/08/07/flutter-from-mobile-to-web-migration-tips-package-compatibility/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1419,142 +1531,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2020/01/09/Machine-Learning-Techniques-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/09/Machine-Learning-Techniques-1/" class="post-title-link" itemprop="url">機器學習技法(Machine Learning Techniques)第一講筆記</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2020-01-09 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-09T00:00:00+08:00">2020-01-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:41:31" itemprop="dateModified" datetime="2021-05-11T23:41:31+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/01/09/Machine-Learning-Techniques-1/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/09/Machine-Learning-Techniques-1/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>機器學習技法是林軒田老師的開的機器學習後半堂課，主要在延續前面機器學習的基礎理論，並延申出不同的機器學習模型介紹。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/CourseOutline.JPG" class="" width="500">
-
-<p>而這堂課主要圍繞在特徵轉換上並分三個面向探討，分別為(1)如果處理大量且高複雜度的特徵轉換(2)找出具有預測性質的特徵來提升模型表現(3)找出資料中的隱藏特徵讓機器學習表現更好。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/NoiseTolerateHyperplane.JPG" class="" width="500">
-
-<p>在線性可分的問題中，前面的課程有教過可以透過PLA或是POCKET來找到分開的超平面，但PLA在求解的過程中會得到很多種解，究竟怎麼樣的切線才會是比較好的切線呢？如果以雜訊的容忍度來看，當資料產生時可能會存在或多或少的雜訊(例如從實體感測器訊號收資料時，可能會有震盪或是偏移的現象)，而雜訊是模型過擬合的因素之一。因此如果要讓模型對雜訊的容忍度最大，那麼就要讓超平面能夠離點越遠越好。例如最右邊的超平面能離點最遠，雜訊的容忍度(灰色區域)也最大。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/LargestMarginHyperplane.JPG" class="" width="500">
-
-<p>換個方式來，這會是一個最佳化問題，而最好的線須要滿足兩大條件: (1)能作出最大邊界(Margin) (2)可以把不同的類別分對。其中灰色區域的算法，是把每個點和超平面計算距離後取最小距離。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/DistanceHyperplane.JPG" class="" width="500">
-
-<p>距離的計算方法，可以想像在平面上有兩個點構成的向量，而w乘上平面上的向量為0，所以w為垂直於平面上的法向量。當有一個x要計算x和平面的距離，即為x和平面上任一個點構成的向量，並對垂直於平面的向量作投影，即為對w方向的投影。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/DistanceSeperateHyperplane.JPG" class="" width="500">
-
-<p>因為要找的是一個可以區分出正確類別的分割超平面，所以可以拆掉距離的絕對值，變成乘上y大於0(即為分割正確時值皆會大於0，如果類別分錯乘上y會小於0)</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/SpecialSpearateHyperplanea.JPG" class="" width="500">
-
-<p>為了簡化式子，假設將式子放縮到最小值會等於1，那margin就會簡化為成1/|w|，並從求margin的最小值，變成分數乘上y的最小值要等於1。而且因為其條件已經滿足大於0，所以可以再拿掉一條分數乘上y要大於0的限制式。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/StandardLargeMarginHyperplane.JPG" class="" width="500">
-
-<p>為了再簡化限制式條件，限制式條件可以再從最小值為1，放寬為分數乘上y大於等於1，而且這個放寬並不會違反原本的限制式。老師這裡舉了一個例子，假設找出來的解為大於等於1.126並且不滿足等於1的條件，這時候如果把b和w除上1.126作放縮讓他滿足原本的條件，會因為w變小而使得目標式變大。這個證明在說如果找出來的解不滿於原本等於1的條件下，就不會是最佳解，因此可以對限制式條件作放寬。最後再將最大化的問題轉為求最小值(倒數)，得到最後的簡化的最佳化問題。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/SVM.JPG" class="" width="500">
-
-<p>如果要找到最佳的平面，只要找到最靠近平面的點就行了，而這些點被稱為支撐向量(support vector)，就像是這個超平面是由最靠近的點所支撐起來般，這也是SVM的概念。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/SolveSVM.JPG" class="" width="500">
-
-<p>因為svm要找到的最佳值是w的兩次函數，且限制式為b和w的一次式，有這樣的限制非常適合使用二次規畫作最佳化。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/WhyLargeMarginHyperplane.JPG" class="" width="500">
-
-<p>但為什麼svm可以作的好呢，老師這邊以兩個面向來說明使用svm會讓Ein和Eout越接近，且不容易overfit泛化性更佳。</p>
-<p>之前在提到regularization的時候講到，為了讓Ein越小但又不希望造成overfit，於是加上w的限制條件限制其範圍。而svm剛好對調，svm是要讓w的長度越小且限制讓所有的類別的資料分對，所以svm和regularization是一體兩面，svm找出來的灰色區域讓為了容忍雜訊對模型的干擾。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/LargeMarginRestrictDichotomy.JPG" class="" width="500">
-
-<p>假設平面上有三個點，如果是原本的pla，在任意切線上可以找到所有的類別組合(共八種)。但使用svm考量到需要維持最大特定margin區域情況，所以沒有辦法作出所有的類別排列組合。在vc維的介紹有講到，如果能作出的dichotomies越少，vc維就越小，Ein和Eout就會越接近，即泛化能力越好。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/BenefitSVM.JPG" class="" width="500">
-
-<p>從上面兩個面向來看，svm可以帶來本質上泛化性更佳的好處，並且在加上特徵轉換的方法後，non-linear的svm可以同時辦到將Ein(即分對不同類別)與Eout(泛化能力)作好。</p>
-<img src="/2020/01/09/Machine-Learning-Techniques-1/SummaryLecture1.JPG" class="" width="500">
-
-<p>這一講主要在說明如何從邊界分類問題延申出最大margin提供更強健的方法來容忍雜訊，並作svm最大margin的最佳化式子推導，最後提到最大margin帶來本值上的好處在於可以提高更佳的泛化能力。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/201_handout.pdf">Machine Learning Techniques 1</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1626,7 +1602,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">59</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1639,7 +1615,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-count">47</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -1674,7 +1650,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

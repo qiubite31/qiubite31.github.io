@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="上一篇透過Langchain SQL Agent建立資料問答系統中使用了Langchain的create_sql_agent來建立SQL Agent。Langchain在實作這個SQL Agent背後的使用了create_react_agent，這是基於2022年的paper “ReAct: Synergizing Reasoning and Acting in Language Models”的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用大型語言模型(LLM)完成Text-to-SQL任務 - Langchain SQL Agent背後的ReAct Prompting">
+<meta property="og:url" content="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="上一篇透過Langchain SQL Agent建立資料問答系統中使用了Langchain的create_sql_agent來建立SQL Agent。Langchain在實作這個SQL Agent背後的使用了create_react_agent，這是基於2022年的paper “ReAct: Synergizing Reasoning and Acting in Language Models”的">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case1.png">
+<meta property="og:image" content="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case2.png">
+<meta property="article:published_time" content="2025-01-02T14:26:12.000Z">
+<meta property="article:modified_time" content="2025-01-19T06:00:23.889Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="SQL">
+<meta property="article:tag" content="Text-to-SQL">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="prompt">
+<meta property="article:tag" content="ReAct Prompting">
+<meta property="article:tag" content="LangChain">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Gemini">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case1.png">
+
+<link rel="canonical" href="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>使用大型語言模型(LLM)完成Text-to-SQL任務 - Langchain SQL Agent背後的ReAct Prompting | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用大型語言模型(LLM)完成Text-to-SQL任務 - Langchain SQL Agent背後的ReAct Prompting
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2025-01-02 22:26:12" itemprop="dateCreated datePublished" datetime="2025-01-02T22:26:12+08:00">2025-01-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2025-01-19 14:00:23" itemprop="dateModified" datetime="2025-01-19T14:00:23+08:00">2025-01-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LLM/" itemprop="url" rel="index"><span itemprop="name">LLM</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>上一篇<a href="/2024/12/05/text-to-sql-by-llm-using-langchain-sql-agent/">透過Langchain SQL Agent建立資料問答系統</a>中使用了Langchain的create_sql_agent來建立SQL Agent。Langchain在實作這個SQL Agent背後的使用了<a target="_blank" rel="noopener" href="https://python.langchain.com/api_reference/langchain/agents/langchain.agents.react.agent.create_react_agent.html">create_react_agent</a>，這是基於2022年的paper “ReAct: Synergizing Reasoning and Acting in Language Models”的實作，雖然這個版本是比較早期的實作現在並不適合拿來使用在production環境，但仍可以透過瞭解SQL Agent是怎麼基於ReAct prompting技巧運作的。</p>
+<h4 id="ReAct-Prompting"><a href="#ReAct-Prompting" class="headerlink" title="ReAct Prompting"></a>ReAct Prompting</h4><p>ReAct Prompting包含了兩個部份，分別是Reasoning和Acting。主要是讓LLM能夠透過交錯的方式產生推理的過程(Reasoning traces)和執行特定任務的動作(task-specific actions)。在產生推理時可以讓LLM針對推理的結果，更新並產生新的執行任務的動作，同時允許LLM在執行任務時可以和外部的工具互動，以取得更具信賴且真實的資訊。</p>
+<h5 id="Hotspot-QA"><a href="#Hotspot-QA" class="headerlink" title="Hotspot QA"></a>Hotspot QA</h5><img src="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case1.png" class="" width="500">
+
+<p>上面是論文中使用的問題「Aside from the Apple Remote, what other devices can control the program Apple Remote was originally designed to interact with?」讓LLM透過ReAct解決問題的推論與執行動作過程。可以看到在找到答案前，每次都會進行思考(Though)、行動(Action)和觀察(Observation)。所以模型會在每一次作完動作得到的觀察結果(例如搜尋結果)後，思考下一步該作什麼動作(例如搜尋某個資訊)。</p>
+<h5 id="AlfWorld"><a href="#AlfWorld" class="headerlink" title="AlfWorld"></a>AlfWorld</h5><img src="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case2.png" class="" width="500">
+
+<p>第二個例子是應用在決策任務中，在決策任務中會包含了更複雜的互動環境，因此更需要透過有效的推論過程和執行動作，讓模型最後能完成正確的任務。在解決AlfWorld的問題「You are in the middle of a room. Looking quickly around you, you see a cabinet 6, a cabinet 1, a coffee machine 1, a countertop 3, a stove burner 1, and a toaster 1. Your task is to: Put some pepper shaker on a drawer.」可以看到在中間加入思考推論後，能讓模型正確的把最後的目標拆解更小的目標來完成最終的任務。</p>
+<h4 id="ReAct-Prompting-in-SQL-Agent"><a href="#ReAct-Prompting-in-SQL-Agent" class="headerlink" title="ReAct Prompting in SQL Agent"></a>ReAct Prompting in SQL Agent</h4><p>接著我們來看一下在Langchain裡面<a target="_blank" rel="noopener" href="https://api.python.langchain.com/en/latest/_modules/langchain_community/agent_toolkits/sql/base.html#create_sql_agent">SQL Agent</a>用到的ReAct prompting預設是怎麼設計的。在prompt的template組成總共會有四個部份，分別為database prompt，tools，ReAct instructions和Begin and Scratchpad。</p>
+<h5 id="Database-Prompt"><a href="#Database-Prompt" class="headerlink" title="Database Prompt"></a>Database Prompt</h5><p>第一個部份是整個prompt的prefix，和<a href="/2024/11/15/text-to-sql-by-llm-using-langchain-sql-chain-explain#%E5%92%8CLLM%E4%BA%92%E5%8B%95%E7%9A%84prompt">SQL Chain</a>一樣由Database Prompt組成，會需要置換的參數為dialect、top_k，這裡和SQL Chain一樣。</p>
+<figure class="highlight plaintext"><figcaption><span>Database Prompt</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">You are an agent designed to interact with a SQL database.</span><br><span class="line">Given an input question, create a syntactically correct &#123;dialect&#125; query to run, then look at the results of the query and return the answer.</span><br><span class="line">Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most &#123;top_k&#125; results.</span><br><span class="line">You can order the results by a relevant column to return the most interesting examples in the database.</span><br><span class="line">Never query for all the columns from a specific table, only ask for the relevant columns given the question.</span><br><span class="line">You have access to tools for interacting with the database.</span><br><span class="line">Only use the below tools. Only use the information returned by the below tools to construct your final answer.</span><br><span class="line">You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.</span><br><span class="line"></span><br><span class="line">DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.</span><br><span class="line"></span><br><span class="line">If the question does not seem related to the database, just return &quot;I don&#x27;t know&quot; as the answer.</span><br></pre></td></tr></table></figure>
+
+<h5 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h5><p>第二個部份為所有提供給模型使用的tool與描述，這裡總共提供四種tool，分別為執行SQL(sql_db_query)、查詢Schema(sql_db_schema)、查詢資料表(sql_db_list_tables)和驗證SQL查詢(sql_db_query_checker)。模型會在推論中決定下一個要使用哪一個tool來執行動作。</p>
+<figure class="highlight plaintext"><figcaption><span>Toolkit</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sql_db_query - Input to this tool is a detailed and correct SQL query, output is a result from the database. If the query is not correct, an error message will be returned. If an error is returned, rewrite the query, check the query, and try again. If you encounter an issue with Unknown column &#x27;xxxx&#x27; in &#x27;field list&#x27;, use sql_db_schema to query the correct table fields.</span><br><span class="line">sql_db_schema - Input to this tool is a comma-separated list of tables, output is the schema and sample rows for those tables. Be sure that the tables actually exist by calling sql_db_list_tables first! Example Input: table1, table2, table3</span><br><span class="line">sql_db_list_tables - Input is an empty string, output is a comma-separated list of tables in the database.</span><br><span class="line">sql_db_query_checker - Use this tool to double check if your query is correct before executing it. Always use this tool before executing a query with sql_db_query!</span><br></pre></td></tr></table></figure>
+
+<h5 id="ReAct-Instruction"><a href="#ReAct-Instruction" class="headerlink" title="ReAct Instruction"></a>ReAct Instruction</h5><p>第三個部份為ReAct prompting主要的格式，會告訴模型須要進行Thought-Action-Action Input-Observation的循環，直到找到最終的答案。這裡的tool_names參數即為第二部份所有的tool名稱集合。</p>
+<p>模型會根據推論(Though)決定執行的行動(Action)，並產生行動輸入(Action Input)。在這裡執行的行動即為使用其中一個tool，而行動輸入就是tool的輸入參數。在執行完行動後的結果就是會產生觀察(Observation)，而模型根據觀察再進行下一步思考推論(Though)，並反覆直到完成任務。</p>
+<figure class="highlight plaintext"><figcaption><span>ReAct Format and Instructions</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Use the following format:</span><br><span class="line"></span><br><span class="line">Question: the input question you must answer</span><br><span class="line">Thought: you should always think about what to do</span><br><span class="line">Action: the action to take, should be one of [&#123;tool_names&#125;]</span><br><span class="line">Action Input: the input to the action</span><br><span class="line">Observation: the result of the action</span><br><span class="line">... (this Thought/Action/Action Input/Observation can repeat N times)</span><br><span class="line">Thought: I now know the final answer</span><br><span class="line">Final Answer: the final answer to the original input question</span><br></pre></td></tr></table></figure>
+
+<h5 id="Begin-and-Scratchpad"><a href="#Begin-and-Scratchpad" class="headerlink" title="Begin and Scratchpad"></a>Begin and Scratchpad</h5><p>第四個部份為Begin與Scratchpad，在這裡會有任務起始的資訊，包含了要回答的問題、最一開始的起始推論，還有儲存推論和行動的暫存器用來紀錄縱跡歷程。這裡的參數共有兩個，第一個input為輸入的問題，第二個agent_scratchpad會紀錄每次的Question-Thought-Action-Action Input-Observation紀錄。</p>
+<figure class="highlight plaintext"><figcaption><span>Begin/Input/Scratchpad</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Begin!</span><br><span class="line"></span><br><span class="line">Question: &#123;input&#125;</span><br><span class="line">Thought: I should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span><br><span class="line">&#123;agent_scratchpad&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="完整的SQL-Agent-Prompting"><a href="#完整的SQL-Agent-Prompting" class="headerlink" title="完整的SQL Agent Prompting"></a>完整的SQL Agent Prompting</h5><p>以下是使用sqlite範例的完整prompt，其中input會在invoke的時候帶入，而scratchpad會在模型每一次的推論與動作執行紀錄下來。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">You are an agent designed to interact with a SQL database.</span><br><span class="line">Given an input question, create a syntactically correct sqlite query to run, then look at the results of the query and return the answer.</span><br><span class="line">Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most 10 results.</span><br><span class="line">You can order the results by a relevant column to return the most interesting examples in the database.</span><br><span class="line">Never query for all the columns from a specific table, only ask for the relevant columns given the question.</span><br><span class="line">You have access to tools for interacting with the database.</span><br><span class="line">Only use the below tools. Only use the information returned by the below tools to construct your final answer.</span><br><span class="line">You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.</span><br><span class="line"></span><br><span class="line">DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.</span><br><span class="line"></span><br><span class="line">If the question does not seem related to the database, just return &quot;I don&#x27;t know&quot; as the answer.</span><br><span class="line"></span><br><span class="line">You have access to the following tools:</span><br><span class="line"></span><br><span class="line">sql_db_query - Input to this tool is a detailed and correct SQL query, output is a result from the database. If the query is not correct, an error message will be returned. If an error is returned, rewrite the query, check the query, and try again. If you encounter an issue with Unknown column &#x27;xxxx&#x27; in &#x27;field list&#x27;, use sql_db_schema to query the correct table fields.</span><br><span class="line">sql_db_schema - Input to this tool is a comma-separated list of tables, output is the schema and sample rows for those tables. Be sure that the tables actually exist by calling sql_db_list_tables first! Example Input: table1, table2, table3</span><br><span class="line">sql_db_list_tables - Input is an empty string, output is a comma-separated list of tables in the database.</span><br><span class="line">sql_db_query_checker - Use this tool to double check if your query is correct before executing it. Always use this tool before executing a query with sql_db_query!</span><br><span class="line"></span><br><span class="line">Use the following format:</span><br><span class="line"></span><br><span class="line">Question: the input question you must answer</span><br><span class="line">Thought: you should always think about what to do</span><br><span class="line">Action: the action to take, should be one of [sql_db_query, sql_db_schema, sql_db_list_tables, sql_db_query_checker]</span><br><span class="line">Action Input: the input to the action</span><br><span class="line">Observation: the result of the action</span><br><span class="line">... (this Thought/Action/Action Input/Observation can repeat N times)</span><br><span class="line">Thought: I now know the final answer</span><br><span class="line">Final Answer: the final answer to the original input question</span><br><span class="line"></span><br><span class="line">Begin!</span><br><span class="line"></span><br><span class="line">Question: &#123;input&#125;</span><br><span class="line">Thought: I should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span><br><span class="line">&#123;agent_scratchpad&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Scratchpad的過程說明可以參考<a href="/2024/12/05/text-to-sql-by-llm-using-langchain-sql-agent#SQLAgent%E5%9F%B7%E8%A1%8C%E9%81%8E%E7%A8%8B">SQL Agent執行過程</a>，完整的Scratchpad如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">Thought: I should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span><br><span class="line">Action: sql_db_list_tables</span><br><span class="line">Action Input: </span><br><span class="line">Observation: Album, Artist, Customer, Employee, Genre, Invoice, InvoiceLine, MediaType, Playlist, PlaylistTrack, Track</span><br><span class="line">Thought: Thought: The `Employee` table likely contains information about employees. I&#x27;ll check its schema.</span><br><span class="line">Action: sql_db_schema</span><br><span class="line">Action Input: Employee</span><br><span class="line">Observation: </span><br><span class="line">CREATE TABLE &quot;Employee&quot; (</span><br><span class="line">	&quot;EmployeeId&quot; INTEGER NOT NULL, </span><br><span class="line">	&quot;LastName&quot; NVARCHAR(20) NOT NULL, </span><br><span class="line">	&quot;FirstName&quot; NVARCHAR(20) NOT NULL, </span><br><span class="line">	&quot;Title&quot; NVARCHAR(30), </span><br><span class="line">	&quot;ReportsTo&quot; INTEGER, </span><br><span class="line">	&quot;BirthDate&quot; DATETIME, </span><br><span class="line">	&quot;HireDate&quot; DATETIME, </span><br><span class="line">	&quot;Address&quot; NVARCHAR(70), </span><br><span class="line">	&quot;City&quot; NVARCHAR(40), </span><br><span class="line">	&quot;State&quot; NVARCHAR(40), </span><br><span class="line">	&quot;Country&quot; NVARCHAR(40), </span><br><span class="line">	&quot;PostalCode&quot; NVARCHAR(10), </span><br><span class="line">	&quot;Phone&quot; NVARCHAR(24), </span><br><span class="line">	&quot;Fax&quot; NVARCHAR(24), </span><br><span class="line">	&quot;Email&quot; NVARCHAR(60), </span><br><span class="line">	PRIMARY KEY (&quot;EmployeeId&quot;), </span><br><span class="line">	FOREIGN KEY(&quot;ReportsTo&quot;) REFERENCES &quot;Employee&quot; (&quot;EmployeeId&quot;)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">3 rows from Employee table:</span><br><span class="line">EmployeeId	LastName	FirstName	Title	ReportsTo	BirthDate	HireDate	Address	City	State	Country	PostalCode	Phone	Fax	Email</span><br><span class="line">1	Adams	Andrew	General Manager	None	1962-02-18 00:00:00	2002-08-14 00:00:00	11120 Jasper Ave NW	Edmonton	AB	Canada	T5K 2N1	+1 (780) 428-9482	+1 (780) 428-3457	andrew@chinookcorp.com</span><br><span class="line">2	Edwards	Nancy	Sales Manager	1	1958-12-08 00:00:00	2002-05-01 00:00:00	825 8 Ave SW	Calgary	AB	Canada	T2P 2T3	+1 (403) 262-3443	+1 (403) 262-3322	nancy@chinookcorp.com</span><br><span class="line">3	Peacock	Jane	Sales Support Agent	2	1973-08-29 00:00:00	2002-04-01 00:00:00	1111 6 Ave SW	Calgary	AB	Canada	T2P 5M5	+1 (403) 262-3443	+1 (403) 262-6712	jane@chinookcorp.com</span><br><span class="line">*/</span><br><span class="line">Thought: Thought: I can count the number of rows in the Employee table to find the number of employees.</span><br><span class="line">Action: sql_db_query</span><br><span class="line">Action Input: SELECT COUNT(*) FROM Employee;</span><br><span class="line">Observation: [(8,)]</span><br><span class="line">Thought: I now know the final answer\nFinal Answer: There are 8 employees. </span><br></pre></td></tr></table></figure>
+
+
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2210.03629">ReAct: Synergizing Reasoning and Acting in Language Models</a><br><a target="_blank" rel="noopener" href="https://www.promptingguide.ai/techniques/react">ReAct Prompting</a><br><a target="_blank" rel="noopener" href="https://python.langchain.com/api_reference/langchain/agents/langchain.agents.react.agent.create_react_agent.html">create_react_agent</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/SQL/" rel="tag"># SQL</a>
+              <a href="/tags/Text-to-SQL/" rel="tag"># Text-to-SQL</a>
+              <a href="/tags/LLM/" rel="tag"># LLM</a>
+              <a href="/tags/prompt/" rel="tag"># prompt</a>
+              <a href="/tags/ReAct-Prompting/" rel="tag"># ReAct Prompting</a>
+              <a href="/tags/LangChain/" rel="tag"># LangChain</a>
+              <a href="/tags/Agent/" rel="tag"># Agent</a>
+              <a href="/tags/Gemini/" rel="tag"># Gemini</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/12/05/text-to-sql-by-llm-using-langchain-sql-agent/" rel="prev" title="使用大型語言模型(LLM)完成Text-to-SQL任務 - 透過Langchain SQL Agent建立資料問答系統">
+      <i class="fa fa-chevron-left"></i> 使用大型語言模型(LLM)完成Text-to-SQL任務 - 透過Langchain SQL Agent建立資料問答系統
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#ReAct-Prompting"><span class="nav-number">1.</span> <span class="nav-text">ReAct Prompting</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Hotspot-QA"><span class="nav-number">1.1.</span> <span class="nav-text">Hotspot QA</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AlfWorld"><span class="nav-number">1.2.</span> <span class="nav-text">AlfWorld</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReAct-Prompting-in-SQL-Agent"><span class="nav-number">2.</span> <span class="nav-text">ReAct Prompting in SQL Agent</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Database-Prompt"><span class="nav-number">2.1.</span> <span class="nav-text">Database Prompt</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Tools"><span class="nav-number">2.2.</span> <span class="nav-text">Tools</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ReAct-Instruction"><span class="nav-number">2.3.</span> <span class="nav-text">ReAct Instruction</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Begin-and-Scratchpad"><span class="nav-number">2.4.</span> <span class="nav-text">Begin and Scratchpad</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84SQL-Agent-Prompting"><span class="nav-number">2.5.</span> <span class="nav-text">完整的SQL Agent Prompting</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/";
+    this.page.identifier = "2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/";
+    this.page.title = "使用大型語言模型(LLM)完成Text-to-SQL任務 - Langchain SQL Agent背後的ReAct Prompting";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : 'dd6d68590ad35526cca603ad699b3589',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
