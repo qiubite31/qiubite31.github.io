@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="上一篇說明Langchain的SQL Agent範例如何透過ReAct Prompting實作，而目前LLM其實都已經具有Function Calling的能力，比起要解析LLM回傳的Action和Action Input再另外執行，直接透過Function Calling的效果其實更好。甚至目前的LLM能力已經可以在不強迫產生Thought的推論動作下模型就能順利解決問題。      Intro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用大型語言模型(LLM)完成Text-to-SQL任務 - 使用Function Calling">
+<meta property="og:url" content="https://qiubite31.github.io/2025/01/26/text-to-sql-by-llm-using-function-calling/index.html">
+<meta property="og:site_name" content="Drake&#39;s">
+<meta property="og:description" content="上一篇說明Langchain的SQL Agent範例如何透過ReAct Prompting實作，而目前LLM其實都已經具有Function Calling的能力，比起要解析LLM回傳的Action和Action Input再另外執行，直接透過Function Calling的效果其實更好。甚至目前的LLM能力已經可以在不強迫產生Thought的推論動作下模型就能順利解決問題。      Intro">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://qiubite31.github.io/2025/01/26/text-to-sql-by-llm-using-function-calling/Gemini-Function-Calling.png">
+<meta property="article:published_time" content="2025-01-26T15:05:51.000Z">
+<meta property="article:modified_time" content="2025-01-26T18:15:05.715Z">
+<meta property="article:author" content="Drake">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="SQL">
+<meta property="article:tag" content="Text-to-SQL">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="ReAct Prompting">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Gemini">
+<meta property="article:tag" content="Function Calling">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiubite31.github.io/2025/01/26/text-to-sql-by-llm-using-function-calling/Gemini-Function-Calling.png">
+
+<link rel="canonical" href="https://qiubite31.github.io/2025/01/26/text-to-sql-by-llm-using-function-calling/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-TW'
+  };
+</script>
+
+  <title>使用大型語言模型(LLM)完成Text-to-SQL任務 - 使用Function Calling | Drake's</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82135937-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-82135937-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Drake's</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜尋..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2025/01/26/text-to-sql-by-llm-using-function-calling/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用大型語言模型(LLM)完成Text-to-SQL任務 - 使用Function Calling
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2025-01-26 23:05:51" itemprop="dateCreated datePublished" datetime="2025-01-26T23:05:51+08:00">2025-01-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2025-01-27 02:15:05" itemprop="dateModified" datetime="2025-01-27T02:15:05+08:00">2025-01-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LLM/" itemprop="url" rel="index"><span itemprop="name">LLM</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2025/01/26/text-to-sql-by-llm-using-function-calling/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2025/01/26/text-to-sql-by-llm-using-function-calling/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>上一篇說明<a href="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/">Langchain的SQL Agent範例如何透過ReAct Prompting</a>實作，而目前LLM其實都已經具有Function Calling的能力，比起要解析LLM回傳的Action和Action Input再另外執行，直接透過Function Calling的效果其實更好。甚至目前的LLM能力已經可以在不強迫產生Thought的推論動作下模型就能順利解決問題。</p>
+<img src="/2025/01/26/text-to-sql-by-llm-using-function-calling/Gemini-Function-Calling.png" class="" width="500">
+
+<div align="center">
+  <a target="_blank" rel="noopener" href="https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling/">Introduction to function calling</a>
+</div>
+
+<p>Function Calling可以允許LLM使用外部的API或Function，以克服無法取得最新知識或是外部資料的限制。只要將prompt和可以允許執行的Function提供給LLM，模型就能在處理prompt時選擇能夠處理當下任務的Function並得到回傳資訊。在取得Function所提供的外部回傳資訊後，可以再提供給模型作最後的回答。</p>
+<p>下面使用Langchain的SQLDatabase提供執行的Function，與Gemini的Function Calling完成Text-to-SQL任務。</p>
+<p>首先建立Chinook資料庫，並使用langchain的SQLDatabase建立資料庫的查詢引擎：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下載 SQL 腳本</span></span><br><span class="line">url = <span class="string">&quot;https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql&quot;</span></span><br><span class="line">response = requests.get(url)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 儲存 SQL 腳本到本地檔案</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Chinook_Sqlite.sql&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(response.text)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 連接到 SQLite 資料庫 (會自動建立資料庫檔案)</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;Chinook.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 執行 SQL 腳本來建立資料庫</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Chinook_Sqlite.sql&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    cursor.executescript(f.read())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提交變更並關閉連接</span></span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_community.utilities <span class="keyword">import</span> SQLDatabase</span><br><span class="line"><span class="comment"># 準備sqlite db</span></span><br><span class="line">db = SQLDatabase.from_uri(<span class="string">&quot;sqlite:///Chinook.db&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Gemini會使用function name, docstring, parameters和parameter type annotations來決定是否要使用特定的函式來回答問題。這裡借用Langchain的SQLDatabase的三個Function並寫好docstring和parameter。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sql_db_list_tables</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Tool for getting tables names.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        Input is an empty string</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;, &quot;</span>.join(db.get_usable_table_names());</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sql_db_schema</span>(<span class="params">table_names: <span class="built_in">str</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Tool for getting metadata about a SQL database. Get the schema and sample rows for the specified SQL tables.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        table_names: A comma-separated list of the table names for which to return the schema.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> db.get_table_info_no_throw(</span><br><span class="line">            [t.strip() <span class="keyword">for</span> t <span class="keyword">in</span> table_names.split(<span class="string">&quot;,&quot;</span>)]</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sql_db_query</span>(<span class="params">query: <span class="built_in">str</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Tool for querying a SQL database. Execute a SQL query against the database and get back the result..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        query: A detailed and correct SQL query.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> db.run_no_throw(query)</span><br></pre></td></tr></table></figure>
+
+<p>接著設定function calling config，這裡設定成ANY會強迫讓模型使用提供的Function，並提供以上三個Function。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> google.generativeai.types <span class="keyword">import</span> content_types</span><br><span class="line"><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterable</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tool_config_from_mode</span>(<span class="params">mode: <span class="built_in">str</span>, fns: Iterable[<span class="built_in">str</span>] = (<span class="params"></span>)</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Create a tool config with the specified function calling mode.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> content_types.to_tool_config(</span><br><span class="line">        &#123;<span class="string">&quot;function_calling_config&quot;</span>: &#123;<span class="string">&quot;mode&quot;</span>: mode, <span class="string">&quot;allowed_function_names&quot;</span>: fns&#125;&#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">sql_tool_dict = &#123;</span><br><span class="line">    <span class="string">&quot;sql_db_query&quot;</span>: sql_db_query,</span><br><span class="line">    <span class="string">&quot;sql_db_schema&quot;</span>: sql_db_schema,</span><br><span class="line">    <span class="string">&quot;sql_db_list_tables&quot;</span>: sql_db_list_tables</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tool_config = tool_config_from_mode(mode=<span class="string">&quot;any&quot;</span>, fns=<span class="built_in">list</span>(sql_tool_dict.keys()))</span><br></pre></td></tr></table></figure>
+
+<p>以下參考Langchain的prompt內容並擷取prefix當作instruction還有輸入的問題為input。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">instruction = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">You are an agent designed to interact with a SQL database.</span></span><br><span class="line"><span class="string">Given an input question, create a syntactically correct sqlite query to run, then look at the results of the query and return the answer.</span></span><br><span class="line"><span class="string">Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most 10 results.</span></span><br><span class="line"><span class="string">You can order the results by a relevant column to return the most interesting examples in the database.</span></span><br><span class="line"><span class="string">Never query for all the columns from a specific table, only ask for the relevant columns given the question.</span></span><br><span class="line"><span class="string">You have access to tools for interacting with the database.</span></span><br><span class="line"><span class="string">Only use the below tools. Only use the information returned by the below tools to construct your final answer.</span></span><br><span class="line"><span class="string">You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">If the question does not seem related to the database, just return &quot;I don&#x27;t know&quot; as the answer.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">First, You should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">text2sql_input = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">How many employees are there?</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果使用generate_content會需要手動管理與模型的互動，所以這裡會把將instruction、prompt和tools提供給模型並與模型建立chat session，其中將enable_automatic_function_calling設成True時會允許模型自己呼叫我們所提供的Function。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Configure Gemini</span></span><br><span class="line">genai.configure(api_key=GEMINI_API_KEY)</span><br><span class="line">model = genai.GenerativeModel(model_name=<span class="string">&#x27;gemini-1.5-flash&#x27;</span>, \</span><br><span class="line">                system_instruction=instruction, \</span><br><span class="line">                tools=<span class="built_in">list</span>(sql_tool_dict.values()))</span><br><span class="line"></span><br><span class="line">chat = model.start_chat(enable_automatic_function_calling=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">response = chat.send_message(text2sql_input)</span><br><span class="line">response.text</span><br></pre></td></tr></table></figure>
+
+<p>最後可以從模型得到正確回答「There are 8 employees.」。</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There are 8 employees.</span><br></pre></td></tr></table></figure>
+
+<p>可以從以下的chat history看到模型會從input的內容開始，先呼叫查詢所有的資料表後，接著選出Employee資料表查詢schema資訊，最後下一段模型生成出來的SQL查詢後回答最終的答案。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> content <span class="keyword">in</span> chat.history:</span><br><span class="line">    <span class="built_in">print</span>(content.role, <span class="string">&quot;-&gt;&quot;</span>, [<span class="built_in">type</span>(part).to_dict(part) <span class="keyword">for</span> part <span class="keyword">in</span> content.parts])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;-&quot;</span> * <span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">user -&gt; [&#123;&#x27;text&#x27;: &#x27;\nHow many employees are there?\n&#x27;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;function_call&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_list_tables&#x27;, &#x27;args&#x27;: &#123;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">user -&gt; [&#123;&#x27;function_response&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_list_tables&#x27;, &#x27;response&#x27;: &#123;&#x27;result&#x27;: &#x27;Album, Artist, Customer, Employee, Genre, Invoice, InvoiceLine, MediaType, Playlist, PlaylistTrack, Track&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;function_call&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_schema&#x27;, &#x27;args&#x27;: &#123;&#x27;table_names&#x27;: &#x27;Employee&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">user -&gt; [&#123;&#x27;function_response&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_schema&#x27;, &#x27;response&#x27;: &#123;&#x27;result&#x27;: &#x27;\nCREATE TABLE &quot;Employee&quot; (\n\t&quot;EmployeeId&quot; INTEGER NOT NULL, \n\t&quot;LastName&quot; NVARCHAR(20) NOT NULL, \n\t&quot;FirstName&quot; NVARCHAR(20) NOT NULL, \n\t&quot;Title&quot; NVARCHAR(30), \n\t&quot;ReportsTo&quot; INTEGER, \n\t&quot;BirthDate&quot; DATETIME, \n\t&quot;HireDate&quot; DATETIME, \n\t&quot;Address&quot; NVARCHAR(70), \n\t&quot;City&quot; NVARCHAR(40), \n\t&quot;State&quot; NVARCHAR(40), \n\t&quot;Country&quot; NVARCHAR(40), \n\t&quot;PostalCode&quot; NVARCHAR(10), \n\t&quot;Phone&quot; NVARCHAR(24), \n\t&quot;Fax&quot; NVARCHAR(24), \n\t&quot;Email&quot; NVARCHAR(60), \n\tPRIMARY KEY (&quot;EmployeeId&quot;), \n\tFOREIGN KEY(&quot;ReportsTo&quot;) REFERENCES &quot;Employee&quot; (&quot;EmployeeId&quot;)\n)\n\n/*\n3 rows from Employee table:\nEmployeeId\tLastName\tFirstName\tTitle\tReportsTo\tBirthDate\tHireDate\tAddress\tCity\tState\tCountry\tPostalCode\tPhone\tFax\tEmail\n1\tAdams\tAndrew\tGeneral Manager\tNone\t1962-02-18 00:00:00\t2002-08-14 00:00:00\t11120 Jasper Ave NW\tEdmonton\tAB\tCanada\tT5K 2N1\t+1 (780) 428-9482\t+1 (780) 428-3457\tandrew@chinookcorp.com\n2\tEdwards\tNancy\tSales Manager\t1\t1958-12-08 00:00:00\t2002-05-01 00:00:00\t825 8 Ave SW\tCalgary\tAB\tCanada\tT2P 2T3\t+1 (403) 262-3443\t+1 (403) 262-3322\tnancy@chinookcorp.com\n3\tPeacock\tJane\tSales Support Agent\t2\t1973-08-29 00:00:00\t2002-04-01 00:00:00\t1111 6 Ave SW\tCalgary\tAB\tCanada\tT2P 5M5\t+1 (403) 262-3443\t+1 (403) 262-6712\tjane@chinookcorp.com\n*/&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;function_call&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_query&#x27;, &#x27;args&#x27;: &#123;&#x27;query&#x27;: &#x27;SELECT COUNT(*) FROM Employee&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">user -&gt; [&#123;&#x27;function_response&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_query&#x27;, &#x27;response&#x27;: &#123;&#x27;result&#x27;: &#x27;[(8,)]&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;text&#x27;: &#x27;There are 8 employees.&#x27;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling">Generative-AI function-calling</a><br><a target="_blank" rel="noopener" href="https://github.com/google-gemini/cookbook/blob/main/quickstarts/Function_calling.ipynb">Gemini cookbook Function_Calling</a><br><a target="_blank" rel="noopener" href="https://github.com/google-gemini/cookbook/blob/main/quickstarts/Function_calling_config.ipynb">Gemini cookbook Function_Calling_config</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/SQL/" rel="tag"># SQL</a>
+              <a href="/tags/Text-to-SQL/" rel="tag"># Text-to-SQL</a>
+              <a href="/tags/LLM/" rel="tag"># LLM</a>
+              <a href="/tags/ReAct-Prompting/" rel="tag"># ReAct Prompting</a>
+              <a href="/tags/Agent/" rel="tag"># Agent</a>
+              <a href="/tags/Gemini/" rel="tag"># Gemini</a>
+              <a href="/tags/Function-Calling/" rel="tag"># Function Calling</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/" rel="prev" title="使用大型語言模型(LLM)完成Text-to-SQL任務 - Langchain SQL Agent背後的ReAct Prompting">
+      <i class="fa fa-chevron-left"></i> 使用大型語言模型(LLM)完成Text-to-SQL任務 - Langchain SQL Agent背後的ReAct Prompting
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+      <div class="tabs tabs-comment">
+        <ul class="nav-tabs">
+            <li class="tab"><a href="#comment-disqus">disqus</a></li>
+            <li class="tab"><a href="#comment-gitalk">gitalk</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane disqus" id="comment-disqus">
+              
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+            </div>
+            <div class="tab-pane gitalk" id="comment-gitalk">
+              <div class="comments" id="gitalk-container"></div>
+            </div>
+        </div>
+      </div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Drake"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Drake</p>
+  <div class="site-description" itemprop="description">Chase excellence, success will follow!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qiubite31" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qiubite31" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/yu-long-lin/" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;yu-long-lin&#x2F;" rel="noopener" target="_blank"><i class="fab fa-linkedin fa-fw"></i>Linkedin</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Drake</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 強力驅動
+  </div>
+
+        
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-firestore.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey   : 'AIzaSyBailFMNgblDDESyjXCS-hLzrVQuP0sUx0',
+      projectId: 'myblog-313416'
+    });
+
+    function getCount(doc, increaseCount) {
+      // IncreaseCount will be false when not in article page
+      return doc.get().then(d => {
+        var count = 0;
+        if (!d.exists) { // Has no data, initialize count
+          if (increaseCount) {
+            doc.set({
+              count: 1
+            });
+            count = 1;
+          }
+        } else { // Has data
+          count = d.data().count;
+          if (increaseCount) {
+            // If first view this article
+            doc.set({ // Increase count
+              count: count + 1
+            });
+            count++;
+          }
+        }
+
+        return count;
+      });
+    }
+
+    function appendCountTo(el) {
+      return count => {
+        el.innerText = count;
+      }
+    }
+  </script>
+  <script>
+    (function() {
+      var db = firebase.firestore();
+      var articles = db.collection('articles');
+
+      if (CONFIG.page.isPost) { // Is article page
+        var title = document.querySelector('.post-title').innerText.trim();
+        var doc = articles.doc(title);
+        var increaseCount = CONFIG.hostname === location.hostname;
+        if (localStorage.getItem(title)) {
+          increaseCount = false;
+        } else {
+          // Mark as visited
+          localStorage.setItem(title, true);
+        }
+        getCount(doc, increaseCount).then(appendCountTo(document.querySelector('.firestore-visitors-count')));
+      } else if (CONFIG.page.isHome) { // Is index page
+        var promises = [...document.querySelectorAll('.post-title')].map(element => {
+          var title = element.innerText.trim();
+          var doc = articles.doc(title);
+          return getCount(doc);
+        });
+        Promise.all(promises).then(counts => {
+          var metas = document.querySelectorAll('.firestore-visitors-count');
+          counts.forEach((val, idx) => {
+            appendCountTo(metas[idx])(val);
+          });
+        });
+      }
+    })();
+  </script>
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dragonlogdown.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://qiubite31.github.io/2025/01/26/text-to-sql-by-llm-using-function-calling/";
+    this.page.identifier = "2025/01/26/text-to-sql-by-llm-using-function-calling/";
+    this.page.title = "使用大型語言模型(LLM)完成Text-to-SQL任務 - 使用Function Calling";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dragonlogdown.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5c8a759a54d2c62d9d15',
+      clientSecret: '911b431c408e3c0ee3c0968375cbd3efdee9abb9',
+      repo        : 'qiubite31.github.io',
+      owner       : 'qiubite31',
+      admin       : ['qiubite31'],
+      id          : '45aa005530ec6597e214a9d595e99d40',
+        language: 'zh-TW',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

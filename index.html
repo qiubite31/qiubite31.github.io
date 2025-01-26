@@ -196,6 +196,135 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2025/01/26/text-to-sql-by-llm-using-function-calling/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/01/26/text-to-sql-by-llm-using-function-calling/" class="post-title-link" itemprop="url">使用大型語言模型(LLM)完成Text-to-SQL任務 - 使用Function Calling</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2025-01-26 23:05:51" itemprop="dateCreated datePublished" datetime="2025-01-26T23:05:51+08:00">2025-01-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2025-01-27 02:15:05" itemprop="dateModified" datetime="2025-01-27T02:15:05+08:00">2025-01-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LLM/" itemprop="url" rel="index"><span itemprop="name">LLM</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2025/01/26/text-to-sql-by-llm-using-function-calling/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2025/01/26/text-to-sql-by-llm-using-function-calling/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上一篇說明<a href="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/">Langchain的SQL Agent範例如何透過ReAct Prompting</a>實作，而目前LLM其實都已經具有Function Calling的能力，比起要解析LLM回傳的Action和Action Input再另外執行，直接透過Function Calling的效果其實更好。甚至目前的LLM能力已經可以在不強迫產生Thought的推論動作下模型就能順利解決問題。</p>
+<img src="/2025/01/26/text-to-sql-by-llm-using-function-calling/Gemini-Function-Calling.png" class="" width="500">
+
+<div align="center">
+  <a target="_blank" rel="noopener" href="https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling/">Introduction to function calling</a>
+</div>
+
+<p>Function Calling可以允許LLM使用外部的API或Function，以克服無法取得最新知識或是外部資料的限制。只要將prompt和可以允許執行的Function提供給LLM，模型就能在處理prompt時選擇能夠處理當下任務的Function並得到回傳資訊。在取得Function所提供的外部回傳資訊後，可以再提供給模型作最後的回答。</p>
+<p>下面使用Langchain的SQLDatabase提供執行的Function，與Gemini的Function Calling完成Text-to-SQL任務。</p>
+<p>首先建立Chinook資料庫，並使用langchain的SQLDatabase建立資料庫的查詢引擎：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下載 SQL 腳本</span></span><br><span class="line">url = <span class="string">&quot;https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql&quot;</span></span><br><span class="line">response = requests.get(url)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 儲存 SQL 腳本到本地檔案</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Chinook_Sqlite.sql&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(response.text)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 連接到 SQLite 資料庫 (會自動建立資料庫檔案)</span></span><br><span class="line">conn = sqlite3.connect(<span class="string">&#x27;Chinook.db&#x27;</span>)</span><br><span class="line">cursor = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 執行 SQL 腳本來建立資料庫</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Chinook_Sqlite.sql&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    cursor.executescript(f.read())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提交變更並關閉連接</span></span><br><span class="line">conn.commit()</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_community.utilities <span class="keyword">import</span> SQLDatabase</span><br><span class="line"><span class="comment"># 準備sqlite db</span></span><br><span class="line">db = SQLDatabase.from_uri(<span class="string">&quot;sqlite:///Chinook.db&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Gemini會使用function name, docstring, parameters和parameter type annotations來決定是否要使用特定的函式來回答問題。這裡借用Langchain的SQLDatabase的三個Function並寫好docstring和parameter。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sql_db_list_tables</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Tool for getting tables names.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        Input is an empty string</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;, &quot;</span>.join(db.get_usable_table_names());</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sql_db_schema</span>(<span class="params">table_names: <span class="built_in">str</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Tool for getting metadata about a SQL database. Get the schema and sample rows for the specified SQL tables.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        table_names: A comma-separated list of the table names for which to return the schema.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> db.get_table_info_no_throw(</span><br><span class="line">            [t.strip() <span class="keyword">for</span> t <span class="keyword">in</span> table_names.split(<span class="string">&quot;,&quot;</span>)]</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sql_db_query</span>(<span class="params">query: <span class="built_in">str</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Tool for querying a SQL database. Execute a SQL query against the database and get back the result..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        query: A detailed and correct SQL query.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> db.run_no_throw(query)</span><br></pre></td></tr></table></figure>
+
+<p>接著設定function calling config，這裡設定成ANY會強迫讓模型使用提供的Function，並提供以上三個Function。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> google.generativeai.types <span class="keyword">import</span> content_types</span><br><span class="line"><span class="keyword">from</span> collections.abc <span class="keyword">import</span> Iterable</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tool_config_from_mode</span>(<span class="params">mode: <span class="built_in">str</span>, fns: Iterable[<span class="built_in">str</span>] = (<span class="params"></span>)</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Create a tool config with the specified function calling mode.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> content_types.to_tool_config(</span><br><span class="line">        &#123;<span class="string">&quot;function_calling_config&quot;</span>: &#123;<span class="string">&quot;mode&quot;</span>: mode, <span class="string">&quot;allowed_function_names&quot;</span>: fns&#125;&#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">sql_tool_dict = &#123;</span><br><span class="line">    <span class="string">&quot;sql_db_query&quot;</span>: sql_db_query,</span><br><span class="line">    <span class="string">&quot;sql_db_schema&quot;</span>: sql_db_schema,</span><br><span class="line">    <span class="string">&quot;sql_db_list_tables&quot;</span>: sql_db_list_tables</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tool_config = tool_config_from_mode(mode=<span class="string">&quot;any&quot;</span>, fns=<span class="built_in">list</span>(sql_tool_dict.keys()))</span><br></pre></td></tr></table></figure>
+
+<p>以下參考Langchain的prompt內容並擷取prefix當作instruction還有輸入的問題為input。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">instruction = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">You are an agent designed to interact with a SQL database.</span></span><br><span class="line"><span class="string">Given an input question, create a syntactically correct sqlite query to run, then look at the results of the query and return the answer.</span></span><br><span class="line"><span class="string">Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most 10 results.</span></span><br><span class="line"><span class="string">You can order the results by a relevant column to return the most interesting examples in the database.</span></span><br><span class="line"><span class="string">Never query for all the columns from a specific table, only ask for the relevant columns given the question.</span></span><br><span class="line"><span class="string">You have access to tools for interacting with the database.</span></span><br><span class="line"><span class="string">Only use the below tools. Only use the information returned by the below tools to construct your final answer.</span></span><br><span class="line"><span class="string">You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">If the question does not seem related to the database, just return &quot;I don&#x27;t know&quot; as the answer.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">First, You should look at the tables in the database to see what I can query.  Then I should query the schema of the most relevant tables.</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">text2sql_input = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">How many employees are there?</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果使用generate_content會需要手動管理與模型的互動，所以這裡會把將instruction、prompt和tools提供給模型並與模型建立chat session，其中將enable_automatic_function_calling設成True時會允許模型自己呼叫我們所提供的Function。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Configure Gemini</span></span><br><span class="line">genai.configure(api_key=GEMINI_API_KEY)</span><br><span class="line">model = genai.GenerativeModel(model_name=<span class="string">&#x27;gemini-1.5-flash&#x27;</span>, \</span><br><span class="line">                system_instruction=instruction, \</span><br><span class="line">                tools=<span class="built_in">list</span>(sql_tool_dict.values()))</span><br><span class="line"></span><br><span class="line">chat = model.start_chat(enable_automatic_function_calling=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">response = chat.send_message(text2sql_input)</span><br><span class="line">response.text</span><br></pre></td></tr></table></figure>
+
+<p>最後可以從模型得到正確回答「There are 8 employees.」。</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There are 8 employees.</span><br></pre></td></tr></table></figure>
+
+<p>可以從以下的chat history看到模型會從input的內容開始，先呼叫查詢所有的資料表後，接著選出Employee資料表查詢schema資訊，最後下一段模型生成出來的SQL查詢後回答最終的答案。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> content <span class="keyword">in</span> chat.history:</span><br><span class="line">    <span class="built_in">print</span>(content.role, <span class="string">&quot;-&gt;&quot;</span>, [<span class="built_in">type</span>(part).to_dict(part) <span class="keyword">for</span> part <span class="keyword">in</span> content.parts])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;-&quot;</span> * <span class="number">80</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">user -&gt; [&#123;&#x27;text&#x27;: &#x27;\nHow many employees are there?\n&#x27;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;function_call&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_list_tables&#x27;, &#x27;args&#x27;: &#123;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">user -&gt; [&#123;&#x27;function_response&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_list_tables&#x27;, &#x27;response&#x27;: &#123;&#x27;result&#x27;: &#x27;Album, Artist, Customer, Employee, Genre, Invoice, InvoiceLine, MediaType, Playlist, PlaylistTrack, Track&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;function_call&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_schema&#x27;, &#x27;args&#x27;: &#123;&#x27;table_names&#x27;: &#x27;Employee&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">user -&gt; [&#123;&#x27;function_response&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_schema&#x27;, &#x27;response&#x27;: &#123;&#x27;result&#x27;: &#x27;\nCREATE TABLE &quot;Employee&quot; (\n\t&quot;EmployeeId&quot; INTEGER NOT NULL, \n\t&quot;LastName&quot; NVARCHAR(20) NOT NULL, \n\t&quot;FirstName&quot; NVARCHAR(20) NOT NULL, \n\t&quot;Title&quot; NVARCHAR(30), \n\t&quot;ReportsTo&quot; INTEGER, \n\t&quot;BirthDate&quot; DATETIME, \n\t&quot;HireDate&quot; DATETIME, \n\t&quot;Address&quot; NVARCHAR(70), \n\t&quot;City&quot; NVARCHAR(40), \n\t&quot;State&quot; NVARCHAR(40), \n\t&quot;Country&quot; NVARCHAR(40), \n\t&quot;PostalCode&quot; NVARCHAR(10), \n\t&quot;Phone&quot; NVARCHAR(24), \n\t&quot;Fax&quot; NVARCHAR(24), \n\t&quot;Email&quot; NVARCHAR(60), \n\tPRIMARY KEY (&quot;EmployeeId&quot;), \n\tFOREIGN KEY(&quot;ReportsTo&quot;) REFERENCES &quot;Employee&quot; (&quot;EmployeeId&quot;)\n)\n\n/*\n3 rows from Employee table:\nEmployeeId\tLastName\tFirstName\tTitle\tReportsTo\tBirthDate\tHireDate\tAddress\tCity\tState\tCountry\tPostalCode\tPhone\tFax\tEmail\n1\tAdams\tAndrew\tGeneral Manager\tNone\t1962-02-18 00:00:00\t2002-08-14 00:00:00\t11120 Jasper Ave NW\tEdmonton\tAB\tCanada\tT5K 2N1\t+1 (780) 428-9482\t+1 (780) 428-3457\tandrew@chinookcorp.com\n2\tEdwards\tNancy\tSales Manager\t1\t1958-12-08 00:00:00\t2002-05-01 00:00:00\t825 8 Ave SW\tCalgary\tAB\tCanada\tT2P 2T3\t+1 (403) 262-3443\t+1 (403) 262-3322\tnancy@chinookcorp.com\n3\tPeacock\tJane\tSales Support Agent\t2\t1973-08-29 00:00:00\t2002-04-01 00:00:00\t1111 6 Ave SW\tCalgary\tAB\tCanada\tT2P 5M5\t+1 (403) 262-3443\t+1 (403) 262-6712\tjane@chinookcorp.com\n*/&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;function_call&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_query&#x27;, &#x27;args&#x27;: &#123;&#x27;query&#x27;: &#x27;SELECT COUNT(*) FROM Employee&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">user -&gt; [&#123;&#x27;function_response&#x27;: &#123;&#x27;name&#x27;: &#x27;sql_db_query&#x27;, &#x27;response&#x27;: &#123;&#x27;result&#x27;: &#x27;[(8,)]&#x27;&#125;, &#x27;id&#x27;: &#x27;&#x27;&#125;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">model -&gt; [&#123;&#x27;text&#x27;: &#x27;There are 8 employees.&#x27;&#125;]</span><br><span class="line">--------------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<p>參考資料:<br><a target="_blank" rel="noopener" href="https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling">Generative-AI function-calling</a><br><a target="_blank" rel="noopener" href="https://github.com/google-gemini/cookbook/blob/main/quickstarts/Function_calling.ipynb">Gemini cookbook Function_Calling</a><br><a target="_blank" rel="noopener" href="https://github.com/google-gemini/cookbook/blob/main/quickstarts/Function_calling_config.ipynb">Gemini cookbook Function_Calling_config</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1331,178 +1460,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2023/11/11/before-adopt-cassandra-you-need-to-know-cql/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/11/before-adopt-cassandra-you-need-to-know-cql/" class="post-title-link" itemprop="url">在採用Cassandra前你必須要知道的事-CQL不是SQL</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2023-11-11 15:43:00" itemprop="dateCreated datePublished" datetime="2023-11-11T15:43:00+08:00">2023-11-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-01-27 22:29:39" itemprop="dateModified" datetime="2024-01-27T22:29:39+08:00">2024-01-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SQL-NoSQL/" itemprop="url" rel="index"><span itemprop="name">SQL&NoSQL</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2023/11/11/before-adopt-cassandra-you-need-to-know-cql/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/11/11/before-adopt-cassandra-you-need-to-know-cql/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。</p>
-<p>在導入的過程中當然沒有這麼順利，特別是對於只用過Oracle或是SQL Server等RDBMS技術，完全沒有碰過NoSQL的開發團隊，大家對於使用Cassandra總是有錯誤的想像，或是在不熟悉與不合適的使用情境下，最後造成大家與Cassandra「不歡而散」。</p>
-<p>這篇想開始談談實際使用Cassandra後會因為Cassandra的設計限制遇到的問題，希望大家在一頭熱投入Cassandra的研究前，可以評估使用情境是否適合。我特別推薦在準備DataStax的Cassandra Developer Certification時上到的一堂課，這堂<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=jYvKiewV-5Q&list=PL2g2h-wyI4SqIigskyJNAeL2vSTJZU_Qp">DS220</a>提到許多Cassandra在實在作data modeling會需要知道的技巧和特性。</p>
-<p>回到這次想談的，CQL不是SQL。</p>
-<p>在初期投入Cassandra技術評估，看到Cassandra支援CQL(Cassandra Query Language)時，肯定會讓RDBMS開發者眼睛一亮，這看起來多麼的熟悉，忍不住在比較NoSQL方案時在Cassandra蓋上一個優勝的章。當然我不能否認當初我們也這麼認為，一直到大家實際使用時，才會發現CQL和SQL有根本上的不同。</p>
-<h4 id="不是任意欄位都能FILTER"><a href="#不是任意欄位都能FILTER" class="headerlink" title="不是任意欄位都能FILTER"></a>不是任意欄位都能FILTER</h4><p>簡單來說，比起RDBMS的SQL查詢，Cassandra因為本身的設計，所以CQL本來就只能作到有限度的查詢。CQL不能像SQL一樣可以將任意欄位放在where條件執行查詢，而是只能針對設定成partition key和clustering key的欄位進行查詢，甚至對組成clustering key的欄位，還有查詢順序的限制。當然這裡我們就先不提建立secondary index或是materialize view的情況。</p>
-<p>拿下面這個簡單的員工資料表來說明。</p>
-<table>
-<thead>
-<tr>
-<th align="left">deptname</th>
-<th align="right">jobgrade</th>
-<th align="right">gender</th>
-<th align="right">emplid</th>
-<th align="center">name</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">HR</td>
-<td align="right">1</td>
-<td align="right">Male</td>
-<td align="right">001</td>
-<td align="center">Tom</td>
-</tr>
-<tr>
-<td align="left">HR</td>
-<td align="right">3</td>
-<td align="right">Female</td>
-<td align="right">002</td>
-<td align="center">Amy</td>
-</tr>
-<tr>
-<td align="left">Design</td>
-<td align="right">2</td>
-<td align="right">Male</td>
-<td align="right">003</td>
-<td align="center">John</td>
-</tr>
-<tr>
-<td align="left">Design</td>
-<td align="right">1</td>
-<td align="right">Female</td>
-<td align="right">004</td>
-<td align="center">Alice</td>
-</tr>
-<tr>
-<td align="left">HR</td>
-<td align="right">1</td>
-<td align="right">Male</td>
-<td align="right">005</td>
-<td align="center">Bob</td>
-</tr>
-<tr>
-<td align="left">Design</td>
-<td align="right">3</td>
-<td align="right">Male</td>
-<td align="right">006</td>
-<td align="center">Henry</td>
-</tr>
-</tbody></table>
-<p>在Cassandra的員工表作了以下設計，如果不說是Cassandra的話，看起來其實就和一般的RDBMS沒有差別。但在Cassandra中下面建立的員工表其實隱含了將deptName設定為partition key，clustering key設定為jobgrade、gender和emplid的意思。以下的語法可以把這個範例建起來，<a target="_blank" rel="noopener" href="https://astra.datastax.com/">DataStax</a>有提供線上的serverless database可以使用。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- create</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> CASSANDRA.EMPLOYEE (</span><br><span class="line">  deptName text,</span><br><span class="line">  jobgrade text,</span><br><span class="line">  empId text,</span><br><span class="line">  name text,</span><br><span class="line">  gender text,</span><br><span class="line">  <span class="keyword">primary</span> key(deptName, jobgrade, gender, empId)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;001&#x27;</span>, <span class="string">&#x27;Tom&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;002&#x27;</span>, <span class="string">&#x27;Amy&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;003&#x27;</span>, <span class="string">&#x27;John&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;004&#x27;</span>, <span class="string">&#x27;Alice&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;HR&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;005&#x27;</span>, <span class="string">&#x27;Mary&#x27;</span>, <span class="string">&#x27;Female&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> CASSANDRA.EMPLOYEE(deptName,jobgrade,empId,name,gender) <span class="keyword">VALUES</span> (<span class="string">&#x27;Design&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;006&#x27;</span>, <span class="string">&#x27;Henry&#x27;</span>, <span class="string">&#x27;Male&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- select</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE;</span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">002</span> <span class="operator">|</span>   Amy</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">2</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">003</span> <span class="operator">|</span>  John</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">3</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">006</span> <span class="operator">|</span> Henry</span><br></pre></td></tr></table></figure>
-<p>假設在RDBMS裡用以上建立的資料表，舉幾種查詢情境如下:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查詢jobgrade為1的員工資料</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line">deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+-------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>   Tom</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span>  Mary</span><br><span class="line">   Design <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">004</span> <span class="operator">|</span> Alice</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查詢deptname為HR, gender為Male的名字</span></span><br><span class="line"><span class="keyword">SELECT</span> name </span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> gender <span class="operator">=</span> <span class="string">&#x27;Male&#x27;</span></span><br><span class="line"></span><br><span class="line"> name</span><br><span class="line"><span class="comment">------</span></span><br><span class="line">  Tom</span><br><span class="line"></span><br><span class="line"> <span class="comment">--查詢deptname為HR, jobgrade為1的員工資料 </span></span><br><span class="line"> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br></pre></td></tr></table></figure>
-
-<p>以上看起來很直覺的查詢，如果是在Cassandra的世界裡，執行第一支CQL會得到以下的錯誤：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING&quot;</span><br></pre></td></tr></table></figure>
-
-<p>Cassandra會將資料依partitiony key分散放到不同的partition存放，所以在CQL查詢中的第一個條件必須要帶partition key(也就是deptname)，Cassandra才能直接到指定的partition取回資料，用來加速資料查詢的速度。因此在不給定partition key條件下直接用jobgrade作filter是不允許的。</p>
-<p>第二支CQL執行則會得到以下的錯誤：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name </span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> gender <span class="operator">=</span> <span class="string">&#x27;Male&#x27;</span></span><br><span class="line"></span><br><span class="line">InvalidRequest: Error <span class="keyword">from</span> server: code<span class="operator">=</span><span class="number">2200</span> [Invalid query] message<span class="operator">=</span>&quot;PRIMARY KEY column &quot;gender&quot; cannot be restricted as preceding column &quot;jobgrade&quot; is not restricted&quot;</span><br></pre></td></tr></table></figure>
-
-<p>因為Cassandra的世界裡，會將一個partition內部的資料依據clustering key作排序。以員工資料表為例，會以deptname切partition後，再依序用jobgrade、gender和emplid排序。</p>
-<p>Casssandra透過預先排序的方式，在查詢資料時就可以得到排序結果，和SQL查詢完才作order by不同。因此Cassandra嚴格限制clustering key的欄位必須要依順序作filter，所以跳過jobgrade先查詢gender是不允許的。</p>
-<p>第三支CQL則因為符合partition和clustering限制所以可以成功執行。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">FROM</span> CASSANDRA.EMPLOYEE</span><br><span class="line"> <span class="keyword">WHERE</span> deptname <span class="operator">=</span> <span class="string">&#x27;HR&#x27;</span></span><br><span class="line">   <span class="keyword">AND</span> jobgrade <span class="operator">=</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line"></span><br><span class="line"> deptname <span class="operator">|</span> jobgrade <span class="operator">|</span> gender <span class="operator">|</span> empid <span class="operator">|</span> name</span><br><span class="line"><span class="comment">----------+----------+--------+-------+------</span></span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span> Female <span class="operator">|</span>   <span class="number">005</span> <span class="operator">|</span> Mary</span><br><span class="line">       HR <span class="operator">|</span>        <span class="number">1</span> <span class="operator">|</span>   Male <span class="operator">|</span>   <span class="number">001</span> <span class="operator">|</span>  Tom</span><br></pre></td></tr></table></figure>
-
-<p>由以上可以發現，CQL雖然和SQL語法非常相似，但本質上Cassandra就是NoSQL資料庫，也有本身的設計限制。因此對於SQL使用者來說，千萬不要因為看到很像SQL的語法，就覺得可以很容易的上手使用！</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1574,7 +1531,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1587,7 +1544,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-count">48</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>

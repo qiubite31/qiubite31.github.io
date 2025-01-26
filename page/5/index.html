@@ -196,6 +196,150 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/09/Machine-Learning-Foundation-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Drake">
+      <meta itemprop="description" content="Chase excellence, success will follow!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Drake's">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/08/09/Machine-Learning-Foundation-6/" class="post-title-link" itemprop="url">機器學習基石(Machine Learning Foundation)第六講筆記</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">發表於</span>
+
+              <time title="創建時間：2017-08-09 00:00:00" itemprop="dateCreated datePublished" datetime="2017-08-09T00:00:00+08:00">2017-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2021-05-11 22:59:31" itemprop="dateModified" datetime="2021-05-11T22:59:31+08:00">2021-05-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B7%9A%E4%B8%8A%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" itemprop="url" rel="index"><span itemprop="name">線上課程筆記</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="閱讀次數">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-users"></i>
+              </span>
+              <span class="post-meta-item-text">閱讀次數：</span>
+              <span class="firestore-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/08/09/Machine-Learning-Foundation-6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/09/Machine-Learning-Foundation-6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前面講到M如果會變成無限大，就無法滿足能夠學習的理論，所以我們希望能透過成長函式mH(N)來取代M，這一講主要在推論mH(N)是不是真的成長的比較慢，且能夠夠取代掉M</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/FourBreakPoint.JPG" class="" width="500">
+
+<p>複習一下成長函數的定義是指Hyperthesis集合在N個點上最多能夠產生多少個Dichotomies(即O或是X兩分的排列組合)。上一講提到了四種成長函數，且每一種都可能有出現break point現象，就是指當輸入點數大於某個臨界值後，會產生沒有辦法滿足的Dicotomies組合。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/RestrictionBreakPoint.JPG" class="" width="500">
+
+<p>假設今天有一個Hyperthesis在N為1時mH(N)為2種，N為2時mH(N)最多只有3種(3 &lt; 2^2)，那麼我們要找在3點輸入時，而且最小的break point K為2(即任2點不能有shatter)，究竟mH(N)為多少呢？可以發現加上第5種組合，無論前面4種用什麼組合，在第5種任2點都會shatter，所以最多只會有4種可能</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/RestrictionBreakPoint2.JPG" class="" width="500">
+
+<p>到這邊可以發現當N越大時，break point K會對最大可能的mH(N)產生限制(因為K為break point，K+1開始都會shatter)，使得當N越大時，N和mH(N)之間的差距會越來越大。所以如果可以證明mH(N)是一個多項式，就可以在原本的Hoeffiding不等式中，把可能無限大的M取代成有限制且為多項式的mH(N)，使得學習是有可能的。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/BoundingFunction.JPG" class="" width="500">
+
+<p>再來先別管成長函式了，我們透過bounding function來表示在break point為K的情況下，mH(N)的最大可能性，就是在K個點不能出現shatter。這樣我們就可以不用管問題是屬於positive intervals或是1D perceptrons要用不同的方法分析，我們可以統一使用B(N, 3)來表代所有不同的問題。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/BoundingFunctionTable.JPG" class="" width="500">
+
+<p>N和K建立的bounding function可以用表格來呈現，基本上可以分成4種。第一種是如果K為1，即B(N, 1)代表1個點不能出現shatter，那麼只會有1種情況；第二種是右上斜角部份，今天如果K大於N，那麼K等於沒有限制，所以最多會有2^N種情況；第三種是在斜角上，當N和k的值一樣時，因為不能是2^N種，所以減1最多會有2^N-1種。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/AchieveDichotomy.JPG" class="" width="500">
+
+<p>那麼最重要的斜角下方部份該怎麼填了，假設要填的值是B(4, 3)，我們猜測他可能和前一排的B(3, ?)有關係。這裡可以看到所有的組合總共是11種，看起來B(4, 3)好像是B(3, 3)和B(3, 2)相加，但是該怎麼去證明說是有關係的呢？</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/Estimating.JPG" class="" width="500">
+
+<p>把B(4, 3)的11種解可以分成α和β兩種類型，橘色的類型為X1-X3相同，但是X4會不一樣(即2α)，紫色的類型為皆不相同(即β)。B(4, 3)指其中3個點不能shatter，那X1-X3也是其中的3個點，所以也不能shatter，意思就是說如果今天不看X4的話，因為X1-X3不能shatter，所以α加β會小於等於B(3, 3)。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/Estimating2.JPG" class="" width="500">
+
+<p>再繼續往下只看α部份的話，如果X1-X3其中有2個點shatter了，那麼再加上X4的話就會造成3點shatter，這也是B(4, 3)不允許的，所以X1-X3其中2個點也不能shatter。於是α會小於等於B(3, 2)</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/PuttingItAllTogether.JPG" class="" width="500">
+
+<p>再來就可以把中間證明的過程連結在一起了，B(4, 3) ≤ B(3, 3) + B(3, 2)，又可以轉變成B(N, K) ≤ B(N-1, K) + B(N-1, K-1)，這樣就可以把斜角下方都值都可以填上一個上限值。我們最早從會有無限多組解的大M開始，再到其實大M是有限的，透過成長函數可找到dichotomy數量mH(N)，再推展到上限函式B(K, N)來統一計算N和K的上限值(不用依不同的情況計算mH(N))，最後證明到這裡的值其實就是上限的上限值(很繞口)。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/BoundingFunctionTheorem.JPG" class="" width="500">
+
+<p>所以推展到這邊可以得到的重點是，mH(N)會被上限函式bounded住，然後這個上限函式又會被上限的上限bounded住，而且這個上限的上限是一個多項式；因此只要確保有出現break point，就可以說mH(N)是個多項式。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/BadBound.JPG" class="" width="500">
+
+<p>再來回到原本的帶有union bound的Hoeffding不等式，我們經過上面的推導後，是不是可以把這個成長函式mH(N)丟進Hoeffding裡面，就可以了呢？再來會開始推導成投影片中的新的式子，是一個長的差不多的式子，他可以證明在N夠大的情況下，就可以根據Hoeffding不等式來說學習是可以達成的。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/ReplaceEoutbyEin.JPG" class="" width="500">
+
+<p>第一步遇到的問題是Eout會是無限多的值，所以會先把Eout取代成有限的Ein’，這裡的概念是如果Ein和Eout差距很大時(即壞事發生時)，那麼有很大的機會(&gt;1/2)，Ein和Ein’也隔的很遠。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/DecomposeH.JPG" class="" width="500">
+
+<p>接著第一步的結果，因為多了Ein’所以會多了N個樣本，所以成長函式裡面的N會變成2N。第二步會把Union Bounded中發生各種壞事的情況，找到共同發生的部份，所以把前面說到有限組合的mH(N)代進式子中。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/HoeffdingWOReplacement.JPG" class="" width="500">
+
+<p>再來因為我們是有限多個值了，所以想像概念就像是現在瓶子裡面有2N個樣本，今天抽出N個樣本，我們就可以把這N個樣本和原本的2N個樣本作比較。這就像是用了一個比較小的瓶子和比較小的誤差，使用了抽後不放回的Hoeffding，他其實還是Hoeffding。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/VCBound.JPG" class="" width="500">
+
+<p>證明到這邊，可以簡單的證明出apnik-Chervonenkis (VC) bound了! 所以在break point為4的2D perceptrons中，如果N夠大的情況下，是真的可以透過PLA達到學習效果的。</p>
+<img src="/2017/08/09/Machine-Learning-Foundation-6/Summary.JPG" class="" width="500">
+
+<p>總結來說，這一課證明了只要存在break point，就會對未來的成長函數加上很大的限制，因為有了break poin也才能證明mH(N)會被一個多項式的上限函式bounded住，並且mH(N)可以取代Hoeffding原本是無限多的大M</p>
+<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/06_handout.pdf">Machine Learning Foundation 06</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
     <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/08/01/Machine-Learning-Foundation-5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1248,117 +1392,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://qiubite31.github.io/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Drake">
-      <meta itemprop="description" content="Chase excellence, success will follow!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Drake's">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/" class="post-title-link" itemprop="url">使用collections中的namedtuple來操作簡單的物件結構</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2017-03-02 00:00:00" itemprop="dateCreated datePublished" datetime="2017-03-02T00:00:00+08:00">2017-03-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="閱讀次數">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-users"></i>
-              </span>
-              <span class="post-meta-item-text">閱讀次數：</span>
-              <span class="firestore-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/03/02/%E4%BD%BF%E7%94%A8collections%E4%B8%AD%E7%9A%84namedtuple%E4%BE%86%E6%93%8D%E4%BD%9C%E7%B0%A1%E5%96%AE%E7%9A%84%E7%89%A9%E4%BB%B6%E7%B5%90%E6%A7%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/02/使用collections中的namedtuple來操作簡單的物件結構/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>tuple在python中是一種不可變動(immutable)的資料結構，相較於list是可變動的(mutable)，兩者共同都可以使用index來讀取值，但因為tuple為不可變動，所以一經宣告即無法修改其中的值。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink = (<span class="string">&#x27;Black Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;sugar free&#x27;</span>)  <span class="comment"># 我要一杯紅茶，正常冰量不加糖</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink[<span class="number">0</span>]  <span class="comment"># 可以使用index來讀取tuple中的item</span></span><br><span class="line">Black Tea</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink[<span class="number">0</span>] = <span class="string">&#x27;Green Tea&#x27;</span>  <span class="comment"># tuple為不可變動，所以無法透過assign來修改其中的值</span></span><br><span class="line">TypeError: <span class="string">&#x27;tuple&#x27;</span> <span class="built_in">object</span> does <span class="keyword">not</span> support item assignment</span><br></pre></td></tr></table></figure>
-<p>tuple很適合用來儲存一些不需要頻繁變動的資料，但是在使用上要使用index來讀取tuple中item的值，若是tuple中的item數量少也許還沒問題，但如果tuple中的item數量很多，甚至是開發一段時間又沒寫註解，往往最後這種index的讀取就變成一種魔術數字(magic number)，造成維護上的困難。</p>
-<p>namedtuple是tuple的擴展，因為namedtuple在使用上可以透過類似讀取欄位(field)名稱的方式，來取用tuple不同的item資料，所以有時候namedtuple就很適合用來代替tuple儲存資料。如果有需要頻繁讀取tuple中的item，於是你開始想建立class和物件來操作，但是資料欄位又沒有到這麼複雜到需要額外建class，這種情況很適合。</p>
-<p>下面馬上來介紹一下namedtuple的使用方法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Drink = namedtuple(<span class="string">&#x27;Drink&#x27;</span>, <span class="string">&#x27;product, ice, sugar&#x27;</span>)  <span class="comment"># 宣告一種名稱(Drink)且包含三個欄位(product, ice, sugar)</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>black_tea = Drink(<span class="string">&#x27;Black Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;sugar free&#x27;</span>)  <span class="comment"># 我要一杯紅茶，正常冰量不加糖</span></span><br><span class="line"></span><br><span class="line">Drink(product=<span class="string">&#x27;Black Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;sugar free&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>black_tea.product  <span class="comment"># 可以使用一開始定義的欄位名稱來讀取值</span></span><br><span class="line">Black Tea</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>black_tea[<span class="number">0</span>]  <span class="comment"># 當然也可以使用index來讀取值</span></span><br><span class="line">Black Tea</span><br></pre></td></tr></table></figure>
-<p>宣告namedtuple需要給定兩個參數，第一個是tuple的名稱(name)，再來是這個tuple包含的欄位名稱(field_name)。欄位名稱使用字串格式代入所有需要的欄位(其中的,可加可不加)。以上面的例子來看，tuple名稱就是Drink，欄位名稱是product, ice和sugar三個。之後透過宣告的namedtuple來儲存資料，就可以使用欄位名稱來讀取item值了!</p>
-<p>namedtuple可以和tuple一樣作unpack</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>product, ice, sugar = black_tea</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sugar</span><br><span class="line">sugar free</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ice</span><br><span class="line">normal</span><br></pre></td></tr></table></figure>
-<p>也有支援直接從list和dict轉成namedtuple</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>l = [<span class="string">&#x27;Bubble Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bubble_tea = Drink._make(l)  <span class="comment"># 使用_make來將list轉成namedtuple</span></span><br><span class="line">Drink(product=<span class="string">&#x27;Bubble Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;regular&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>d = &#123;<span class="string">&#x27;product&#x27;</span>: <span class="string">&#x27;Bubble Tea&#x27;</span>, <span class="string">&#x27;ice&#x27;</span>: <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;sugar&#x27;</span>: <span class="string">&#x27;regular&#x27;</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bubble_tea = Drink(**d)  <span class="comment"># 使用拆開映射運算符(double-star-operator)來拆開dict轉成namedtuple</span></span><br><span class="line">Drink(product=<span class="string">&#x27;Bubble Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;regular&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>將namedtuple轉成dict(此dict為collection裡面OrderDict)</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>bubble_tea_dict = bubble_tea._asdict()</span><br><span class="line">OrderedDict([(<span class="string">&#x27;product&#x27;</span>, <span class="string">&#x27;Bubble Tea&#x27;</span>), (<span class="string">&#x27;ice&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>), (<span class="string">&#x27;sugar&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>)])</span><br></pre></td></tr></table></figure>
-<p>如果今天已經存在一個namedtuple，需要使用現存的namedtuple來新增一個新的namedtuple也可以使用_filed來辦到</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>Ingredient = namedtuple(<span class="string">&#x27;Ingredient&#x27;</span>, <span class="string">&#x27;tapioca_pearls, grass_jelly, flan&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Order = namedtuple(<span class="string">&#x27;Order&#x27;</span>, Drink._fields + Ingredient._fields)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我要一杯奶茶，正常冰半糖加布丁</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink_order = Order(<span class="string">&#x27;Milk Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;half sugar&#x27;</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">True</span>)</span><br><span class="line">Order(product=<span class="string">&#x27;Milk Tea&#x27;</span>, ice=<span class="string">&#x27;regular&#x27;</span>, sugar=<span class="string">&#x27;half sugar&#x27;</span>, tapioca_pearls=<span class="literal">False</span>, grass_jelly=<span class="literal">False</span>, flan=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
-<p>在開發過程中，如果可以巧妙的使用namedtuple，可以讓程式更加有可讀性，也可以讓幫助下降日後的維護成本!</p>
-<p><a target="_blank" rel="noopener" href="https://docs.python.org/3.6/library/collections.html#collections.namedtuple">Python docs - namedtuple() Factory Function for Tuples with Named Fields</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1430,7 +1463,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -1443,7 +1476,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-count">48</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
