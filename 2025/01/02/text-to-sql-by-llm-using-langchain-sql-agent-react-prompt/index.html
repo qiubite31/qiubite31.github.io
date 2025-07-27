@@ -31,17 +31,17 @@
 <meta property="og:image" content="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case1.png">
 <meta property="og:image" content="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case2.png">
 <meta property="article:published_time" content="2025-01-02T14:26:12.000Z">
-<meta property="article:modified_time" content="2025-01-19T06:00:23.889Z">
+<meta property="article:modified_time" content="2025-07-26T06:12:25.673Z">
 <meta property="article:author" content="Drake">
-<meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="SQL">
 <meta property="article:tag" content="Text-to-SQL">
 <meta property="article:tag" content="LLM">
-<meta property="article:tag" content="prompt">
 <meta property="article:tag" content="ReAct Prompting">
-<meta property="article:tag" content="LangChain">
 <meta property="article:tag" content="Agent">
 <meta property="article:tag" content="Gemini">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="prompt">
+<meta property="article:tag" content="LangChain">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://qiubite31.github.io/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case1.png">
 
@@ -241,7 +241,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2025-01-19 14:00:23" itemprop="dateModified" datetime="2025-01-19T14:00:23+08:00">2025-01-19</time>
+                <time title="修改時間：2025-07-26 14:12:25" itemprop="dateModified" datetime="2025-07-26T14:12:25+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -286,6 +286,8 @@
 
       
         <p>上一篇<a href="/2024/12/05/text-to-sql-by-llm-using-langchain-sql-agent/">透過Langchain SQL Agent建立資料問答系統</a>中使用了Langchain的create_sql_agent來建立SQL Agent。Langchain在實作這個SQL Agent背後的使用了<a target="_blank" rel="noopener" href="https://python.langchain.com/api_reference/langchain/agents/langchain.agents.react.agent.create_react_agent.html">create_react_agent</a>，這是基於2022年的paper “ReAct: Synergizing Reasoning and Acting in Language Models”的實作，雖然這個版本是比較早期的實作現在並不適合拿來使用在production環境，但仍可以透過瞭解SQL Agent是怎麼基於ReAct prompting技巧運作的。</p>
+<span id="more"></span>
+
 <h4 id="ReAct-Prompting"><a href="#ReAct-Prompting" class="headerlink" title="ReAct Prompting"></a>ReAct Prompting</h4><p>ReAct Prompting包含了兩個部份，分別是Reasoning和Acting。主要是讓LLM能夠透過交錯的方式產生推理的過程(Reasoning traces)和執行特定任務的動作(task-specific actions)。在產生推理時可以讓LLM針對推理的結果，更新並產生新的執行任務的動作，同時允許LLM在執行任務時可以和外部的工具互動，以取得更具信賴且真實的資訊。</p>
 <h5 id="Hotspot-QA"><a href="#Hotspot-QA" class="headerlink" title="Hotspot QA"></a>Hotspot QA</h5><img src="/2025/01/02/text-to-sql-by-llm-using-langchain-sql-agent-react-prompt/ReAct_case1.png" class="" width="500">
 
@@ -324,15 +326,15 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
               <a href="/tags/SQL/" rel="tag"># SQL</a>
               <a href="/tags/Text-to-SQL/" rel="tag"># Text-to-SQL</a>
               <a href="/tags/LLM/" rel="tag"># LLM</a>
-              <a href="/tags/prompt/" rel="tag"># prompt</a>
               <a href="/tags/ReAct-Prompting/" rel="tag"># ReAct Prompting</a>
-              <a href="/tags/LangChain/" rel="tag"># LangChain</a>
               <a href="/tags/Agent/" rel="tag"># Agent</a>
               <a href="/tags/Gemini/" rel="tag"># Gemini</a>
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/prompt/" rel="tag"># prompt</a>
+              <a href="/tags/LangChain/" rel="tag"># LangChain</a>
           </div>
 
         

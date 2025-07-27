@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/denormalizing_for_query_performance.png">
 <meta property="og:image" content="https://qiubite31.github.io/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/denormalizing_for_query_performance2.png">
 <meta property="article:published_time" content="2024-02-28T06:23:30.000Z">
-<meta property="article:modified_time" content="2024-03-03T09:42:34.372Z">
+<meta property="article:modified_time" content="2025-07-26T06:16:35.732Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Cassandra">
 <meta property="article:tag" content="NoSQL">
@@ -239,7 +239,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-03-03 17:42:34" itemprop="dateModified" datetime="2024-03-03T17:42:34+08:00">2024-03-03</time>
+                <time title="修改時間：2025-07-26 14:16:35" itemprop="dateModified" datetime="2025-07-26T14:16:35+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -286,6 +286,8 @@
         <p>關聯式資料庫的使用者在使用Cassandra設計資料模型時，通常第一個會遇到的問題就是不能使用join。Cassandra明確說明不支援join，建議的方式為建立一個反正規化(Denormalization)的資料表。</p>
 <h4 id="什麼叫反正規化-Denormalization"><a href="#什麼叫反正規化-Denormalization" class="headerlink" title="什麼叫反正規化(Denormalization)"></a>什麼叫反正規化(Denormalization)</h4><p>有別於關聯式資料庫的正規化(Normalization)設計，透過減少資料庫內的資料冗餘(Data Redundancy)和去除相依性來增進資料的一致性。這種方式的缺點在當資料被拆成多個資料表後，依不同使用情境下將資料join起來查詢時，會導致效能不佳。</p>
 <p>而反正規化則是相反，反正規化會增加資料冗餘或是對資料進行分組，來得到最佳化的讀取效能。所以在反正規化的實例中，會把預先join完的資料建成一張資料表，這時就會有同一份資料被複製成多張資料表的情況。</p>
+<span id="more"></span>
+
 <h4 id="怎麼將反正規化應用在資料設計"><a href="#怎麼將反正規化應用在資料設計" class="headerlink" title="怎麼將反正規化應用在資料設計"></a>怎麼將反正規化應用在資料設計</h4><h5 id="關聯式資料庫正規化設計"><a href="#關聯式資料庫正規化設計" class="headerlink" title="關聯式資料庫正規化設計"></a>關聯式資料庫正規化設計</h5><p>舉DataStax的課程<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PL2g2h-wyI4SqIigskyJNAeL2vSTJZU_Qp">DS220.08</a>範例來說明。這個範例為電影資料庫被設計成videos、users和comments三張資料表。</p>
 <img src="/2024/02/28/before-adopt-cassandra-you-need-to-know-no-join/typical_relational_structure.png" class="" width="500">
 

@@ -29,7 +29,7 @@
 <meta property="og:description" content="雖然python已經有很好用的測試框架可以使用，不過對於剛開始想要自己寫測試的人，這些框架該怎麼使用還是需要花點時間學習一番。在真正進入使用測試框架之後，不彷先來作個簡單的測試感覺一下，其實我們可以很簡單的使用python的assert來實作看看。 假設今天要設計提款功能，其中有兩個函式，一個會回傳存款減去提款剩下的金額，一個會檢查提款金額只能以1000為單位。所以這台atm很簡單，就是只讓你提1">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2017-09-06T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:11:21.609Z">
+<meta property="article:modified_time" content="2025-07-26T06:24:55.010Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="Test">
@@ -231,7 +231,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:11:21" itemprop="dateModified" datetime="2021-05-11T23:11:21+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:24:55" itemprop="dateModified" datetime="2025-07-26T14:24:55+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,6 +277,8 @@
       
         <p>雖然python已經有很好用的測試框架可以使用，不過對於剛開始想要自己寫測試的人，這些框架該怎麼使用還是需要花點時間學習一番。在真正進入使用測試框架之後，不彷先來作個簡單的測試感覺一下，其實我們可以很簡單的使用python的assert來實作看看。</p>
 <p>假設今天要設計提款功能，其中有兩個函式，一個會回傳存款減去提款剩下的金額，一個會檢查提款金額只能以1000為單位。所以這台atm很簡單，就是只讓你提1000為單位的金額，而且不能提超過你餘額的錢。</p>
+<span id="more"></span>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">withdraw</span>(<span class="params">deposit, money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> deposit - money</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_withdraw</span>(<span class="params">money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;accept&#x27;</span> <span class="keyword">if</span> money % <span class="number">1000</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;refuse&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>接著就是來寫一個測試用的function class，把要測試的不同條件寫進去，如果全pass就給個PASS訊息。function class只是一個簡單的方法把函式都集中起來，當然可以再作不同的變化。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TaskTest</span>(<span class="params"><span class="built_in">object</span></span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1200</span>, <span class="number">2000</span>) &amp;lt; <span class="number">0</span>, <span class="string">&#x27;存款小於提款不能允許提出&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">3000</span>, <span class="number">2000</span>) &gt; <span class="number">0</span>, <span class="string">&#x27;存款大於提款需允許提出&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;ALL withdraw PASS!&#x27;</span>)    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_check_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1300</span>) == <span class="string">&#x27;refuse&#x27;</span>, <span class="string">&#x27;提款金額非以1000為單位必須拒絕&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1000</span>) == <span class="string">&#x27;accept&#x27;</span>, <span class="string">&#x27;提款金額以1000為單位必須接受&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;All check_withdraw test PASS!&#x27;</span>)</span><br></pre></td></tr></table></figure>

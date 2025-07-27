@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="前面第一堂課在介紹線性的SVM，透過二次規畫找到最大margin的支撐向量來建立更強健的模型。這堂課將會延讀svm並加上非線性轉換的方式，讓SVM不止可以控制模型複雜度，也能結合特微轉換來提高模型效果。   假設透過特徵轉換的方法將SVM轉為非線性，原本的x會被轉換到z空間，但又希望可以在解SVM最佳化問題時，能夠擺脫轉換到z空間高維度的依賴。即將非線性轉換轉成另一個對等問題，不管轉到幾維的空間，">
+  <meta name="description" content="前面第一堂課在介紹線性的SVM，透過二次規畫找到最大margin的支撐向量來建立更強健的模型。這堂課將會延讀svm並加上非線性轉換的方式，讓SVM不止可以控制模型複雜度，也能結合特微轉換來提高模型效果。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="機器學習技法(Machine Learning Techniques)第二講筆記">
 <meta property="og:url" content="https://qiubite31.github.io/2020/01/21/Machine-Learning-Techniques-2/index.html">
 <meta property="og:site_name" content="Drake&#39;s">
-<meta property="og:description" content="前面第一堂課在介紹線性的SVM，透過二次規畫找到最大margin的支撐向量來建立更強健的模型。這堂課將會延讀svm並加上非線性轉換的方式，讓SVM不止可以控制模型複雜度，也能結合特微轉換來提高模型效果。   假設透過特徵轉換的方法將SVM轉為非線性，原本的x會被轉換到z空間，但又希望可以在解SVM最佳化問題時，能夠擺脫轉換到z空間高維度的依賴。即將非線性轉換轉成另一個對等問題，不管轉到幾維的空間，">
+<meta property="og:description" content="前面第一堂課在介紹線性的SVM，透過二次規畫找到最大margin的支撐向量來建立更強健的模型。這堂課將會延讀svm並加上非線性轉換的方式，讓SVM不止可以控制模型複雜度，也能結合特微轉換來提高模型效果。">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://qiubite31.github.io/2020/01/21/Machine-Learning-Techniques-2/DualSVM.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2020/01/21/Machine-Learning-Techniques-2/LagrangeMultiplier.JPG">
@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2020/01/21/Machine-Learning-Techniques-2/AreWeDoneYet.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2020/01/21/Machine-Learning-Techniques-2/Summary.JPG">
 <meta property="article:published_time" content="2020-01-20T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:44:29.994Z">
+<meta property="article:modified_time" content="2025-07-26T06:21:30.985Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="Machine Learning Techniques">
@@ -248,7 +248,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:44:29" itemprop="dateModified" datetime="2021-05-11T23:44:29+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:21:30" itemprop="dateModified" datetime="2025-07-26T14:21:30+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -294,6 +294,8 @@
       
         <p>前面第一堂課在介紹線性的SVM，透過二次規畫找到最大margin的支撐向量來建立更強健的模型。這堂課將會延讀svm並加上非線性轉換的方式，讓SVM不止可以控制模型複雜度，也能結合特微轉換來提高模型效果。</p>
 <img src="/2020/01/21/Machine-Learning-Techniques-2/DualSVM.JPG" class="" width="500">
+
+<span id="more"></span>
 
 <p>假設透過特徵轉換的方法將SVM轉為非線性，原本的x會被轉換到z空間，但又希望可以在解SVM最佳化問題時，能夠擺脫轉換到z空間高維度的依賴。即將非線性轉換轉成另一個對等問題，不管轉到幾維的空間，都只會有N個變數，變數數量不會和要轉換的維度的有關，這稱為原本SVM的對偶問題(dual problem)。</p>
 <img src="/2020/01/21/Machine-Learning-Techniques-2/LagrangeMultiplier.JPG" class="" width="500">

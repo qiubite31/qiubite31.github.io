@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2020/02/05/Machine-Learning-Techniques-4/SelectionbySV.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2020/02/05/Machine-Learning-Techniques-4/summary.JPG">
 <meta property="article:published_time" content="2020-02-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:45:13.922Z">
+<meta property="article:modified_time" content="2025-07-26T06:21:23.107Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="Machine Learning Techniques">
@@ -246,7 +246,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:45:13" itemprop="dateModified" datetime="2021-05-11T23:45:13+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:21:23" itemprop="dateModified" datetime="2025-07-26T14:21:23+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -293,6 +293,8 @@
         <img src="/2020/02/05/Machine-Learning-Techniques-4/HardMarginCons.JPG" class="" width="500">
 
 <p>上一講教了透過kernel trick來處理dual SVM中的轉換與內積，並介紹了不同的kernel function，從線性到無限多維轉換的Gaussian，但SVM還是有可能會overfit。overfit有兩種可能的原因，第一種為使用了過度複雜的轉換，第二種則是堅持要把所有資料完全的切分開來。以上面這個例子來說，如果可以容忍有錯誤分類，但可以使用簡單的線性切分也可以得到不錯的邊界；相反的，如果使用比較複雜的轉換確實完美的將資料都區分正確，反而容易造成overfit。</p>
+<span id="more"></span>
+
 <img src="/2020/02/05/Machine-Learning-Techniques-4/GiveUpExample.JPG" class="" width="500">
 
 <p>但該如何解決這個問題呢？之前在講pocket演算法時，pocket會找到能分錯資料最少的超平面，但hard-margin SVM除了要求要全部分對之外，還要選w長度最小的超平面。所以如果可以讓SVM也能像pocket一樣容忍一些錯誤，即不管部份分錯的點，就能達到某種程度的條件放寬。這邊引入C參數來代表放寬條件的相對重要性，C較大時代表越重視不要犯錯越好，C越小時代表越重視w長度，即分對的資料的margin越寬越好。</p>

@@ -29,7 +29,7 @@
 <meta property="og:description" content="過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。 在導入的過程中當然">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2023-11-11T07:43:00.000Z">
-<meta property="article:modified_time" content="2024-01-27T14:29:39.207Z">
+<meta property="article:modified_time" content="2025-07-26T06:18:41.328Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Cassandra">
 <meta property="article:tag" content="NoSQL">
@@ -232,7 +232,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2024-01-27 22:29:39" itemprop="dateModified" datetime="2024-01-27T22:29:39+08:00">2024-01-27</time>
+                <time title="修改時間：2025-07-26 14:18:41" itemprop="dateModified" datetime="2025-07-26T14:18:41+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -279,6 +279,8 @@
         <p>過去兩年的時間投入了數據平台的建置，希望可以打造一個所謂的現代化數據平台(Modern Data Platform)，這中間可是比想像中困難多了。但兩年過去了團隊成員從也是從小貓幾隻，一路成長到十多人的團隊。講到現代化的數據平台，NoSQL的儲存方案肯定是會被考量到的一項技術，在一陣研究和討論後，我們決定採用Cassandra當作在數據平台服務中，擔任NoSQL的主要儲存技術。</p>
 <p>在導入的過程中當然沒有這麼順利，特別是對於只用過Oracle或是SQL Server等RDBMS技術，完全沒有碰過NoSQL的開發團隊，大家對於使用Cassandra總是有錯誤的想像，或是在不熟悉與不合適的使用情境下，最後造成大家與Cassandra「不歡而散」。</p>
 <p>這篇想開始談談實際使用Cassandra後會因為Cassandra的設計限制遇到的問題，希望大家在一頭熱投入Cassandra的研究前，可以評估使用情境是否適合。我特別推薦在準備DataStax的Cassandra Developer Certification時上到的一堂課，這堂<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=jYvKiewV-5Q&list=PL2g2h-wyI4SqIigskyJNAeL2vSTJZU_Qp">DS220</a>提到許多Cassandra在實在作data modeling會需要知道的技巧和特性。</p>
+<span id="more"></span>
+
 <p>回到這次想談的，CQL不是SQL。</p>
 <p>在初期投入Cassandra技術評估，看到Cassandra支援CQL(Cassandra Query Language)時，肯定會讓RDBMS開發者眼睛一亮，這看起來多麼的熟悉，忍不住在比較NoSQL方案時在Cassandra蓋上一個優勝的章。當然我不能否認當初我們也這麼認為，一直到大家實際使用時，才會發現CQL和SQL有根本上的不同。</p>
 <h4 id="不是任意欄位都能FILTER"><a href="#不是任意欄位都能FILTER" class="headerlink" title="不是任意欄位都能FILTER"></a>不是任意欄位都能FILTER</h4><p>簡單來說，比起RDBMS的SQL查詢，Cassandra因為本身的設計，所以CQL本來就只能作到有限度的查詢。CQL不能像SQL一樣可以將任意欄位放在where條件執行查詢，而是只能針對設定成partition key和clustering key的欄位進行查詢，甚至對組成clustering key的欄位，還有查詢順序的限制。當然這裡我們就先不提建立secondary index或是materialize view的情況。</p>

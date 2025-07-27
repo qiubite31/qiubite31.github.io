@@ -29,7 +29,7 @@
 <meta property="og:description" content="上一篇有提到真的有重要的功能不支援web的情況下，可以採用conditional import的方式，在不同平台運行不同的程式片段，避免使用過多的平台判斷邏輯造成程式碼過長，或是在compile階段出現error。 假設今天要實作一個platform判斷邏輯，因為我們已經知道web平台不支援dart:io，且其他的平台(ios, android等)都可以用dart:io.Platform。所以設計">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2021-09-11T11:05:29.000Z">
-<meta property="article:modified_time" content="2021-09-12T02:33:14.307Z">
+<meta property="article:modified_time" content="2025-07-26T06:19:16.027Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Flutter">
 <meta property="article:tag" content="Flutter Web">
@@ -233,7 +233,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-09-12 10:33:14" itemprop="dateModified" datetime="2021-09-12T10:33:14+08:00">2021-09-12</time>
+                <time title="修改時間：2025-07-26 14:19:16" itemprop="dateModified" datetime="2025-07-26T14:19:16+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -280,6 +280,8 @@
         <p>上一篇有提到真的有重要的功能不支援web的情況下，可以採用conditional import的方式，在不同平台運行不同的程式片段，避免使用過多的平台判斷邏輯造成程式碼過長，或是在compile階段出現error。</p>
 <p>假設今天要實作一個platform判斷邏輯，因為我們已經知道web平台不支援dart:io，且其他的平台(ios, android等)都可以用dart:io.Platform。所以設計的邏輯為，當dart:io能被使用時採用dart:io.Platform判斷運行平台，否則即判定為web。</p>
 <p>首先可以先作一個簡單的列舉項目PlatformType，用來比較platform判斷結果。接著設計一個PlatformCheck類別，並實作類似dart:io的isPlatform檢查。而checkPlatform函式會實作在拆出去的platform_web或platform_io兩個dart裡面。</p>
+<span id="more"></span>
+
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// platform_type.dart</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;platform_web.dart&#x27;</span> <span class="keyword">if</span> (dart.<span class="keyword">library</span>.io) <span class="string">&#x27;platform_io.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> PlatformType &#123;</span><br><span class="line">  WEB,</span><br><span class="line">  ANDROID,</span><br><span class="line">  IOS</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PlatformCheck</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isWeb() =&gt; checkPlatform() == PlatformType.WEB;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isAndroid() =&gt; checkPlatform() == PlatformType.ANDROID;</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">bool</span> isIos() =&gt; checkPlatform() == PlatformType.IOS;</span><br><span class="line">  <span class="comment">// ...other platform</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>回頭看開頭的conditional import，我們想到達成的效果為，如果可以使用dart.library.io的話就import platform_io.dart，不行的話則import platform_web.dart。</p>

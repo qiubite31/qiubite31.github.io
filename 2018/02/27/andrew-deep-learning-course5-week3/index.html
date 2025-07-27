@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="在RNN的應用中，有一種是sequence to sequence模型，像是在語言翻譯問題上，要把長度為5的法文翻譯成長度為6的英文。首先先透過一個encoder將每個法文字詞輸入進RNN模型，再透過decoder逐一輸出英文字詞直到結尾，這樣的模型被證實只要使用足夠大量的法文和英文句子就可以完成。   另一個類似的應用是給一張照片，然後自動給予這張照片適當的標題，這時可以透過CNN來建立一個en">
+  <meta name="description" content="在RNN的應用中，有一種是sequence to sequence模型，像是在語言翻譯問題上，要把長度為5的法文翻譯成長度為6的英文。首先先透過一個encoder將每個法文字詞輸入進RNN模型，再透過decoder逐一輸出英文字詞直到結尾，這樣的模型被證實只要使用足夠大量的法文和英文句子就可以完成。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Andrew深度學習課程五 - Sequence Model第3周筆記">
 <meta property="og:url" content="https://qiubite31.github.io/2018/02/27/andrew-deep-learning-course5-week3/index.html">
 <meta property="og:site_name" content="Drake&#39;s">
-<meta property="og:description" content="在RNN的應用中，有一種是sequence to sequence模型，像是在語言翻譯問題上，要把長度為5的法文翻譯成長度為6的英文。首先先透過一個encoder將每個法文字詞輸入進RNN模型，再透過decoder逐一輸出英文字詞直到結尾，這樣的模型被證實只要使用足夠大量的法文和英文句子就可以完成。   另一個類似的應用是給一張照片，然後自動給予這張照片適當的標題，這時可以透過CNN來建立一個en">
+<meta property="og:description" content="在RNN的應用中，有一種是sequence to sequence模型，像是在語言翻譯問題上，要把長度為5的法文翻譯成長度為6的英文。首先先透過一個encoder將每個法文字詞輸入進RNN模型，再透過decoder逐一輸出英文字詞直到結尾，這樣的模型被證實只要使用足夠大量的法文和英文句子就可以完成。">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://qiubite31.github.io/2018/02/27/andrew-deep-learning-course5-week3/sequence_to_sequence.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2018/02/27/andrew-deep-learning-course5-week3/image_caption.JPG">
@@ -49,7 +49,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2018/02/27/andrew-deep-learning-course5-week3/CTC_cost.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2018/02/27/andrew-deep-learning-course5-week3/trigger_word.JPG">
 <meta property="article:published_time" content="2018-02-26T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:34:12.374Z">
+<meta property="article:modified_time" content="2025-07-26T06:22:42.616Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="Deep Learning">
@@ -254,7 +254,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:34:12" itemprop="dateModified" datetime="2021-05-11T23:34:12+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:22:42" itemprop="dateModified" datetime="2025-07-26T14:22:42+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -300,6 +300,8 @@
       
         <p>在RNN的應用中，有一種是sequence to sequence模型，像是在語言翻譯問題上，要把長度為5的法文翻譯成長度為6的英文。首先先透過一個encoder將每個法文字詞輸入進RNN模型，再透過decoder逐一輸出英文字詞直到結尾，這樣的模型被證實只要使用足夠大量的法文和英文句子就可以完成。</p>
 <img src="/2018/02/27/andrew-deep-learning-course5-week3/sequence_to_sequence.JPG" class="" width="500">
+
+<span id="more"></span>
 
 <p>另一個類似的應用是給一張照片，然後自動給予這張照片適當的標題，這時可以透過CNN來建立一個encoder，接著再透過RNN建立一個decoder來產生適當的標題。</p>
 <img src="/2018/02/27/andrew-deep-learning-course5-week3/image_caption.JPG" class="" width="500">

@@ -29,7 +29,7 @@
 <meta property="og:description" content="寫python在做字串格式化的時候，常常會使用format來達成。一般簡單的format用法，會使用大括弧加數字編號配合引數順序做取代 12&gt;&gt;&gt; str &#x3D; &quot;My name is &amp;#123;0&amp;#125;, and I&amp;#x27;m &amp;#123;1&amp;#125; years old&quot;.format(&amp;#x27;Tom&amp;#x27;, 18)&quot;My">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2016-08-07T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T14:52:33.507Z">
+<meta property="article:modified_time" content="2025-07-26T06:30:41.250Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:30:41" itemprop="dateModified" datetime="2025-07-26T14:30:41+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,6 +277,8 @@
         <p>寫python在做字串格式化的時候，常常會使用format來達成。一般簡單的format用法，會使用大括弧加數字編號配合引數順序做取代</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">str</span> = <span class="string">&quot;My name is &#123;0&#125;, and I&#x27;m &#123;1&#125; years old&quot;</span>.<span class="built_in">format</span>(<span class="string">&#x27;Tom&#x27;</span>, <span class="number">18</span>)</span><br><span class="line"><span class="string">&quot;My name is Tom, and I&#x27;m 18 years old&quot;</span></span><br></pre></td></tr></table></figure>
 <p>在Python3.1開始可以省略數字編號</p>
+<span id="more"></span>
+
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">str</span> = <span class="string">&quot;My name is &#123;&#125;, and I&#x27;m &#123;&#125; years old&quot;</span>.<span class="built_in">format</span>(<span class="string">&#x27;Tom&#x27;</span>, <span class="number">18</span>)</span><br><span class="line"><span class="string">&quot;My name is Tom, and I&#x27;m 18 years old&quot;</span></span><br></pre></td></tr></table></figure>
 <p>或是使用欄位名稱來取代對應引數</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">str</span> = <span class="string">&quot;My name is &#123;name&#125;, and I&#x27;m &#123;age&#125; years old&quot;</span>.<span class="built_in">format</span>(name=<span class="string">&#x27;Tom&#x27;</span>, age=<span class="number">18</span>)</span><br><span class="line"><span class="string">&quot;My name is Tom, and I&#x27;m 18 years old&quot;</span></span><br></pre></td></tr></table></figure>

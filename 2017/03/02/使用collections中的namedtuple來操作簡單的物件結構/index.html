@@ -29,7 +29,7 @@
 <meta property="og:description" content="tuple在python中是一種不可變動(immutable)的資料結構，相較於list是可變動的(mutable)，兩者共同都可以使用index來讀取值，但因為tuple為不可變動，所以一經宣告即無法修改其中的值。 12345&gt;&gt;&gt; drink &#x3D; (&amp;#x27;Black Tea&amp;#x27;, &amp;#x27;regular&amp;#x27;, &amp;#x27;sugar free&amp;#x2">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2017-03-01T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T14:52:33.503Z">
+<meta property="article:modified_time" content="2025-07-26T06:28:15.328Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="Collections">
@@ -231,7 +231,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:28:15" itemprop="dateModified" datetime="2025-07-26T14:28:15+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,6 +277,9 @@
       
         <p>tuple在python中是一種不可變動(immutable)的資料結構，相較於list是可變動的(mutable)，兩者共同都可以使用index來讀取值，但因為tuple為不可變動，所以一經宣告即無法修改其中的值。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink = (<span class="string">&#x27;Black Tea&#x27;</span>, <span class="string">&#x27;regular&#x27;</span>, <span class="string">&#x27;sugar free&#x27;</span>)  <span class="comment"># 我要一杯紅茶，正常冰量不加糖</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink[<span class="number">0</span>]  <span class="comment"># 可以使用index來讀取tuple中的item</span></span><br><span class="line">Black Tea</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>drink[<span class="number">0</span>] = <span class="string">&#x27;Green Tea&#x27;</span>  <span class="comment"># tuple為不可變動，所以無法透過assign來修改其中的值</span></span><br><span class="line">TypeError: <span class="string">&#x27;tuple&#x27;</span> <span class="built_in">object</span> does <span class="keyword">not</span> support item assignment</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
 <p>tuple很適合用來儲存一些不需要頻繁變動的資料，但是在使用上要使用index來讀取tuple中item的值，若是tuple中的item數量少也許還沒問題，但如果tuple中的item數量很多，甚至是開發一段時間又沒寫註解，往往最後這種index的讀取就變成一種魔術數字(magic number)，造成維護上的困難。</p>
 <p>namedtuple是tuple的擴展，因為namedtuple在使用上可以透過類似讀取欄位(field)名稱的方式，來取用tuple不同的item資料，所以有時候namedtuple就很適合用來代替tuple儲存資料。如果有需要頻繁讀取tuple中的item，於是你開始想建立class和物件來操作，但是資料欄位又沒有到這麼複雜到需要額外建class，這種情況很適合。</p>
 <p>下面馬上來介紹一下namedtuple的使用方法</p>

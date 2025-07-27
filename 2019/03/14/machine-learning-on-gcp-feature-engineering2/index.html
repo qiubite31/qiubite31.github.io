@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2019/03/14/machine-learning-on-gcp-feature-engineering2/DenseAndSparse.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2019/03/14/machine-learning-on-gcp-feature-engineering2/EatAll.JPG">
 <meta property="article:published_time" content="2019-03-13T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:40:33.425Z">
+<meta property="article:modified_time" content="2025-07-26T06:21:58.951Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="Feature Engineering">
@@ -239,7 +239,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:40:33" itemprop="dateModified" datetime="2021-05-11T23:40:33+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:21:58" itemprop="dateModified" datetime="2025-07-26T14:21:58+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -287,6 +287,8 @@
 <h2 id="Categorical"><a href="#Categorical" class="headerlink" title="Categorical"></a>Categorical</h2><img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/Categorical.JPG" class="" width="500">
 
 <p>如果遇到類別型的特徵又需要拿進來訓練模型，則可以用one-hot encoding來處理。例如當今天要對商品銷售預測建立模型時，想要把員工拿進來考量，也許不同員工對顧客的服務上會影響到商品銷售。雖然員工的編號是數值，但其並不存在實際上數值的意義，這時候就可以透過one-hot來處理，並以多個欄位變數表示來將每個值轉成0/1表示的稀疏向量。</p>
+<span id="more"></span>
+
 <img src="/2019/03/14/machine-learning-on-gcp-feature-engineering2/CustomerRating.JPG" class="" width="500">
 
 <p>有時候在某些資料則可以當作連續型處理，也可以使用one-hot來處理。例如顧客的評分，如果你認為4分和2分是差距很大的，這時也可以依個人考量當作類別型處理。要特別注意的是，如果今天顧客沒有提供評分資料，在處理missing value上，第一種數值型的處理方法是使用另一個欄位來紀錄是否有收到評分(1/0)，並維持評分值為0；第二種類別型處理方法則將所有one-hot變數設為0，並一樣透過另一欄位紀錄是否有評分，注意不要使用自己的特別編碼(magic number)來處理。</p>

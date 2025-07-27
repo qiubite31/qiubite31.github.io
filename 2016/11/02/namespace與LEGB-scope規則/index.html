@@ -29,7 +29,7 @@
 <meta property="og:description" content="python的namespace是一種”name-to-object”的對應關係，而在不同的namespace之間都有各自的作用域，就像是不同的module中雖然都定義了相同的名稱的函式，但卻不會互相影響。為了找到特定的”name-to-object”的namespace，python會採用scope的概念來找到特定object的所屬變數或是函式，而搜尋順序即是LEBG規則。 python的sco">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2016-11-01T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T14:52:33.503Z">
+<meta property="article:modified_time" content="2025-07-26T06:29:01.003Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:29:01" itemprop="dateModified" datetime="2025-07-26T14:29:01+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -278,6 +278,8 @@
 <p>python的scope規則LEGB查找順序分別為 Local -&gt; Enclosed -&gt; Global -&gt; Built-in</p>
 <p>Local: 宣告於於function或是class內的name<br/>Enclosed: 封閉的function，function被另一個function包起來，常見為<a href="/2016/11/08/Closure%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">Closure</a><br/>Global: 最上層位於module的global name<br/>Build-in: 內建module的name，例如print, input等等</p>
 <p>以下舉幾個範例說明:</p>
+<span id="more"></span>
+
 <h5 id="1-L-local-scope"><a href="#1-L-local-scope" class="headerlink" title="1. L - local scope"></a>1. L - local scope</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var = <span class="string">&#x27;global&#x27;</span>    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">L</span>():</span>    </span><br><span class="line">    var = <span class="string">&#x27;local&#x27;</span>        </span><br><span class="line">    <span class="built_in">print</span>(var)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;&gt; L()  <span class="comment"># local 當function有定義local scope時，會優先使用local scope</span></span><br><span class="line">local</span><br></pre></td></tr></table></figure>
 <h5 id="2-LE-local-and-Enclosed-scope"><a href="#2-LE-local-and-Enclosed-scope" class="headerlink" title="2. LE - local and Enclosed scope"></a>2. LE - local and Enclosed scope</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var = <span class="string">&#x27;global&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LE</span>():</span>    </span><br><span class="line">    var = <span class="string">&#x27;enclosed&#x27;</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span>        </span><br><span class="line">        <span class="built_in">print</span>(var)    </span><br><span class="line">    inner()</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;&gt; LE()  <span class="comment"># 當function沒有local scope時，會往外找enclosed scope</span></span><br><span class="line">enclosed</span><br></pre></td></tr></table></figure>
 <h5 id="3-LEG-local-Enclosed-and-Global-scope"><a href="#3-LEG-local-Enclosed-and-Global-scope" class="headerlink" title="3. LEG - local, Enclosed and Global scope"></a>3. LEG - local, Enclosed and Global scope</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var = <span class="string">&#x27;global&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LEG</span>():</span>    </span><br><span class="line">    <span class="built_in">print</span>(var)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>LEG()  <span class="comment"># 當local和enclosed都沒有時，會往外找global</span></span><br><span class="line"><span class="keyword">global</span></span><br></pre></td></tr></table></figure>

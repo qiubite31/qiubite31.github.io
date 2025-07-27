@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:18" itemprop="dateModified" datetime="2025-07-26T14:23:18+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,58 +273,14 @@
       
           <p>上一堂課講到為了避免overfitting，可以使用regularization的技巧，把一個regularizer加在Ein上面，轉而求Augmented Error反而可以有效的解決模型複雜度太高的問題。這一堂課會講到該如何使用Validation的手法幫助選擇機器學習裡面不同的參數。</p>
 <img src="/2017/10/25/Machine-Learning-Foundation-15/ManyModel.JPG" class="" width="500">
-
-<p>在訓練一個機器學習模型，其中會遇到很多的選擇，包含使用哪些演算法、使用多少資料、要使用什麼非線性轉換方法，甚至是要使用哪一種regularizer。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelection.JPG" class="" width="500">
-
-<p>Machine Learning裡面最實務的問題，就是如何作出好的選擇讓最後Eout可以作到最好，如果用視覺化的方法來作選擇，反而會受到自己的主觀影響，那到底該怎麼作選擇呢？</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelectionByEin.JPG" class="" width="500">
-
-<p>如果使用Ein來作模型選擇的話，就會受到overfitting的影響，越複雜的模型就越容易作好更好的Ein，但是會付出模型複雜度的代價，因為overfitting造成泛化能力變差，Eout反而也作不好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelectionByEtest.JPG" class="" width="500">
-
-<p>那如果我們可以拿到實際的測試資料，就拿實際的測試資料衡量模型表現就好了，但是實務上可能不會有這樣的實際測試資料。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/EinAndEtest.JPG" class="" width="500">
-
-<p>如果使用Ein來選模型不可行，而實務上又拿不到實際的資料該怎麼取平衡呢？我們可以使用手上的樣本資料，把一部份切出來當作看不到的測試資料，再拿剩下的資料作學習，並使用切出來的資料衡量模型的效果。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ValidationSet.JPG" class="" width="500">
-
-<p>原本的樣本資料D要負擔兩種角色，一個是透過D來求出最好的Ein，然後再把D丟進演算法得到一個Hypothesis G，前面有講到如果這樣的話很可能會造成overfitting問題，所以我們把資料分成train和validation，先使用train總共N-K筆資料練習出好的Ein，並得到Hypothesis G，最後再透過K筆validation資料來驗證G到底好還不好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelectionByEval.JPG" class="" width="500">
-
-<p>從前面講到的learning curve可以知道，如果使用較多的資料來訓練會得到比較好的結果，所以實務上雖然會使用D(train)來訓練出不同的Hypothesis，然後使用D(val)作評估並選出最好的模型，但是最後在選好模型之後，會再把全部的資料D丟進模型裡作訓練，因為使用全部的資料會比較用部份訓練資料所訓練出來的模型還要好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/ValidaionPractice.JPG" class="" width="500">
-
-<p>從驗證資料量和Eout來分析可以看到黑線的Eout會很大，因為在使用複雜的模型之下可能因為overfitting的關係造成Eout作不好；而虛線是用Etest資料，但是這個最佳的測試資料常常是不存在的；紅色是只使用訓練資料建立模型得到的Eout，他會比藍色使用全部資料來訓練所得到的Eout還要來的高。至於為什麼使用訓練資料會比使用Ein還要來的差的原因，是因為當驗證資料量K越大，代表訓練資料就越小，可能產生underfitting使得模型怎麼樣都練習不好。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/Dilemma.JPG" class="" width="500">
-
-<p>所以我們會遇到不知道該怎麼選擇驗證資料量K的情況，因為如果用了比較大的K，雖然可以確保validation和Eout可以比較接近，但卻會造成訓練資料的Eout和全部資料的Eout差很多；但如果使用小的K雖然可以確保訓練資料的Eout和全部資料的Eout很接近，但是就無法確保validation和Eout到底接不接近。實務上的K常使用N/5。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/K=1.JPG" class="" width="500">
-
-<p>假設今天設定K=1，並且重複抽出一筆當驗證算出error，再來把error作平均，就可以透過計算這個平均的error來推估Eout。而這種只抽一筆當驗證的方法就稱為leave-one-out的cross validation，因為每次都用N-K筆計算一個g，所以稱為交叉驗證。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/LOO.JPG" class="" width="500">
-
-<p>在使用leave-one-out cross validation可以有兩種方法，第一種是拿掉一個點，用剩下的點作迴歸，再計算驗證的點到迴歸的距離當作error；第二種是拿掉一個貫，用剩下的點中間取一個常數，再計算驗證的點到常數的距離當作error，透過比較這兩種方法得到的較小的error，就可以選出比較好的模型，也許使用計算迴歸不一定會得到比較小的error，反而使用常數來計算還得到較好的結果。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/GuaranteeOfLOO.JPG" class="" width="500">
-
-<p>而且leave-one-out cross validation的期望值，確實也可以證明和Eout是相近的，這個部份證明這裡就不多作說明了。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/LOOPractice.JPG" class="" width="500">
-
-<p>在實務上，如果使用Ein來選擇模型，使用越多的特徵雖然可以得到較小的Ein，但卻也可以造成overfitting，反而和Eout相差很大。但是如果使用leave-one-out cross validation的方法來選模型，確實可以找到一個比較接近Eout的結果，而且絕對對比Ein要來的好很多。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/DisadventageLOO.JPG" class="" width="500">
-
-<p>使用leave-one-out的最大問題，就是他會花很多的時間在作訓練，如果樣本資料有1000筆，每次都要拿999筆來訓練並重複作一千次才能取到平均的Error，所以在實務上leave-one-out要用來選擇模型可能比較不可行。第二個問題是leave-one-out因為每次只取一個點，所以他的變動程度很高，雖然有取平均，但是他本質上還是一個變動程度比較高的評估方法。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/VFoldCrossValidation.JPG" class="" width="500">
-
-<p>所以實務上，第一個希望可以降低訓練的次數，比起之前的1000次訓練，可以切成10份的方式，每次取9份作訓練1份作驗證後作平均，這樣就只需要作10次而不需要作到1000次。而且這個方法也可以作到交叉驗證的效果，leave-one-out其實也就是這種方法的極端例子。實務上比較常用的方法是切成十份，又可以稱為10-fold cross validation</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/FinalWord.JPG" class="" width="500">
-
-<p>使用cross validation在實務上會比只作一次validation當果會比較好也比較穩定，但是前提是在計算上是充許的，因為作k次的交叉驗證作平均需要額外的運算資源；而validation切5份或是10份就可以得到比較好的結果，不需要真的使用到leave-one-out。我們透過validation是可以讓我們選到一個比較好的模型，但是要注意的是，這個validation還是比最終使用測試資料的結果應該還是要樂觀的，只要真正應用在測試資料，你才會知道真的的效果如何。</p>
-<img src="/2017/10/25/Machine-Learning-Foundation-15/Summary.JPG" class="" width="500">
-
-<p>總結來說，這堂課學到使用Ein來選擇模型是很危險的，並談到leave-one-out cross validaion與實務上會使用到的k-fold corss validation可以用來作模型選擇。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/15_handout.pdf">Machine Learning Foundation 15</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/10/25/Machine-Learning-Foundation-15/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -374,7 +330,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:22" itemprop="dateModified" datetime="2025-07-26T14:23:22+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -420,49 +376,14 @@
       
           <p>上一堂課講到overfitting現象，他會在使用過高的模型複雜度、雜訊過多或是資料太少時發生。上次有提到可以使用Data Clean/Purning和Data Hinting從資料面下手解決，這堂課會提到regularized手法來避免overfitting。</p>
 <img src="/2017/10/18/Machine-Learning-Foundation-14/Regularization.JPG" class="" width="500">
-
-<p>Overfit現象就是Target和Fit兩者相差太多，雖然可以將樣本學習的很好使Ein很小，但是卻造成泛化能力很差Eout過高，就如同右邊這張圖。regularized目標則是希望可以把Fit曲線能夠更接近Target，所以regularized可以視成一個從高次方項走向底次方項的手法，有很多的解都可以通過樣本點，但是究竟哪一組是最好的，就是regularized要作的。那該怎麼從高次多項走回低次多項式呢？</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithConstraint.JPG" class="" width="500">
-
-<p>要從高次多項式走回低次多項式，其實就可以視成低次多項式是高次多項式加上constrain，即如果把十次多項式中超過三次的項權重都設成0，那麼就可以降回二次多項式了。在求最佳化的過程也是，如果今天要求二次多項式的最小值Ein，就可以使用加上constrain的十次多項式來求最小值。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithLooserConstraint.JPG" class="" width="500">
-
-<p>進一步的可以再延伸出，如果我並不是把超過三次項的權重設成0，而是只要其中有8項設權重設成0，就可以放寬這個constrain，讓regression可以更加的有彈性。這個放寬限制條件的二項式會比本來的二項式可以變化的項次更多，但也不像十次多項式這麼複雜。所以成求Ein時，只要確保權重為0的項次小於3個就可以了，但是這種離散的限制就像PLA一樣不容易求解，是NP-hard問題。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegressionWithSofterConstraint.JPG" class="" width="500">
-
-<p>原本的條件是算權重不是0的項次要小於3，我們可以把他轉換成將每個項次權重平均相加要小於上限制C，這樣就可以轉成比較好解的問題，而且權重越接近0的取平均會越小。C如果設定的越大，就會越接近十次多項式結果，且所有比較小的C的項次組合都會被比較大的C的項次組合包含。這個H(C)又可以被稱為regularized hypothesis，即加上限制條件的hypothesis，而透過規則化的hypothesis set裡所找到的最佳hypothesis又稱為W(REG)</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/TheLagrangeMultiplier.JPG" class="" width="500">
-
-<p>再來可以和之前一樣把式子轉換成矩陣的表示方法來解最佳化問題。原本我們可以透過走梯度反方向到W(lin)這個最佳解，但是現在加上了限制式，這個限制在幾何上是一個圓圈，找到前面所提到的規則化hpothesis最佳解W(REG)的話，就得同時往梯度反方向走而且不離開圓邊。又因為往圓的法向量(紅色向量)走就會離開圓邊，所以只能往垂直於法向量的分量走(綠色向量)，當持續走到梯度反方向要是和圓的法向量平行的話，就代表不能走了，即為找到最佳解。我們可以把兩個平行向量的比值設成2λ/N。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/AugmentedErr.JPG" class="" width="500">
-
-<p>再來可以把求梯度等於0轉換回求最小值的式子，即為Ein加上一組regularizer又可稱為augmented error Eaug(w)，如果預先先指定λ值就可以很容易的解這個式子。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/Result.JPG" class="" width="500">
-
-<p>所以只要加上一點regularizer就可以對模型結果作出適當調整，今天如果λ設成0的話就等同沒有regularized即為overfitting，λ設的太大則會造成underfitting，加上regularizer就會有類似懲罰的效果。這種的規則化方法又稱為weight-decay regularization，即把權重最小的規則化方法。而且這個規則化方法可以應用到linear regresion、logistic regression甚至是其他不同的transform。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/RegularizationAndVC.JPG" class="" width="500">
-
-<p>但究竟這個augmented error和之前學到的VC有什麼相關性呢？用求augmented error的方法來解本來不好解的constrain Ein，這裡對應到的VC保證為Eout會小於En加上一個constrain H(C)，所以作好Eaug就能把Eout間接的也作好。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/AnotherView.JPG" class="" width="500">
-
-<p>Augmented error和VC bound其實相同的地方在於都是在求複雜度，augmented error求的是單一個hypothesis的複雜度，而VC則是在求整個hypothesis集合的複雜度。這個augmented error如果可以表現更好，那麼Eaug可能是一個比Ein更好的代理人可以幫我們作到好的Eout。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/EffectiveVCDimension.JPG" class="" width="500">
-
-<p>其實使用regulization付出的VC dimension會比原本還要小，因為在實際上有N個特徵維度下，最終透過regulization將不會使用到那麼多的維度。這裡相比原本的d(VC)，可以稱為d(EFF)，其付出的維度會比本來的d(VC)還小。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/GeneralRegularizers.JPG" class="" width="500">
-
-<p>那到底該使用什麼樣的regularizer呢？今天如果在知道target特性的情況下，可以針對target特性來設計regularizer，比如說如果想要一個比較接近偶函數的函數話，就針對奇數次方讓他變小。又或者在選出一個比較能夠說服我們的regularizer，像是比較平滑或是簡單的regularizer，因為overfitting是noise造成的，noise就會造成不平滑，像是使用L1 regularizer。或者也可以找一個好使用好最佳化的regularizer，像是前面說到的weight-decay regularizer，又被稱為L2 regularizer。如果找到不好的regularizer，那就把λ設定成0就等同於拿掉regularizer的效果。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/L2AndL1.JPG" class="" width="500">
-
-<p>L2 Regularizer最大的好處就是他很好微分求最佳值，而L1在微分求最佳值的部份比較困難，且L1在求最佳值時很常發生在頂點上，意義就是某一些的權重w會是0，所以L1 Regularizer又被稱為sparse regularizer。透過L1就可以在高維度空間下(例如1000維)，找到一些w非0的項次(可能只有5維)，所以在最後的預測只要算非0項速度會比較快。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/OptimalLambda.JPG" class="" width="500">
-
-<p>那λ該怎麼選擇呢？很明顯的可以看到不管是stochastic noise或是deterministic noise，只要noise越大λ就要越大。下一講將會開始說明在使用規則化手法時，該如何有效的使用最佳的λ。</p>
-<img src="/2017/10/18/Machine-Learning-Foundation-14/Summary.JPG" class="" width="500">
-
-<p>總結來看，這堂課說明規則化就是在原本的hypothesis加上一個條件，並轉成一個Augmented Error，因為作了規則化所以有些維度就不會被使用到，因此VC維度就會下降成d(EFF)，而使用regularizer的使用方法可以針對target特性，或是使用容易說服自己的regularizer，還有也可以使用好最佳化的regularizer。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/14_handout.pdf">Machine Learning Foundation 14</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/10/18/Machine-Learning-Foundation-14/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -512,7 +433,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:16:38" itemprop="dateModified" datetime="2021-05-11T23:16:38+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:26" itemprop="dateModified" datetime="2025-07-26T14:23:26+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -558,49 +479,14 @@
       
           <p>上一講提到可以使用非線性轉換的方法，將線性的模型轉換成非線性，雖然可以解決更複雜的問題，但也伴隨著模型複雜度提高的代價。這一講將提到過度適合(Overfitting)現象所造成的泛化能力缺陷。</p>
 <img src="/2017/10/13/Machine-Learning-Foundation-13/BadGeneralization.JPG" class="" width="500">
-
-<p>假設今天有一個目標的函式是二次函式，但我們使用的四次函式來找到通過所有點的答案使得Ein為0，但這個四次函式卻和目標的二次函式差距很大造成Eout很大。這樣就會讓這個四次函式只認得樣本資料，而這種VC維度很高所付出的代價就是模型會失去舉一反三的能力，也就是泛化能力很差。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/Overfitting.JPG" class="" width="500">
-
-<p>這裡帶出學習會出現的兩個問題，一個是過度適合(Overfitting)，即Ein的fitting作的很好，但是作過度了造成Eout效果不好；一個是低度適合(Underfitting)，即Ein的fitting作的不夠好。Underfitting可以透過增加樣本資料或是使用較複雜的模型就可以解決，但是Overfitting反而是一個比較難解決的問題。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/CauseofOverfitting.JPG" class="" width="500">
-
-<p>發生Overfitting會有幾種原因，第一種是使用了過多的VC維，也就是使用了過於複雜的機器學習模型，像是對二次函式問題使用了四次函式來解；第二種可能性是雜訊太多，造成錯誤的學習；第三種是資料量不足，如果資料量不足可能沒有辦法學習出接近目標函式的結果。尤其當資料量不夠且雜訊又多，就很容易造成Overfitting讓模型最終失去泛化能力</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/CaseStudy.JPG" class="" width="500">
-
-<p>假設現在有兩個目標函式，一個是十次多項式加上雜訊，一個是五十次多項式但是沒有雜訊。今天分別使用二次多項式和十次多項式來比較兩個問題的學習結果，會發現十次多項式都發生Overfitting，在Ein都作的比較好，但是Eout都作不好。甚至是當我們已經知道目標函式是十次多項式的情況，使用十次多項式的結果也不一定會贏過二次多項式。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/LearningCurve.JPG" class="" width="500">
-
-<p>用學習曲線來看會發現，當樣本數量不夠的時候，十次多項式Ein和Eout差距會非常大，所以如果資料量不足就不應該免強使用較複雜的方法，反而使用二次多項式還能夠學習出比較好的結果。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/NoNoise.JPG" class="" width="500">
-
-<p>那如果都沒有雜訊的情況下也會是二次多項式的效果比較好，因為當目標函式很複雜時，也會造成類似雜訊的效果，如果二次多項式和十次多項式都作不好，使用二次多項式的泛化效果可能會比較好。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DetailExperiment.JPG" class="" width="500">
-
-<p>什麼時候要注意overfitting會發生呢？可以分成模型複雜程度Qf和雜訊程度σ^2來探討，再來會討論兩者和資料量N之間的關係。<img src="/2017/10/13/Machine-Learning-Foundation-13/TheOverfitMeasure.JPG" class="" width="500">延續之前的二次和十次多項式的例子，再來會使用Eout(g10) - Eout(g2)來衡量overfit的程度，即使用十次和二次多項式的Eout差來衡量。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/Result.JPG" class="" width="500">
-
-<p>在固定模型複雜度之下，只要資料量不夠而且雜訊程度越高，就越容易造成overfit；但在固定雜訊程度看模型複雜度的影響，大部份也是發生在資料量少且目標複雜度高會造成overfit。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/NoiseAndSize.JPG" class="" width="500">
-
-<p>兩者最主要的差異在於，雜訊是stochastic noise，即隨機產生的，但是目標函式的複雜度是deterministic noice，是固定可以計算出來的。總結來說在四種情況下會發生overfit，第一個是資料的量過小，第二個是stochastic noise太高的時候，第三個是deterministic noise太高的時候，第四個則是VC維度太高的時候。所以overfit是很容易發生的。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DeterministicNoise.JPG" class="" width="500">
-
-<p>所以到底為什麼今天的目標函式太過複雜的情況下和隨機雜訊是類似的呢？假設今天目標函式太過複雜，以至於無法使用任何的hypothesis描述，這中間的差距就是我們說的deterministic noise，這並不是一個隨機發生的雜訊。所以deterministic noise會取決於hypothesis，而且在給定相同x之下會有相同的deterministic noise。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/HandleOverfit.JPG" class="" width="500">
-
-<p>如果有這麼多的原因會造成overfit，那該怎麼解決呢？在模型部份，可以先使用比較簡單的模型開始，避免一開始就用過複雜的模型；在資料部份，可以將雜訊資料作data cleaning/pruning處理，或是收集更多的資料與使用data hinting產生虛擬資料來提供更多額外的資料；另外還可以透過regularization對模型產生懲罰效果，或是透過validation來隨時看學習的狀況。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DataClean.JPG" class="" width="500">
-
-<p>在Data Cleaning/Pruning的部份，Data Clean是指把已經確定是錯誤標記的資料，標記到正確的類別。Data Pruning則是直接將錯誤的雜訊資料直接從資料集去除掉。兩個資料的處理方法都不難，難度反而會在於該如何判斷資料是有問題的雜訊資料。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/DataHinting.JPG" class="" width="500">
-
-<p>在Data Hinging部份，以圖像的數字辨識來說，就是把每個字作簡單的旋轉來當作新的虛擬資料並加進來學習。這個方法很常用在現今在作圖象辨識時，對圖像作扭曲或是轉換來增加學習樣本數量。</p>
-<img src="/2017/10/13/Machine-Learning-Foundation-13/Summary.JPG" class="" width="500">
-
-<p>總結來說，這堂課教到了把Ein作好但是Eout作不好是overfitting現象，而且overfitting是非常容易發生的。不只是雜訊會造成overfitting，當目標函式過於複雜時，也是另一種雜訊。在處理overfitting的部份，這堂課簡單提到了data cleaning/pruning和data hinting，下一堂會再進一步教到如何使用regularization來避免overfitting現象。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/13_handout.pdf">Machine Learning Foundation 13</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/10/13/Machine-Learning-Foundation-13/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -650,7 +536,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:29" itemprop="dateModified" datetime="2025-07-26T14:23:29+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -696,55 +582,14 @@
       
           <p>上一堂講到三種不同的線性模型都可以用在二元分類，並且還可以透過二元分類來達成多類別分類，這一堂課會教到該如何將線性模型延伸轉換成非線性模型。</p>
 <img src="/2017/10/02/Machine-Learning-Foundation-12/LinearHypotheses.JPG" class="" width="500">
-
-<p>前面都講到線性模型，線性模型可以很容易的計算出線性分數，再結合不同的轉換作輸出，線性模型好處在於VC維度是可以很容易的受到控制的，所以確保作好Ein，Eout就可以表現的好。但是如果遇到像右邊比較複雜的資料，可能就沒辦法使用線性模型達成，勢必需要結合其它手法來突破限制。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/CircularSeparable.JPG" class="" width="500">
-
-<p>再重新看一次這組比較複雜的資料，可以發現他雖然沒辦法線性分割，但似乎是「圓圈」可分的問題，也就是在圓圈內和圓圈外是不同的類別。那該如何把本來線性可分的問題轉成圓圈可分，再透過前面教到的演算法來解決呢？</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/CircularSeparable2.JPG" class="" width="500">
-
-<p>接著我們先把原本的圓圈作符號的替換，可以整理成像之前一樣的向量內積式。他的意義在於，如果本來可以這個問題在X維度上用圓圈分出兩種類別，那麼在Z維度上將可以用直接用直線來分出兩種類別，即線性可分問題，這樣的轉換又稱為特徵轉換。所以我們知道問題在X維是圓圈可分，轉成在Z維是線性可分，但是相反來說的是不是在Z維是線性可分，在X維就是圓圈可分呢？</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/LinearHypothesesZSpace.JPG" class="" width="500">
-
-<p>在Z維是線性可分，但是在X維其實不一定會是圓圈。因為在二次曲線可能性不止是圓圈，還有可能是橢圓或是雙曲線，甚至就算是圓圈還可能分成圓內和圓外，那該如何找到所有二次曲線的可能性呢？</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/GeneralQuadraticHypothesisSet.JPG" class="" width="500">
-
-<p>我們可以列出所有能表式二次曲線的項都列出來(包含常數、一次項和二次項)，所以在Z維的perceptron就會對應到在X維的某個二次曲線可能的分類方式，當然也有可能會退化成一次方程式。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/GoodQuadraticHypothesis.JPG" class="" width="500">
-
-<p>所以到現在可以發現，如果能夠在Z維找到一個好的perceptron，就可以在X維找到一個可分割類別的二次曲線。之前學習的內容都是在X維裡面使用x和y來找到好的perceptron，現在要在Z維找到好的perceptron，自然就需要使用在Z維上的資料，再使用學習到的二元分類方法來處理。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/NonlinearModel.JPG" class="" width="500">
-
-<p>首先可以透過一個函式Φ來將X維資料轉成Z維，再使用演算法來找出一個線性分割的perceptron。於是我們就可以把X維的資料，把它丟到Z維看看轉換到Z維的這筆資料究竟是什麼類別，就可以知道這筆資料該分成什麼類別。所以當我們把原本學到的方法透過特徵轉換到二次式甚至是多項式，可大大延伸演算法的應用範圍！</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/FeatureTransform.JPG" class="" width="500">
-
-<p>比如說本來維度很高的手寫辨識資料，可以應用特徵轉換建立intensity和symmetry組成的兩維問題。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/ComputationStoragePrice.JPG" class="" width="500">
-
-<p>這樣的特徵轉換好看起很多好處，但是究竟會有什麼壞處呢？前面只講到兩次項而已，如果今天要把特徵轉成Q次項的話，他的複雜度將會是O(Q^d)，其中d是除常數項以外的項次，Q是要作的Q次項轉換。所以可以發現，透過這個轉換會讓計算還有儲存都多花費額外的力氣，可能是很困難的。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/ModelComplexityPrice.JPG" class="" width="500">
-
-<p>除了計算和儲存的困難，在VC維也會因為Q變大而變大，造成模型的複雜度變高。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/GeneralizationIssue.JPG" class="" width="500">
-
-<p>上面給出了一組資料且有兩種分類結果，雖然右邊的Ein為0(即所有資料都可以分對)，但是相比起左邊的分類結果反而讓人比較喜歡。雖然左邊的分類結果有些點是分錯的Ein不是0，但是線性的模型的泛化能力會比較好，雖然特徵轉換的維度比較低，Ein比較大，但是確有可能得到一個比較好的Eout；右邊的模型其特徵轉換的維度比較高，雖然讓Ein可以作的很好，但有可能得到較差的Eout，這就是機器學習上特徵還有模型選擇的trade-off！</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/VisualChoices.JPG" class="" width="500">
-
-<p>那到底該選擇哪個維度的轉換才是最好的呢？也許就先把資料作視覺化看看資料長什麼樣子就能決定了，像是正圓圈只要作二次曲線轉換就可以了。看似好像一下子就可以找到特徵轉換的維度來達到好的學習效果，但是這樣的過程其實包含了過多的人為介入，而這樣的介入也許可以得到不錯的學習結果與好的Ein，但是背後隱含了機器會受到你的主觀想法和偏見影響，也容易讓你對學習的結果有過度的樂觀。所以在機器學習中要非常的小心，也許我們可以先偷看資料，然後用腦袋解析一次來找到最好的維度轉換與好的Ein，但是這個學習的結果在拿來應用時卻可能會得到不好的效果。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/PolynomialTransformRevisited.JPG" class="" width="500">
-
-<p>在多維度的轉換過程中，當轉換成Q維時，其中也包含了Q-1維的項次，Q-1維能作到的事Q維也能作到，Q-1維就等同於在Q維中某些項次為0，這其實是一個巢狀的涵蓋蓋念。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/StructuredHypothesisSets.JPG" class="" width="500">
-
-<p>維度越高，可調整的自由變數就越多，所以VC維也就越多；又因為可調整的自由變數越多，所以也就越有可能找到更好的結果來產生更好的Ein。再來就可以畫出之前也看過的圖，Ein會隨著VC維而下降，而模型複雜度則會隨著VC維而上升，其中我們最在乎的Eout會先下降再上升。所以如果一開始就使用很高維度的特徵轉換是會得到好的Ein，但也會付出模型複雜度的代價，造成Eout效果不好。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/LinearModelFirs.JPG" class="" width="500">
-
-<p>安全的作法是先從低維轉換開始，再持續往右邊移動，直接找到好的Ein與好的Eout。雖然線性分類也許可以作到的是有限的，但是線性的泛化能力比較好，反而最後可以作到的事情是比較多的。</p>
-<img src="/2017/10/02/Machine-Learning-Foundation-12/Summary.JPG" class="" width="500">
-
-<p>這一堂課教的是把原本線性的模型作特徵轉換變成非線性，並說明其中轉換的流程該如何作，但要特別注意的是維度的轉換是會付出計算、儲存和模型複雜度代價的，在選擇維度轉換記得要從簡單的開始，慢慢的往高維度找到最好的模型。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/12_handout.pdf">Machine Learning Foundation 12</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/10/02/Machine-Learning-Foundation-12/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -794,7 +639,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:34" itemprop="dateModified" datetime="2025-07-26T14:23:34+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -840,62 +685,14 @@
       
           <p>上一講談到logistic regression，這一講會講到到底該如何使用線性的模型來作二元或是多元分類。</p>
 <img src="/2017/09/28/Machine-Learning-Foundation-11/LinearModelsRevisited.JPG" class="" width="500">
-
-<p>複習一下三種線性模型，共同點就是三種都會透過計算分數來作分類，差別在於PLA的線性分類會將分數取正負號來達到0/1分類，線性迴歸則是直接輸出分數，並使用squared error評估找到最佳解；logistic regression則是會透過logistic function將分數轉換成0到1的機率值。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/ErrorFunctionsRevisited.JPG" class="" width="500">
-
-<p>為了將線性模型作二元分類(y=-1/+1)，可以把error function稍微整理算出yx項，這個yx項的實際意義為分類的正確性，也就是yx項得到的分數要是正的(即兩者同號)，而且越大越好。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/VisualizingErrorFunctions.JPG" class="" width="500">
-
-<p>再來將三種模型的error畫出來，可以發現三種error的特性都不同，唯一相同地方在於如果squared和scaled cross-entropy很低時，通常0/1也會很低。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/TheoreticalImplicationUpperBound.JPG" class="" width="500">
-
-<p>究竟linear regression和logistic regression是否是好的分類方法呢？先從VC的角度來看scaled cross-entropy他會是0/1 error的upper bound，所以如果把logistic regression的cross-entropy error作到最小的話，也就可以說我們能把0/1 error也作的好。當然sqr err也是一樣，所以linear regression和logistic regression確實是可以作到二元分類的。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/RegressionClassification.JPG" class="" width="500">
-
-<p>在logistic/linear regression分類問題上，linear regression的好處是他最容易作到最佳化，但是其error衡量比較寬鬆；logistic regression因為他也是convex所以最佳化也是容易的，而error衡量在ys負向很小時會很寬鬆，但也比linear regression還好；PLA則是如果在線性可分的問題上可以作到很好，不過缺點就是如果在非性線可分的問題上，雖然可以使用pocket演算法，但是效果就沒那麼好。</p>
-<p>以前有有學過，雖然linear regression太過寬鬆，但是卻可以很快的先拿在找到一個初始的權重值，後續再交給PLA或是logistic regression作後續的最佳化。在實務上大部份的人會較常使用logistic regression來作二元分類，因為可以兼顧效果還有最佳化的容易程度。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/IterativeOptimization.JPG" class="" width="500">
-
-<p>雖然PLA和logistic regression都是iterative optimization方法，但是PLA是每看一點就作調整，而logistic regression卻要看完所有的資料點才會一次調整權重，他的速度和pocket一樣，每作一輪都要花比較長的時間，到底能不能讓logistic regression和PLA一樣快呢？</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/StochasticGradientDescent.JPG" class="" width="500">
-
-<p>那不就學PLA每看一個點就調整一次權重就好了啊，這種每看一點作偏微分求梯度來調整權重的方法就稱為Stochastic Gradient Desent(SGD)，即用隨機的梯度作梯度下降來接近真實梯度的期望值。好處就是每次算一個點比較簡單而且容易計算，由其是在大量資料的情況下原本的批次梯度下降法速度會很慢，但是壞就就是一次看一個點所以每次調整的結果可能很不穩定，但是最終應該都會很接近要求的目標值。這種隨機梯度下降也適合online learning，即每次接到一筆新資料後即作學習調整權重。其實還有另外折衷的方法稱為mini-batch gradient desent，當我們沒辦法看完所有資料再調整權重時，那就一次看N筆資料作調整就好囉！</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/PLARevisited.JPG" class="" width="500">
-
-<p>那PLA和logistic regression到底相差在哪裡呢？PLA是一次調整到位，而logistic是看差多少就調多少，所以SGD的logistic可以說他像soft的PLA，而PLA又很像η設成1的logistic。在執行logistic時有兩個可以調整討論的地方，第一個是停止條件，通常我們會執行夠多的次數，因為我們相信執行夠多次就會逐步接近目標執；另外是η的設定上，老師個人習慣會使用0.1126，也許之後需要調整學習速度時可以參考一下。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/MulticlassClassification.JPG" class="" width="500">
-
-<p>再來談到多類別分類的問題，實務上常會有很多多類別的問題，像是要辨識圖像上不同的東西就是多類別的問題，再來會介紹該怎麼使用二元分類來達成多類別分類。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/MulticlassPrediction.JPG" class="" width="500">
-
-<p>當我們想分類其中一種類別時，可以把其他三種當成同一種類別，這樣就可以建立四種二元分類器，把多類別問題轉成二元分類問題。但是這樣的方法會有某些地方有分類重疊的問題，像是四個角落都有兩種分類器範圍重疊，甚至也會有某些地方所有分類器都分不出來，像是中間區塊所有分類器都會認為不是自己要分類出來的區域。那該怎麼辦呢？</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OneClassSoftly.JPG" class="" width="500">
-
-<p>我們可以應用logistic regression來達成softly classfication，用顏色深淺來代表機率的大小，顏色越藍分到O機率越大，反之顏色越紅分到X的機率大。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/SoftClassifiers.JPG" class="" width="500">
-
-<p>再來組合出四個分類器，就可以知道在給定一組資料X，他究竟有分到不同類別的的機率有多少，所以可以透過選出機率最大的類別來判斷要分成哪個類別。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OVA.JPG" class="" width="500">
-
-<p>當我們有K種類別要作分類時，透過logistic regression建立K個分類器，接著選出機率最高的類別，這種方法來作多類別分類稱為One-Versus-All(OVA)。好處是方法很有效率，而且只要和logistic regression能算出機率值的方法，都可以應用OVA作多類別分類，壞處是如果成兩元分類的資料不平衡的話，可能造成每個分類器都叫你猜大宗類別，造成最終分類效果不好。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/Unbalance.JPG" class="" width="500">
-
-<p>前面有講到OVA會遇到Unbalance問題，可能造成分類表現不好，那該怎麼解決這個問題呢？</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OneVersusOne.JPG" class="" width="500">
-
-<p>前面是一對其他所有類別作兩元分類，我們其實可以直接使用其中兩種類別的資料作二元分類就好了，如果兩種類別的資料接近的話，那麼資料量就會比較平均避免Unbalance問題。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/PairwiseClassifiers.JPG" class="" width="500">
-
-<p>那有這麼多的分類器，到底該如何判斷是哪個類別呢？以方塊類別為例，其中可以發現共6個分類器，其中前三個都說分出來的結果是方塊，後面三個則分類分到一個菱形和兩個星型，透過投票可以知道最可能的類別應該會是方塊，因為分出方塊佔大多數。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/OVO.JPG" class="" width="500">
-
-<p>這樣的方法稱為One-versus-one(OVO)，因為他是一對一類別的分類，而非一對其他所有類別的分類方法，透過一對一類別的分類別，再找出最有可能的的類別。這個方法的優點是在訓練資料時很有效果，因為只使用比較少的資料量來作訓練，而且可以應用在所有的二元分類問題；壞處則是要訓練更多的分類器，所以在預測的時間、訓練的次數還有儲存的空間都會花比較多。</p>
-<img src="/2017/09/28/Machine-Learning-Foundation-11/Summary.JPG" class="" width="500">
-
-<p>這一講首先學到了前面講的三種線種模型方法其實都是可以用來作二元分類的，而且針對logistic regression可以使用SGD來作隨機梯度下降找最佳解，這樣的方法很像最早學到的PLA。再來針對多類別的問題教了兩種方法，都是應用二元分類來達成多類別分類，第一種OVA是把所有資料分成兩個類別，一個是要分出來的類別，另一個是把其他資料視為同一類別；第二種OAO是單純就看兩種不同類別來作兩兩比較，而這兩種多類別方法都是簡單而且常被拿來使用的分類手法！</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/11_handout.pdf">Machine Learning Foundation 11</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/09/28/Machine-Learning-Foundation-11/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -945,7 +742,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:18:43" itemprop="dateModified" datetime="2021-05-11T23:18:43+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:37" itemprop="dateModified" datetime="2025-07-26T14:23:37+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -991,63 +788,14 @@
       
           <p>上次介紹了linear regression，這一堂課會說到logistic regression，主要會將linear regression使用sigmoid轉換來算出不同類別的機率。</p>
 <img src="/2017/09/20/Machine-Learning-Foundation-10/HeartAttackPredictionProblem.JPG" class="" width="500">
-
-<p>之前有學過在二元分類中會判斷病人「有」或是「沒有」心臟疾病，並可以使用0/1的分類錯誤來判斷分類的結果好壞</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/HeartAttackPredictionProblem2.JPG" class="" width="500">
-
-<p>但如果今天並非想要知道病人「有」或是「沒有」心臟疾病，而是想知道未來一段時間後，心臟疾病發生的機率是多少。和二元分類有點不同，我們想要知道的是發生某個狀況的機率，這會是一個介於0到1的數值。當然後續可以對這個數值定義出一個臨界值來達成二元分類，所以又可以稱為soft binary classification。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/SoftBinaryClassification.JPG" class="" width="500">
-
-<p>如果我們可以知道在給定一組x，他的結果y是一個機率值的話那就可以很容易的找到這樣的結果，但是實務上我們只會拿到有抽樣誤差雜訊的結果，只能知道0/1的結果(即有沒有心臟病發)。再來會學到的是，如果只能知道0/1的情況下，要如何求出想要的機率值。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/LogisticHypothesis.JPG" class="" width="500">
-
-<p>要如何找到這個機率值呢？一樣可以像之前的線性問題，將每個特徵乘上特徵權重，就會找到分數，但是這次想要的不是這個分數，而且要把分數轉換為0到1的機率值，分數越大機率越大，反之分數越小機率就越對，這裡會透過logistic function會把這個分數值轉換成0到1的機率值。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/LogisticFunction.JPG" class="" width="500">
-
-<p>一般會使用sigmoid來把分數轉換成0到1的機率值，當分數越大會越接近1，分數越小會越接近0。再來就可以使用這個logistic hypothesis來達到我們的目標函式f(x)</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/ThreeLinearModels.JPG" class="" width="500">
-
-<p>究竟logistic和之前學到的有什麼差別呢？<br/>在linear classification算完分數會以0為臨界點來區分0/1類別，並使用0/1 err來判斷結果，在linear regression則會直接輸出分數，再使用squared err來評估結果；logistic regression會將算完的分數透過logistic function轉換，但該用什麼err來衡量呢？</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/Likelihood.JPG" class="" width="500">
-
-<p>首先可以先算出f(x)是怎麼產生一組資料D的，再來因為要使用hypothesis H來逼近f(x)，所以可以把f取代成h，因為最好的狀況下，我們學習到的h和原本的f是會非常接近。而且如果資料D是由f產生的，那麼f算出來的機率值應該是很大的，所以若是可以在多個h裡面找到一個最大機率的h，就能找到一個最適合的hypothesis</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/LikelihoodLogisticHypothesis.JPG" class="" width="500">
-
-<p>在計算likeliood時，重點會放在hypothesis上，因為hypothesis決定了最後的機率，再來因為logistic function具有對稱性，所以最後可以整理成h(YnXn)的連乘</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/CrossEntropyError.JPG" class="" width="500">
-
-<p>因為這個hypothesis是線性的，在線性裡面我們關注的是其中的權重w，所以再重新整理將h取代成w，把y取代成線性組合yn*w</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/CrossEntropyError2.JPG" class="" width="500">
-
-<p>之前最常處理的就是連加的問題，所以我們取log將連乘取代成連加，再來為了轉成求Ein，所以加上負號來取最小值。最後再將logistic function代進去，就可以得到最後要求的Ein，這裡的Ein又可以稱為cross-entropy error。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/MinimizingEin.JPG" class="" width="500">
-
-<p>在推導出Ein後，再來就要找到一個權重w可以讓Ein最小，因為Ein最小就可以知道Eout也很小。前面的linear regression因為是convex所以可以透過梯度找到最小低，而logistic regression這個函式也是convex，所以也可以透過梯度來找到梯度為0的地方算出最好的權重w。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/MinimizingEin2.JPG" class="" width="500">
-
-<p>我們可以使用微分和鏈鎖率來找到梯度，如果今天要讓梯度等於0可以有一個假設，就是假設θ出來的值是0，但要讓θ出來的值是負無限大，就要讓y乘上w乘上x這一項是正的。其中w^T．x這個分數在以前可以被拿來作兩元分類，而乘上y如果大於0的話，代表是同號，即所有資料都可以分對，意義就是線性可分。之前在linear regression可以直接算出一個close-form的答案，但是現在logistic regression並非線性的，困難在於沒辦法直接算出close-form的解，那該怎麼辦呢？</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/IterativeOptimization.JPG" class="" width="500">
-
-<p>這個時候就可以應用到之前的PLA方法，PLA在每次拜訪到的點如果分錯的話，就會逐步作調整來更新權重。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/IterativeOptimization2.JPG" class="" width="500">
-
-<p>在整理後可以歸納出兩個部分，如果需要更新權重的話，第一個η是指走多大一步，之前在PLA可以視為1，後面第二部份則是算出要走的方向。像這種逐步循序的調整學習又稱為iterative optimization approach逐步最佳化方法。</p>
-<p>那麼再來要如何找到logistic regression的最好權重值w呢？其實就是隨便找一個方向v，然後慢慢透過往下走到谷底就可以了，其中要走的步伐η會決定往下走的速度。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/GradientDescent.JPG" class="" width="500">
-
-<p>但是要怎麼找這個方向v呢？因為這個問題還是非線性，但是如果我們每次都看一小小段，就是一次只看一個線性問題，就可以比較容易而且轉成接近線性問題。其實這就是常使用的梯度下降法(Gradient Descent)，即每一次走梯度逐步找到最佳，或是近似最佳解。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/StepChoice.JPG" class="" width="500">
-
-<p>那麼η該怎麼決定呢？如果η太小的話，雖然遲早可以找到最佳值，但是速度會很慢；如果η太大的話，反而可以會跳過最小值，搞不好會跳來跳去找不到最佳值。有一個最好的方法，就是隨著坡度的大小來決定η要走的大小。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/SimpleHeuristicEta.JPG" class="" width="500">
-
-<p>因為η會改變，所以可以採用一個不一樣的η來代表這個會變動的η，即他每一次的學習都是會變化的η乘上梯度，這就稱為fixed learning rate gradient descent。</p>
-<img src="/2017/09/20/Machine-Learning-Foundation-10/PuttingEverythingTogether.JPG" class="" width="500">
-
-<p>最後我們可以逐步的作梯度下降，一直到找到最好的谷點，但是實際上可以找到接近谷底的值就可以了，所以最常用的就是設定一個iteration的次數，到達就停止。這個方法其實就很像之前學到的pocket方法，pocket方法是每次抓一個最好的值，得到更好的值就會更新。</p>
-<p>因為之前有上過Andrew的Machine Learning課程，其實Andrew在教linear regression找最佳權重w時，就是直接教fixed learning rate的梯度下降法，我覺得在學習線性時用梯度下降還滿好理解的，對於後面到logistic regression很有幫助，建議沒有上過Andrew的Machine Learning課程可以考慮上看看！</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/10_handout.pdf">Machine Learning Foundation 10</a><br/><a target="_blank" rel="noopener" href="https://www.coursera.org/learn/machine-learning">Andrew Ng - Machine Learning</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/09/20/Machine-Learning-Foundation-10/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1097,7 +845,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:12:35" itemprop="dateModified" datetime="2021-05-11T23:12:35+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:44" itemprop="dateModified" datetime="2025-07-26T14:23:44+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1143,56 +891,14 @@
       
           <p>上堂課講到err的衡量方法有兩種，其中一種squared err就是這這堂課Regression就會用到的err衡量方法。</p>
 <img src="/2017/09/12/Machine-Learning-Foundation-9/CreditLimitProblem.JPG" class="" width="500">
-
-<p>regression會拿來解連續型資料的問題，以前面提過的信用卡案例來說，regression就不是拿來用在判斷要不要發給信用卡，而且會決定發卡的額度上限是多少，依然是一個機器學習問題。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/LinearRegressionHypothesis.JPG" class="" width="500">
-
-<p>前面的例子也有說到，不同的資料特徵值可能會有不同的重要性，所以會有一個權重w來表示每個x的重要性加權。這有點累似之前的perceptron，但差別是perceptron是用來作二元分類，所以會再取sign判斷正負號，而這裡的regression是不用的。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/IllustrationLinearRegression.JPG" class="" width="500">
-
-<p>linear regression的hypothesis主要會找到一條線(或超平面)來盡量滿足所有的資料點，而資料點和線或是平面的距離就稱為residuals(餘數)，或是可以稱為誤差，我們會希望這個餘數越小越好，因為越小就代表hypothesis越正確。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/ErrorMeasure.JPG" class="" width="500">
-
-<p>一開始有講到，linear regression最常使用的錯誤衡量方法就是sqiared err。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/MatrixEin.JPG" class="" width="500">
-
-<p>在regression求Ein時，可以把運算過程轉換成向量矩陣運算</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/MinEin.JPG" class="" width="500">
-
-<p>在求Ein最小值的過程只有W是未知的，而這個Ein(w)會是一個convex函式，在反覆修正W最終會得到一個最低點，也就可以找到Ein最小值，可以找透過找梯度為0來找到這個最低點。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/Gradient.JPG" class="" width="500">
-
-<p>中間會將梯度函式重新整理，在梯度等於0的情況下，最終會找到最好的W。在求W的過程中會帶出pseudo-inverse的概感，使用pseudo-inverse和y就可以求出最好的W。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/IsRegressionLearning.JPG" class="" width="500">
-
-<p>這樣看起來直接計算出W好像有一步登天的感覺不像機器學習，但事實上linear regression可以說是機器學習方法，因為確實可以找到Ein，當你認同VC維那麼好的Ein就會有好的Eout，而且在計算過程中，其實背後也有很多的步驟進行並非一步就達成。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/IsRegressionLearning2.JPG" class="" width="500">
-
-<p>要怎麼確定linear regression真的可以學的好呢？可以透過對多的Ein的平均來衡量，而這個Ein的平均大概會等於noise level(資料的雜訊)×(1-d+1/N)，所以如果資料量越多得到的結果就會越好。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/GeometricViewHatMatrix.JPG" class="" width="500">
-
-<p>以幾何上來說來說明，y是一個N維的向量，X是在N維上的一個小空間，而y(hat)會落在這個小空間裡。linear regression的目的就是讓y和y(hat)可以最小，最小的距離就是y到y(hat)的線性投影，所以linear regression的hypothesis的目的就是把任何一個向量投影到x空間中。因為H作了投影，而I-H等同就是在求餘數，即y-y(hat)。這之中會存在一個特性trace(I-H) = N-(d+1)。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/AnIllustrativeProof.JPG" class="" width="500">
-
-<p>y為f(x)加上noise，Ein其實就是把I-H用在noise向量上，最後推導出來Ein平均為noise level×(1-d+1/N)，Eout平均推導出來剛好相反，為noise level×(1-d+1/N)。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/TheLearningCurve.JPG" class="" width="500">
-
-<p>從Ein和Eout可以畫出leraning curve，當資料量N越大時可以看到Ein和Eout的變化，Eout會越加越少，Ein會越減越少，兩者都會收斂。VC求的是最壞的情形，而我們現在是求平均的情形，但兩者會得到類似的結果，所以可以說linear regression在N夠大時，並在noise不是太多的情況下，確實是可以學習的。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/LinearClassification.JPG" class="" width="500">
-
-<p>和之前的線性分類相比，分類的y是兩元類別，迴歸是一個連續型實數；分類會取sign轉成二元類別而迴歸不用；在錯誤衡量方法，分類是用0/1 error而迴歸是用squared error。因為迴歸的運算可以很有效的得到解答，那麼是不是可以把linear regression拿來解分類問題嗎？</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/RelationOfTwoError.JPG" class="" width="500">
-
-<p>其實兩者最大的不同就是在錯誤的衡量，可以發現迴歸的平方錯誤會比分類0/1的錯誤還大。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/RegressionForClassification.JPG" class="" width="500">
-
-<p>接著把VC放進來分類問題，因為regression的squared錯誤會比0/1錯誤還大，分類會被regression bound住。所以如果可以把regression作的很好，就可以把分類作的很好，甚至可能把Eout也作好。所以確實可以用regression來取代作分類問題，會比較好解，但是效果確不一定比較好，因為其錯誤為分類的上界。</p>
-<p>有個好的辦法是，先透過regression來算出一個W初始值，再將這個W拿去PLA進行學習，可能可以增加PLA學習的效率。</p>
-<img src="/2017/09/12/Machine-Learning-Foundation-9/summary.JPG" class="" width="500">
-
-<p>總結來說，這一堂課介紹了linear regression，其在求解時而要求出pseudo-inverse，而且可以確保Eout和Ein平均的差距為2(d+1)/N，最後linear regression是可以用在分類問題上的。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/09_handout.pdf">Machine Learning Foundation 09</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/09/12/Machine-Learning-Foundation-9/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1242,7 +948,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:11:21" itemprop="dateModified" datetime="2021-05-11T23:11:21+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:24:55" itemprop="dateModified" datetime="2025-07-26T14:24:55+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1288,17 +994,14 @@
       
           <p>雖然python已經有很好用的測試框架可以使用，不過對於剛開始想要自己寫測試的人，這些框架該怎麼使用還是需要花點時間學習一番。在真正進入使用測試框架之後，不彷先來作個簡單的測試感覺一下，其實我們可以很簡單的使用python的assert來實作看看。</p>
 <p>假設今天要設計提款功能，其中有兩個函式，一個會回傳存款減去提款剩下的金額，一個會檢查提款金額只能以1000為單位。所以這台atm很簡單，就是只讓你提1000為單位的金額，而且不能提超過你餘額的錢。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">withdraw</span>(<span class="params">deposit, money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> deposit - money</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_withdraw</span>(<span class="params">money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;accept&#x27;</span> <span class="keyword">if</span> money % <span class="number">1000</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;refuse&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>接著就是來寫一個測試用的function class，把要測試的不同條件寫進去，如果全pass就給個PASS訊息。function class只是一個簡單的方法把函式都集中起來，當然可以再作不同的變化。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TaskTest</span>(<span class="params"><span class="built_in">object</span></span>):</span>    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1200</span>, <span class="number">2000</span>) &amp;lt; <span class="number">0</span>, <span class="string">&#x27;存款小於提款不能允許提出&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">3000</span>, <span class="number">2000</span>) &gt; <span class="number">0</span>, <span class="string">&#x27;存款大於提款需允許提出&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;ALL withdraw PASS!&#x27;</span>)    </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_check_withdraw</span>(<span class="params">self, func</span>):</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1300</span>) == <span class="string">&#x27;refuse&#x27;</span>, <span class="string">&#x27;提款金額非以1000為單位必須拒絕&#x27;</span>        </span><br><span class="line">        <span class="keyword">assert</span> func(<span class="number">1000</span>) == <span class="string">&#x27;accept&#x27;</span>, <span class="string">&#x27;提款金額以1000為單位必須接受&#x27;</span>        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;All check_withdraw test PASS!&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>接著就開始執行測試囉!</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester = TaskTest()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_withdraw(withdraw)</span><br><span class="line">ALL withdraw PASS!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_check_withdraw(check_withdraw)</span><br><span class="line">All check_withdraw test PASS!</span><br></pre></td></tr></table></figure>
-<p>那如果今天有人不小心動到函式內容，1000被改成1300會發生什麼事情呢？</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_withdraw</span>(<span class="params">money</span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;accept&#x27;</span> <span class="keyword">if</span> money % <span class="number">1300</span> == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&#x27;refuse&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>一樣執行看看，就會發現在作檢查提款的測試時被assert中斷了!當測試沒測過就可以趕快回去檢查一下程式碼究竟發生什麼問題了</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester = TaskTest()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_withdraw(withdraw)</span><br><span class="line">ALL withdraw PASS!</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tester.test_check_withdraw(check_withdraw)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;assert.py&quot;</span>, line <span class="number">23</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    tester.test_check_withdraw(check_withdraw)</span><br><span class="line">  File <span class="string">&quot;assert.py&quot;</span>, line <span class="number">15</span>, <span class="keyword">in</span> test_check_withdraw</span><br><span class="line">    <span class="keyword">assert</span> func(<span class="number">1300</span>) == <span class="string">&#x27;refuse&#x27;</span>, <span class="string">&#x27;提款金額非以1000為單位必須拒絕&#x27;</span></span><br><span class="line">AssertionError: 提款金額非以<span class="number">1000</span>為單位必須拒絕</span><br></pre></td></tr></table></figure>
-<p>第一次寫測試其實可以從python的assert開始玩起，自己就可以簡單寫單元測試囉！針對已經是大型的系統就可以考慮使用一些python的測試框架作單元測試或是整合測試。如果像這樣的單元測試要一進步的話，可以先從使用python的<a target="_blank" rel="noopener" href="https://docs.python.org/3.4/library/unittest.html">unittest</a>開始！</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/09/07/%E4%BD%BF%E7%94%A8assert%E4%BE%86%E5%AF%A6%E4%BD%9C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%B0%B1%E4%B8%8A%E6%89%8B/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1348,7 +1051,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:08:50" itemprop="dateModified" datetime="2021-05-11T23:08:50+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:41" itemprop="dateModified" datetime="2025-07-26T14:23:41+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1396,52 +1099,14 @@
 
 <p>先來複習一下前面課程，從前面的課程可以得知，在有限的VC維度下，且有大的樣本N並且Ein是夠小的，滿足三個條件我們就可以讓機器可以學習。</p>
 <img src="/2017/08/24/Machine-Learning-Foundation-8/RecapLearningFlow.JPG" class="" width="500">
-
-<p>那如果今天在整個學習流程中，未知的目標函式在產生x時有雜訊發生，會發生什麼事呢？這堂課主要就是在說明，如果資料有雜訊，到底會不會對學習造成影響。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/Noice.JPG" class="" width="500">
-
-<p>事實上雜訊是有可能發生的，比如說在審核信用卡的例子，可能在y產生雜訊，即發不發信用卡被錯誤標記；也可能在x產生雜訊，這就發生在蒐集資料時產生的錯誤。那麼究竟有雜訊會不會對VC維產生影響呢？</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/ProbabilitiesMarbles.JPG" class="" width="500">
-
-<p>我們一樣從前面的抽彈珠例子來看，本來如果f(x)和h(x)相等時是綠色，不相等是橘色，今天如果有雜訊發生，代表y和f(x)會不相等(明明要核卡但沒有)。雜訊就可以假設成一種會變顏色的彈珠，有時是綠色有時是橘色，雖然會有這種雜訊的彈珠出現，但是因為雜訊變色彈珠是少數，我們仍然可以透過抽樣的方式來計算橘色和綠色彈珠的比率，所以VC維還是會work的。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/TargetDistribution.JPG" class="" width="500">
-
-<p>這邊會帶出目標分配P(y|x)，以二元分類o和x的例子來看，如果我們已知P(o|x)是70%，P(x|x)是30%，在這個情況下我們會選擇o，但是剩下的30%可以看成雜訊。即最好的預測是o，而雜訊發生的機率是30%。所以在這裡機器學習要作到的，就是在點x找到最理想的mini-target。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/TheNewLearningFlow.JPG" class="" width="500">
-
-<p>最後再把雜訊加進去後，可以把目標函式f(x)改變成mini-target P(y|x)加上雜訊，而這個y會用來在最後評估g和f是否接近。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/PointwiseErrMeasure.JPG" class="" width="500">
-
-<p>之前談到的錯誤衡量方式為分類錯誤(又稱為0/1錯誤)，就是直覺的判斷g(x)和f(x)是否相等，不管是Ein或是Eout都可以對每一個點各自作判斷(稱為pointwise)是否發生錯誤。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/TwoErrMeasures.JPG" class="" width="500">
-
-<p>這種0/1錯誤衡量會用在分類問題上，除了分類錯誤外，另外常用的錯誤衡量方式為Squred Err，判斷每一個y到理想的y的距離，這種則常用在數值型的機器學習問題，像是迴歸分析。在不同的機器學習問題，會使用最適合的錯誤衡量方法。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/LearningFlowWiErrMeasure.JPG" class="" width="500">
-
-<p>當我們把錯誤衡量加上去，這個選擇的錯誤衡量會用來評估g(x)和f(x)是否相等。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/ChoiceErrMeasure.JPG" class="" width="500">
-
-<p>在0/1分類時，可能會有兩種分錯的情況，以指紋判斷正不正確來說明，一種為false reject，就是指原本是正確的，但是被判成錯誤；另一種為false accept，是指原本是錯誤的，但是被判成正確。看起來都是錯誤，但是這兩種錯誤會在不同的應用上有不同的重要性。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/FingerprintVerificationOfSupermarket.JPG" class="" width="500">
-
-<p>以超市的應用為例，如果超市透過指紋來判斷是不是要給折扣，今天判斷錯誤造成該給折扣卻沒給(false reject)讓顧客不開心，損失了這個客戶可能造成超市的損失；相比之下，如果是不該給折扣卻給了(false accept)，頂多只是超市有一點損失而已沒什麼大不了。所以以超市來看，false reject的成本會比false accept高。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/FingerprintVerificationOfCIA.JPG" class="" width="500">
-
-<p>以CIA應用為例，今天如果有人沒有權限但是卻被判斷有權限可以看資料(false accept)，這將是個很嚴重的錯誤；那如果是有權限但是被判斷成沒有權限(false reject)，其實只的造成員工的不開心而已。和超市相比，他的false accept成本可能就會遠遠大於false reject。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/LearningFlowWiAlgo.JPG" class="" width="500">
-
-<p>那麼到底該怎麼樣去衡量雜訊造成的實際應用錯誤呢？我們會透過設計友善的演算法來找到還可以接受的錯誤衡量方法。所以相比於實際的錯誤err，在設計演算法會透過計算一個另一個err hat，來試圖讓錯誤衡量可以更多的方便。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/MinEinForWeightClassify.JPG" class="" width="500">
-
-<p>前面講到的又稱為有權重的分類問題(weight classification)，不同的例子會有不同的重要性。因為已經證明在有雜訊的情況下VC維仍然是可行的，所以我們只要確保Ein是最小的，就可以保證Eout是最小的。我們總共學過兩個讓Ein最小化的方法，第一個是PLA，PLA就會等所有的資料都分對就結束，即Ein為0；如果PLA跑不完的話，可以用另外的Pocket演算法，Pocket演算法可以把加權錯誤比較好的放入pocket。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/WeightedPocketAlgo.JPG" class="" width="500">
-
-<p>如果我們要把0/1分類問題加上權重，其實可以簡單的把-1的資料複製成1000次，就會很像他有帶權重1000。實際並不的真的複製，原本的pocket會輪流拜訪每一個點，當我們這種-1的點讓他有1000倍的機率更容易被拜訪到，其實就可以達到類似的效果。</p>
-<img src="/2017/08/24/Machine-Learning-Foundation-8/summary.JPG" class="" width="500">
-
-<p>總結來說，這堂課首先說明了有雜訊的情況下，會使用一個機率函式P(y|x)來取代f(x)，再來會使用適合的錯誤衡量方法來作評估，但是錯誤衡量方法有時並不容易給，所以會透過比較友善的演算法設計來達成。最後說到兩種不同的錯誤會有不同的權重，且這個權重可以透過虛擬複製的方法達成。</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/08_handout.pdf">Machine Learning Foundation 08</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/08/24/Machine-Learning-Foundation-8/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1491,7 +1156,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:00:30" itemprop="dateModified" datetime="2021-05-11T23:00:30+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:47" itemprop="dateModified" datetime="2025-07-26T14:23:47+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1537,43 +1202,14 @@
       
           <p>在上一講中證明了如果存在break point，而且輸入點N夠大的情況下，Ein和Eout是會接近的。這一講會延續VC bound帶出VC Dimension。</p>
 <img src="/2017/08/16/Machine-Learning-Foundation-7/MoreOnGrowthFunction.JPG" class="" width="500">
-
-<p>前面有證明到，成長函式mH(N)會被上限函式B(N, k) bound住，然後上限函式又會被一個多項式N^k-1給bound住。所以我們可以直接使用N的k-1次方來表示成長函式。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/MoreOnVCBound.JPG" class="" width="500">
-
-<p>再來把N的k-1次方取代原本的成長函式mH(N)並代回原本的Hoeffding不等式中，他告訴我們1. 只要成長函式存在break point，即表示是個好的hypothesis且2. 輸入的N夠大，即表示是個好的D的情況下，再來配合3. 一個好的演算法，那麼就可以保證機器可以有學習的效果。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/VCDimension.JPG" class="" width="500">
-
-<p>VC dimension被定義為最大的非break point維度，所以當我們說在k點不能被shatter，那麼VC dimension就是k-1。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/FourVCDimension.JPG" class="" width="500">
-
-<p>依據VC dimension的定義，在PLA是在4點不能shatter，所以VC dimension為3。以前我們說成長函式mH(N)是有限的就是好的，現在我們可以說如果VC dimension是有限也就是好的。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/2DPLARevisited.JPG" class="" width="500">
-
-<p>有了VC dimension再回來看2D的PLA該怎麼學習，PLA可以在線性可分的資料D中找到g讓Ein為0，而VC dimension為3且N夠大的情況下，能推論Ein和Eout會很接近，即Ein和Eout差距很大的機率會很小，又因為Ein為0，所以可以知道Eout也會很接近0，就代表機器真的可以學習了。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/VCDimensionOfPerceptron.JPG" class="" width="500">
-
-<p>前面可以看到1維perceptron的VC dimension為2，2維的perceptron的VC dimension為3，這樣看起來似乎可以推論出d維度的VC dimension為d+1。當然這是正確的，因為後續可以證明出dVC &gt;= d+1和dVC &lt;= d+1</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/DegreeOfFreedom.JPG" class="" width="500">
-
-<p>VC dimension的物理意義大致上可以說是hypothesis集合在要作二元分類的狀況下，到底有多少的自由度。前面提到的VC dimension的定義是說，VC dimension在k-1的時候可以產生最多的dichotomy，所以這個自由度也就告訴我們hypothesis集合到底可以產生多少的dicotomy組合。以positive ray的例子來看，其有1個可以調整的參數，positive interval的例子則有2個可以調整的參數</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/PenaltyForModelComplexity.JPG" class="" width="500">
-
-<p>我們可以將VC bound的式子作一些調整轉換，其中把右邊壞事情發生的機率代換成δ，那麼好事情發生的機率就是1-δ，也就是Ein(g) - Eout(g) &lt;= ε，再用右邊的部份可以導出ε。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/PenaltyForModelComplexity2.JPG" class="" width="500">
-
-<p>好事情發生的機率，即Ein(g)和Eout(g)有多靠近，又可以稱為generalization eror，就是指舉一反三的效果好不好。衡量一個model的複雜度可以用Ω符號來表示，而VC dimension告訴我們的是，當model的複雜度越高的時候，就會產生penalty效應，有很高的機率Eout(g)會小於等於Ein(g)加上model的複雜度。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/TheVCMessage.JPG" class="" width="500">
-
-<p>以圖示來看這個現象，其中model複雜度會隨著VC dimension越大而變大；而VC dimension越大時，排列組合也會比較多，就比較有可能找到一個更小的Ein，所以Ein會降低。但是因為model複雜度的penalty效應，Eout並不會隨著Ein持續下降，而且到達一個臨界點時轉折變成一個山谷型，所以最好的VC dimension就是中間轉折的地方。這在機器學習上的意義就是，當我們使用很強大的hypothesis或是model，也會伴隨著model複雜度提高帶來的壞處，也就是把Ein作到最好，但也可能因為model複雜度的penalty讓Eout沒辦法作到最好，在使用機器學習上都需要進行取捨的地方。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/SampleComplexity.JPG" class="" width="500">
-
-<p>那麼到底需要多少的樣本資料，才能讓Ein和Eout很接近呢？假設今天要讓Ein和Eou相距ε為0.1而且δ壞事發生的機率為10%，如果是2D的perceptron其VC dimension為3，那需要有多少的資料才足夠呢？理論上可以推出29300筆可以滿足，大至上為10000 x dVC，但是實務上只需要10 x dVC的樣本數就足夠了。</p>
-<img src="/2017/08/16/Machine-Learning-Foundation-7/Summary.JPG" class="" width="500">
-
-<p>總結這一講的內容，主要在介紹VC dimension定義為最大的non-break point，且percepron的VC dimension為d+1，VC dimension其實際意義為可自由調整的參數，且VC dimension會影響到模型和樣本的複雜度</p>
-<p>參考資料:<br/><a target="_blank" rel="noopener" href="http://www.csie.ntu.edu.tw/~htlin/mooc/doc/07_handout.pdf">Machine Learning Foundation 07</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/08/16/Machine-Learning-Foundation-7/#more" rel="contents">
+                閱讀全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

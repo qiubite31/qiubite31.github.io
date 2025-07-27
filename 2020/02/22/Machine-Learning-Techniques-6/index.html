@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。   因為已經知道最佳的w會是βZ的線性組合，所以這裡一樣可以將w轉換為z的線性組合，當出現Z與Z乘積時">
+  <meta name="description" content="上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="機器學習技法(Machine Learning Techniques)第六講筆記">
 <meta property="og:url" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/index.html">
 <meta property="og:site_name" content="Drake&#39;s">
-<meta property="og:description" content="上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。   因為已經知道最佳的w會是βZ的線性組合，所以這裡一樣可以將w轉換為z的線性組合，當出現Z與Z乘積時">
+<meta property="og:description" content="上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/RecallRepresenterTheorem.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/KernelRidge.JPG">
@@ -46,7 +46,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/KernelModela.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2020/02/22/Machine-Learning-Techniques-6/Summary.JPG">
 <meta property="article:published_time" content="2020-02-21T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:42:50.793Z">
+<meta property="article:modified_time" content="2025-07-26T06:21:09.417Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="Machine Learning Techniques">
@@ -250,7 +250,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:42:50" itemprop="dateModified" datetime="2021-05-11T23:42:50+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:21:09" itemprop="dateModified" datetime="2025-07-26T14:21:09+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -297,6 +297,8 @@
         <img src="/2020/02/22/Machine-Learning-Techniques-6/RecallRepresenterTheorem.JPG" class="" width="500">
 
 <p>上一堂講到kernel logistic regression，並證明L2-regularized linear model都可以kernel化。這堂課會嘗試將kernel放進L2-regularized linear regression作出kernel ridge regression。</p>
+<span id="more"></span>
+
 <img src="/2020/02/22/Machine-Learning-Techniques-6/KernelRidge.JPG" class="" width="500">
 
 <p>因為已經知道最佳的w會是βZ的線性組合，所以這裡一樣可以將w轉換為z的線性組合，當出現Z與Z乘積時就可以換成kernel，轉成透過kernel trick解β問題。</p>

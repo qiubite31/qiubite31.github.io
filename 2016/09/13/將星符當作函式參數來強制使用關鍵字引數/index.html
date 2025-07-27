@@ -29,7 +29,7 @@
 <meta property="og:description" content="很特別的可以直接當作一個函式的參數來使用。如果當作函式的參數，可以用來限定*之後不可以使用位置引數，但可以使用關鍵字引數，這樣的使用方法被稱為Keyword-Only Arguments 以下以位置引數(Positional Argument)與關鍵字引數(Keyword Argument)中的計算小考平均成績為例說明: 12def total_score(eng_score, math_scor">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2016-09-12T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T14:52:33.503Z">
+<meta property="article:modified_time" content="2025-07-26T06:30:01.342Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:30:01" itemprop="dateModified" datetime="2025-07-26T14:30:01+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,6 +277,8 @@
         <p>很特別的可以直接當作一個函式的參數來使用。如果當作函式的參數，可以用來限定*之後不可以使用位置引數，但可以使用關鍵字引數，這樣的使用方法被稱為Keyword-Only Arguments</p>
 <p>以下以<a href="/2016/08/22/%E4%BD%8D%E7%BD%AE%E5%BC%95%E6%95%B8-Positional-Argument-%E8%88%87%E9%97%9C%E9%8D%B5%E5%AD%97%E5%BC%95%E6%95%B8-Keyword-Argument/">位置引數(Positional Argument)與關鍵字引數(Keyword Argument)</a>中的計算小考平均成績為例說明:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_score</span>(<span class="params">eng_score, math_score, eng_weight=<span class="number">0.5</span>, math_weight=<span class="number">0.5</span></span>):</span>    </span><br><span class="line">    <span class="keyword">return</span> eng_scoreeng_weight + math_scoremath_weight</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
 <p>在這個範例中，可以使用以下4種方式來呼叫函式都是沒問題的</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>)  <span class="comment"># 省略且不指定有預設值的參數</span></span><br><span class="line"><span class="number">85</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(eng_score=<span class="number">80</span>, eng_weight=<span class="number">0.2</span>, math_score=<span class="number">90</span>, math_weight=<span class="number">0.8</span>)  <span class="comment"># 使用關鍵字引數，可隨意安排順序</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, math_weight=<span class="number">0.8</span>, eng_weight=<span class="number">0.2</span>)  <span class="comment"># 混用位置和關鍵字引數</span></span><br><span class="line"><span class="number">88</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>total_score(<span class="number">80</span>, <span class="number">90</span>, <span class="number">0.2</span>, <span class="number">0.8</span>)  <span class="comment"># 單純使用位置引數</span></span><br><span class="line"><span class="number">88</span></span><br></pre></td></tr></table></figure>
 <p>但如果今天在原本的函式中，把*加入到第三個參數，這樣在第四種單純使用位置引數來作函式呼叫就會引發TypeError，因為在之後不能使用位置引數</p>

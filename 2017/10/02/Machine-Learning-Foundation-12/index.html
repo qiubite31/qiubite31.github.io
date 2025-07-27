@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="上一堂講到三種不同的線性模型都可以用在二元分類，並且還可以透過二元分類來達成多類別分類，這一堂課會教到該如何將線性模型延伸轉換成非線性模型。   前面都講到線性模型，線性模型可以很容易的計算出線性分數，再結合不同的轉換作輸出，線性模型好處在於VC維度是可以很容易的受到控制的，所以確保作好Ein，Eout就可以表現的好。但是如果遇到像右邊比較複雜的資料，可能就沒辦法使用線性模型達成，勢必需要結合其它">
+  <meta name="description" content="上一堂講到三種不同的線性模型都可以用在二元分類，並且還可以透過二元分類來達成多類別分類，這一堂課會教到該如何將線性模型延伸轉換成非線性模型。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="機器學習基石(Machine Learning Foundation)第十二講筆記">
 <meta property="og:url" content="https://qiubite31.github.io/2017/10/02/Machine-Learning-Foundation-12/index.html">
 <meta property="og:site_name" content="Drake&#39;s">
-<meta property="og:description" content="上一堂講到三種不同的線性模型都可以用在二元分類，並且還可以透過二元分類來達成多類別分類，這一堂課會教到該如何將線性模型延伸轉換成非線性模型。   前面都講到線性模型，線性模型可以很容易的計算出線性分數，再結合不同的轉換作輸出，線性模型好處在於VC維度是可以很容易的受到控制的，所以確保作好Ein，Eout就可以表現的好。但是如果遇到像右邊比較複雜的資料，可能就沒辦法使用線性模型達成，勢必需要結合其它">
+<meta property="og:description" content="上一堂講到三種不同的線性模型都可以用在二元分類，並且還可以透過二元分類來達成多類別分類，這一堂課會教到該如何將線性模型延伸轉換成非線性模型。">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/02/Machine-Learning-Foundation-12/LinearHypotheses.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/02/Machine-Learning-Foundation-12/CircularSeparable.JPG">
@@ -45,7 +45,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/02/Machine-Learning-Foundation-12/LinearModelFirs.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/02/Machine-Learning-Foundation-12/Summary.JPG">
 <meta property="article:published_time" content="2017-10-01T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:15:11.983Z">
+<meta property="article:modified_time" content="2025-07-26T06:23:29.890Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="Machine Learning Foundation">
@@ -248,7 +248,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:29" itemprop="dateModified" datetime="2025-07-26T14:23:29+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -294,6 +294,8 @@
       
         <p>上一堂講到三種不同的線性模型都可以用在二元分類，並且還可以透過二元分類來達成多類別分類，這一堂課會教到該如何將線性模型延伸轉換成非線性模型。</p>
 <img src="/2017/10/02/Machine-Learning-Foundation-12/LinearHypotheses.JPG" class="" width="500">
+
+<span id="more"></span>
 
 <p>前面都講到線性模型，線性模型可以很容易的計算出線性分數，再結合不同的轉換作輸出，線性模型好處在於VC維度是可以很容易的受到控制的，所以確保作好Ein，Eout就可以表現的好。但是如果遇到像右邊比較複雜的資料，可能就沒辦法使用線性模型達成，勢必需要結合其它手法來突破限制。</p>
 <img src="/2017/10/02/Machine-Learning-Foundation-12/CircularSeparable.JPG" class="" width="500">

@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"qiubite31.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="上一堂課講到為了避免overfitting，可以使用regularization的技巧，把一個regularizer加在Ein上面，轉而求Augmented Error反而可以有效的解決模型複雜度太高的問題。這一堂課會講到該如何使用Validation的手法幫助選擇機器學習裡面不同的參數。   在訓練一個機器學習模型，其中會遇到很多的選擇，包含使用哪些演算法、使用多少資料、要使用什麼非線性轉換方法">
+  <meta name="description" content="上一堂課講到為了避免overfitting，可以使用regularization的技巧，把一個regularizer加在Ein上面，轉而求Augmented Error反而可以有效的解決模型複雜度太高的問題。這一堂課會講到該如何使用Validation的手法幫助選擇機器學習裡面不同的參數。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="機器學習基石(Machine Learning Foundation)第十五講筆記">
 <meta property="og:url" content="https://qiubite31.github.io/2017/10/25/Machine-Learning-Foundation-15/index.html">
 <meta property="og:site_name" content="Drake&#39;s">
-<meta property="og:description" content="上一堂課講到為了避免overfitting，可以使用regularization的技巧，把一個regularizer加在Ein上面，轉而求Augmented Error反而可以有效的解決模型複雜度太高的問題。這一堂課會講到該如何使用Validation的手法幫助選擇機器學習裡面不同的參數。   在訓練一個機器學習模型，其中會遇到很多的選擇，包含使用哪些演算法、使用多少資料、要使用什麼非線性轉換方法">
+<meta property="og:description" content="上一堂課講到為了避免overfitting，可以使用regularization的技巧，把一個regularizer加在Ein上面，轉而求Augmented Error反而可以有效的解決模型複雜度太高的問題。這一堂課會講到該如何使用Validation的手法幫助選擇機器學習裡面不同的參數。">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/25/Machine-Learning-Foundation-15/ManyModel.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/25/Machine-Learning-Foundation-15/ModelSelection.JPG">
@@ -46,7 +46,7 @@
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/25/Machine-Learning-Foundation-15/FinalWord.JPG">
 <meta property="og:image" content="https://qiubite31.github.io/2017/10/25/Machine-Learning-Foundation-15/Summary.JPG">
 <meta property="article:published_time" content="2017-10-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T15:15:11.983Z">
+<meta property="article:modified_time" content="2025-07-26T06:23:18.396Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Machine Learning">
 <meta property="article:tag" content="Machine Learning Foundation">
@@ -249,7 +249,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 23:15:11" itemprop="dateModified" datetime="2021-05-11T23:15:11+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:23:18" itemprop="dateModified" datetime="2025-07-26T14:23:18+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -295,6 +295,8 @@
       
         <p>上一堂課講到為了避免overfitting，可以使用regularization的技巧，把一個regularizer加在Ein上面，轉而求Augmented Error反而可以有效的解決模型複雜度太高的問題。這一堂課會講到該如何使用Validation的手法幫助選擇機器學習裡面不同的參數。</p>
 <img src="/2017/10/25/Machine-Learning-Foundation-15/ManyModel.JPG" class="" width="500">
+
+<span id="more"></span>
 
 <p>在訓練一個機器學習模型，其中會遇到很多的選擇，包含使用哪些演算法、使用多少資料、要使用什麼非線性轉換方法，甚至是要使用哪一種regularizer。</p>
 <img src="/2017/10/25/Machine-Learning-Foundation-15/ModelSelection.JPG" class="" width="500">

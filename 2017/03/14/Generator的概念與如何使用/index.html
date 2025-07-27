@@ -29,7 +29,7 @@
 <meta property="og:description" content="generator本身也是iterator，和iterator不同的地方在於generator會透過function宣告的方式，但有別於一般的function直接return回傳值，generator的function會在”有需要”的時候，使用yield來回傳值。為什麼稱為”有需要”的時候呢？因為generator在每次呼叫next()回傳值後，會記下所有的資料並保留最後一次執行狀態，直到下一次呼">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2017-03-13T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-11T14:52:33.503Z">
+<meta property="article:modified_time" content="2025-07-26T06:27:15.192Z">
 <meta property="article:author" content="Drake">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-11 22:52:33" itemprop="dateModified" datetime="2021-05-11T22:52:33+08:00">2021-05-11</time>
+                <time title="修改時間：2025-07-26 14:27:15" itemprop="dateModified" datetime="2025-07-26T14:27:15+08:00">2025-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,6 +276,9 @@
       
         <p>generator本身也是iterator，和iterator不同的地方在於generator會透過function宣告的方式，但有別於一般的function直接return回傳值，generator的function會在”有需要”的時候，使用yield來回傳值。為什麼稱為”有需要”的時候呢？因為generator在每次呼叫next()回傳值後，會記下所有的資料並保留最後一次執行狀態，直到下一次呼叫next()才會再繼續執行未結束的狀態。我們可以看一下下面這個範例:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">transform</span>(<span class="params">data</span>):</span>    </span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> data:        </span><br><span class="line">        <span class="keyword">yield</span> <span class="built_in">chr</span>(<span class="built_in">ord</span>(char) + <span class="number">1</span>)  <span class="comment"># 透過yield回傳值後留存狀態</span></span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
 <p>在每一次呼叫next()時，generator才會開始執行，並且每次執行到yield回傳值後停止，並保留執行狀態直到下一次呼叫next()才繼續執行。當generator終止後呼叫next()則會發生StopIteration。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>char = transform(<span class="string">&#x27;python&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">q</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">z</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">i</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">p</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">p</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">o</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">next</span>(char)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">File &lt;stdin&gt;, line <span class="number">1</span>, <span class="keyword">in</span>     </span><br><span class="line">    <span class="built_in">next</span>(char)StopIteration</span><br></pre></td></tr></table></figure>
 <p>也可以使用for loop來呼叫generator</p>
